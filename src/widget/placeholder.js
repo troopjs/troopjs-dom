@@ -5,7 +5,7 @@
  */
 /*jshint strict:false, smarttabs:true, laxbreak:true */
 /*global define:true */
-define([ "../component/widget", "troopjs-utils/deferred", "require" ], function WidgetPlaceholderModule(Widget, Deferred, parentRequire) {
+define([ "require", "../component/widget", "troopjs-utils/deferred" ], function WidgetPlaceholderModule(parentRequire, Widget, Deferred) {
 	var FUNCTION = Function;
 	var POP = Array.prototype.pop;
 	var HOLDING = "holding";
