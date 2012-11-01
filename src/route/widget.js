@@ -1,11 +1,10 @@
 /*!
- * TroopJS route/service module
+ * TroopJS route/widget module
  * @license TroopJS Copyright 2012, Mikael Karon <mikael@karon.se>
  * Released under the MIT license.
  */
-define([ "troopjs-core/component/service", "troopjs-utils/uri", "troopjs-jquery/hashchange" ], function RouterModule(Service, URI) {
+define([ "../component/widget", "troopjs-utils/uri", "troopjs-jquery/hashchange" ], function RouteWidgetModule(Widget, URI) {
 	var HASHCHANGE = "hashchange";
-	var $ELEMENT = "$element";
 	var ROUTE = "route";
 	var RE = /^#/;
 
@@ -24,49 +23,35 @@ define([ "troopjs-core/component/service", "troopjs-utils/uri", "troopjs-jquery/
 			self[ROUTE] = route;
 
 			// Publish route
-			self.publish(ROUTE, uri);
+			self.publish(self.displayName, uri, $event);
 		}
 	}
 
-	return Service.extend(function RouterService($element) {
-		this[$ELEMENT] = $element;
-	}, {
-		displayName : "browser/route/router",
-
+	return Widget.extend({
 		"sig/initialize" : function initialize(signal, deferred) {
 			var self = this;
 
-			self[$ELEMENT].bind(HASHCHANGE, self, onHashChange);
+			self.bind(HASHCHANGE, self, onHashChange);
 
 			if (deferred) {
 				deferred.resolve();
 			}
-
-			return self;
 		},
 
 		"sig/start" : function start(signal, deferred) {
-			var self = this;
-
-			self[$ELEMENT].trigger(HASHCHANGE);
+			this.trigger(HASHCHANGE);
 
 			if (deferred) {
 				deferred.resolve();
 			}
-
-			return self;
 		},
 
 		"sig/finalize" : function finalize(signal, deferred) {
-			var self = this;
-
-			self[$ELEMENT].unbind(HASHCHANGE, onHashChange);
+			this.unbind(HASHCHANGE, onHashChange);
 
 			if (deferred) {
 				deferred.resolve();
 			}
-
-			return self;
 		}
 	});
 });
