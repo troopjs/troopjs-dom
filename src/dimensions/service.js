@@ -3,7 +3,7 @@
  * @license TroopJS Copyright 2012, Mikael Karon <mikael@karon.se>
  * Released under the MIT license.
  */
-define([ "troopjs-core/component/service" ], function DimensionsServiceModule(Service) {
+define([ "troopjs-core/component/service", "troopjs-jquery/dimensions", "troopjs-jquery/resize" ], function DimensionsServiceModule(Service) {
 	var DIMENSIONS = "dimensions";
 	var $ELEMENT = "$element";
 

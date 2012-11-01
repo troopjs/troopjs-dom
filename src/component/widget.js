@@ -5,7 +5,7 @@
  */
 /*jshint strict:false, smarttabs:true, newcap:false */
 /*global define:true */
-define([ "troopjs-core/component/gadget", "jquery", "troopjs-utils/deferred" ], function WidgetModule(Gadget, $, Deferred) {
+define([ "troopjs-core/component/gadget", "jquery", "troopjs-utils/deferred", "troopjs-jquery/weave", "troopjs-jquery/action" ], function WidgetModule(Gadget, $, Deferred) {
 	var UNDEFINED;
 	var NULL = null;
 	var FUNCTION = Function;
