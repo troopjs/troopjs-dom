@@ -3,9 +3,9 @@
  * @license TroopJS Copyright 2012, Mikael Karon <mikael@karon.se>
  * Released under the MIT license.
  */
-/*jshint strict:false, smarttabs:true, laxbreak:true */
 /*global define:true */
 define([ "require", "../component/widget", "troopjs-utils/deferred" ], function WidgetPlaceholderModule(parentRequire, Widget, Deferred) {
+	/*jshint strict:false, smarttabs:true, laxbreak:true */
 	var FUNCTION = Function;
 	var POP = Array.prototype.pop;
 	var HOLDING = "holding";

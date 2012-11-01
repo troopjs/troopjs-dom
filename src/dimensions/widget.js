@@ -3,6 +3,7 @@
  * @license TroopJS Copyright 2012, Mikael Karon <mikael@karon.se>
  * Released under the MIT license.
  */
+/*global define:true */
 define([ "../component/widget", "troopjs-jquery/dimensions", "troopjs-jquery/resize" ], function DimensionsModule(Widget) {
 	var DIMENSIONS = "dimensions";
 	function onDimensions($event, w, h) {

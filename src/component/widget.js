@@ -3,9 +3,9 @@
  * @license TroopJS Copyright 2012, Mikael Karon <mikael@karon.se>
  * Released under the MIT license.
  */
-/*jshint strict:false, smarttabs:true, newcap:false */
 /*global define:true */
 define([ "troopjs-core/component/gadget", "jquery", "troopjs-utils/deferred", "troopjs-jquery/weave", "troopjs-jquery/action" ], function WidgetModule(Gadget, $, Deferred) {
+	/*jshint strict:false, smarttabs:true, newcap:false */
 	var UNDEFINED;
 	var NULL = null;
 	var FUNCTION = Function;
