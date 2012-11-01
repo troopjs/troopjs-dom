@@ -3,8 +3,10 @@
  * @license TroopJS Copyright 2012, Mikael Karon <mikael@karon.se>
  * Released under the MIT license.
  */
-/*global define:true */
+/*global define:false */
 define([ "../component/widget", "troopjs-utils/uri", "troopjs-jquery/hashchange" ], function RouteWidgetModule(Widget, URI) {
+	/*jshint strict:false */
+
 	var HASHCHANGE = "hashchange";
 	var ROUTE = "route";
 	var RE = /^#/;

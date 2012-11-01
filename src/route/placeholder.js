@@ -3,8 +3,10 @@
  * @license TroopJS Copyright 2012, Mikael Karon <mikael@karon.se>
  * Released under the MIT license.
  */
-/*global define:true */
+/*global define:false */
 define([ "../widget/placeholder" ], function RoutePlaceholderModule(Placeholder) {
+	/*jshint strict:false */
+
 	var NULL = null;
 	var ROUTE = "route";
 

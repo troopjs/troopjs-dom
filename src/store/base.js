@@ -3,8 +3,10 @@
  * @license TroopJS Copyright 2012, Mikael Karon <mikael@karon.se>
  * Released under the MIT license.
  */
-/*global define:true */
+/*global define:false */
 define([ "compose", "troopjs-core/component/gadget" ], function StoreModule(Compose, Gadget) {
+	/*jshint strict:false */
+
 	var STORAGE = "storage";
 
 	return Gadget.extend({

@@ -3,8 +3,10 @@
  * @license TroopJS Copyright 2012, Mikael Karon <mikael@karon.se>
  * Released under the MIT license.
  */
-/*global define:true */
+/*global define:false */
 define([ "../component/widget" ], function ApplicationModule(Widget) {
+	/*jshint strict:false */
+
 	return Widget.extend({
 		displayName : "browser/widget/application",
 
