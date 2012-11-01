@@ -121,7 +121,7 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-utils/deferred", "t
 			var self = this;
 			var $element = self[$ELEMENT];
 			var $proxies = self[$PROXIES] = [];
-			var key = NULL;
+			var key;
 			var value;
 			var matches;
 			var topic;
