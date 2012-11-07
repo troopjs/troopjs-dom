@@ -17,32 +17,28 @@ define([ "../component/widget", "troopjs-jquery/dimensions", "troopjs-jquery/res
 	return Widget.extend(function DimensionsWidget($element, displayName, dimensions) {
 		this[DIMENSIONS] = dimensions;
 	}, {
-		"sig/initialize" : function initialize(signal, deferred) {
+		"sig/initialize" : function initialize(signal) {
 			var self = this;
 
 			self.bind(DIMENSIONS + "." + self[DIMENSIONS], self, onDimensions);
 
-			if (deferred) {
-				deferred.resolve();
-			}
+			return self;
 		},
 
-		"sig/start" : function start(signal, deferred) {
-			this.trigger("resize." + DIMENSIONS);
+		"sig/start" : function start(signal) {
+			var self = this;
 
-			if (deferred) {
-				deferred.resolve();
-			}
+			self.trigger("resize." + DIMENSIONS);
+
+			return self;
 		},
 
-		"sig/finalize" : function finalize(signal, deferred) {
+		"sig/finalize" : function finalize(signal) {
 			var self = this;
 
 			self.unbind(DIMENSIONS + "." + self[DIMENSIONS], onDimensions);
 
-			if (deferred) {
-				deferred.resolve();
-			}
+			return self;
 		}
 	});
 });
