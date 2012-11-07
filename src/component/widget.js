@@ -4,7 +4,7 @@
  * Released under the MIT license.
  */
 /*global define:false */
-define([ "troopjs-core/component/gadget", "jquery", "troopjs-utils/deferred", "troopjs-jquery/weave", "troopjs-jquery/action" ], function WidgetModule(Gadget, $, Deferred) {
+define([ "troopjs-core/component/gadget", "jquery", "when", "when/apply", "troopjs-jquery/weave", "troopjs-jquery/action" ], function WidgetModule(Gadget, $, when, apply) {
 	/*jshint strict:false, smarttabs:true, newcap:false */
 
 	var UNDEFINED;
@@ -22,7 +22,6 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-utils/deferred", "t
 	var $ELEMENT = "$element";
 	var $PROXIES = "$proxies";
 	var ONE = "one";
-	var THEN = "then";
 	var ATTR_WEAVE = "[data-weave]";
 	var ATTR_WOVEN = "[data-woven]";
 
@@ -57,51 +56,23 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-utils/deferred", "t
 		 * Renders contents into element
 		 * @param contents (Function | String) Template/String to render
 		 * @param data (Object) If contents is a template - template data (optional)
-		 * @param deferred (Deferred) Deferred (optional)
 		 * @returns self
 		 */
-		function render(/* contents, data, ..., deferred */) {
+		function render(/* contents, data, ... */) {
 			var self = this;
-			var $element = self[$ELEMENT];
 			var arg = arguments;
 
 			// Shift contents from first argument
 			var contents = SHIFT.call(arg);
 
-			// Assume deferred is the last argument
-			var deferred = arg[arg.length - 1];
+			// Call render with contents (or result of contents if it's a function)
+			$fn.call(self[$ELEMENT], contents instanceof FUNCTION ? contents.apply(self, arg) : contents);
 
-			// If deferred not a true Deferred, make it so
-			if (deferred === UNDEFINED || !(deferred[THEN] instanceof FUNCTION)) {
-				deferred = Deferred();
-			}
+			return self.weave().then(function resolve(widgets) {
+				self.trigger(REFRESH, widgets);
 
-			// Defer render (as weaving it may need to load async)
-			Deferred(function deferredRender(dfdRender) {
-
-				// Link deferred
-				dfdRender.then(function renderDone() {
-					// Trigger refresh
-					$element.trigger(REFRESH, arguments);
-
-					// Resolve outer deferred
-					deferred.resolve();
-				}, deferred.reject, deferred.notify);
-
-				// Notify that we're about to render
-				dfdRender.notify("beforeRender", self);
-
-				// Call render with contents (or result of contents if it's a function)
-				$fn.call($element, contents instanceof FUNCTION ? contents.apply(self, arg) : contents);
-
-				// Notify that we're rendered
-				dfdRender.notify("afterRender", self);
-
-				// Weave element
-				$element.find(ATTR_WEAVE).weave(dfdRender);
+				return widgets;
 			});
-
-			return self;
 		}
 
 		return render;
@@ -118,7 +89,7 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-utils/deferred", "t
 	}, {
 		displayName : "browser/component/widget",
 
-		"sig/initialize" : function initialize(signal, deferred) {
+		"sig/initialize" : function initialize() {
 			var self = this;
 			var $element = self[$ELEMENT];
 			var $proxies = self[$PROXIES] = [];
@@ -158,14 +129,10 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-utils/deferred", "t
 				}
 			}
 
-			if (deferred) {
-				deferred.resolve();
-			}
-
 			return self;
 		},
 
-		"sig/finalize" : function finalize(signal, deferred) {
+		"sig/finalize" : function finalize() {
 			var self = this;
 			var $element = self[$ELEMENT];
 			var $proxies = self[$PROXIES];
@@ -177,38 +144,22 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-utils/deferred", "t
 			}
 
 			delete self[$ELEMENT];
-
-			if (deferred) {
-				deferred.resolve();
-			}
-
-			return self;
 		},
 
 		/**
 		 * Weaves all children of $element
-		 * @param deferred (Deferred) Deferred (optional)
 		 * @returns self
 		 */
-		weave : function weave(deferred) {
-			var self = this;
-
-			self[$ELEMENT].find(ATTR_WEAVE).weave(deferred);
-
-			return self;
+		weave : function weave() {
+			return this[$ELEMENT].find(ATTR_WEAVE).weave();
 		},
 
 		/**
 		 * Unweaves all children of $element _and_ self
-		 * @param deferred (Deferred) Deferred (optional)
 		 * @returns self
 		 */
-		unweave : function unweave(deferred) {
-			var self = this;
-
-			self[$ELEMENT].find(ATTR_WOVEN).andSelf().unweave(deferred);
-
-			return this;
+		unweave : function unweave() {
+			return this[$ELEMENT].find(ATTR_WOVEN).andSelf().unweave();
 		},
 
 		/**
@@ -291,43 +242,36 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-utils/deferred", "t
 
 		/**
 		 * Empties widget
-		 * @param deferred (Deferred) Deferred (optional)
 		 * @returns self
 		 */
-		empty : function empty(deferred) {
+		empty : function empty() {
 			var self = this;
 
-			// Ensure we have deferred
-			deferred = deferred || Deferred();
+			// Create deferred
+			var deferred = when.defer();
 
-			// Create deferred for emptying
-			Deferred(function emptyDeferred(dfdEmpty) {
-				// Link deferred
-				dfdEmpty.then(deferred.resolve, deferred.reject, deferred.notify);
+			// Get element
+			var $element = self[$ELEMENT];
 
-				// Get element
-				var $element = self[$ELEMENT];
+			// Detach contents
+			var $contents = $element.contents().detach();
 
-				// Detach contents
-				var $contents = $element.contents().detach();
+			// Trigger refresh
+			self.trigger(REFRESH, self);
 
-				// Trigger refresh
-				$element.trigger(REFRESH, self);
+			// Use timeout in order to yield
+			setTimeout(function emptyTimeout() {
+				// Get DOM elements
+				var contents = $contents.get();
 
-				// Use timeout in order to yield
-				setTimeout(function emptyTimeout() {
-					// Get DOM elements
-					var contents = $contents.get();
+				// Remove elements from DOM
+				$contents.remove();
 
-					// Remove elements from DOM
-					$contents.remove();
+				// Resolve deferred
+				deferred.resolve(contents);
+			}, 0);
 
-					// Resolve deferred
-					dfdEmpty.resolve(contents);
-				}, 0);
-			});
-
-			return self;
+			return deferred.promise;
 		}
 	});
 });

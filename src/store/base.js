@@ -4,7 +4,7 @@
  * Released under the MIT license.
  */
 /*global define:false */
-define([ "compose", "troopjs-core/component/gadget" ], function StoreModule(Compose, Gadget) {
+define([ "compose", "troopjs-core/component/gadget", "when" ], function StoreModule(Compose, Gadget, when) {
 	/*jshint strict:false */
 
 	var STORAGE = "storage";
@@ -12,44 +12,24 @@ define([ "compose", "troopjs-core/component/gadget" ], function StoreModule(Comp
 	return Gadget.extend({
 		storage : Compose.required,
 
-		set : function set(key, value, deferred) {
+		set : function set(key, value) {
 			// JSON encoded 'value' then store as 'key'
-			this[STORAGE].setItem(key, JSON.stringify(value));
-
-			// Resolve deferred
-			if (deferred) {
-				deferred.resolve(value);
-			}
+			return when(this[STORAGE].setItem(key, JSON.stringify(value)))
 		},
 
-		get : function get(key, deferred) {
+		get : function get(key) {
 			// Get value from 'key', parse JSON
-			var value = JSON.parse(this[STORAGE].getItem(key));
-
-			// Resolve deferred
-			if (deferred) {
-				deferred.resolve(value);
-			}
+			return when(JSON.parse(this[STORAGE].getItem(key)));
 		},
 
-		remove : function remove(key, deferred) {
+		remove : function remove(key) {
 			// Remove key
-			this[STORAGE].removeItem(key);
-
-			// Resolve deferred
-			if (deferred) {
-				deferred.resolve();
-			}
+			return when(this[STORAGE].removeItem(key));
 		},
 
-		clear : function clear(deferred) {
+		clear : function clear() {
 			// Clear
-			this[STORAGE].clear();
-
-			// Resolve deferred
-			if (deferred) {
-				deferred.resolve();
-			}
+			return when(this[STORAGE].clear());
 		}
 	});
 });
