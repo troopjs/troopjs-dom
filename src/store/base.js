@@ -14,7 +14,7 @@ define([ "compose", "troopjs-core/component/gadget", "when" ], function StoreMod
 
 		set : function set(key, value) {
 			// JSON encoded 'value' then store as 'key'
-			return when(this[STORAGE].setItem(key, JSON.stringify(value)))
+			return when(this[STORAGE].setItem(key, JSON.stringify(value)));
 		},
 
 		get : function get(key) {
