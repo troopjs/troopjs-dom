@@ -4,7 +4,7 @@
  * Released under the MIT license.
  */
 /*global define:false */
-define([ "troopjs-core/component/gadget", "jquery", "when", "when/apply", "troopjs-jquery/weave", "troopjs-jquery/action" ], function WidgetModule(Gadget, $, when, apply) {
+define([ "troopjs-core/component/gadget", "jquery", "when", "troopjs-jquery/weave", "troopjs-jquery/action" ], function WidgetModule(Gadget, $, when) {
 	/*jshint strict:false, smarttabs:true, newcap:false */
 
 	var UNDEFINED;
