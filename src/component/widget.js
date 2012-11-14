@@ -128,8 +128,6 @@ define([ "troopjs-core/component/gadget", "jquery", "when", "troopjs-jquery/weav
 					self[key] = NULL;
 				}
 			}
-
-			return self;
 		},
 
 		"sig/finalize" : function finalize() {
