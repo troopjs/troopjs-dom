@@ -17,6 +17,8 @@ define([ "../component/widget", "troopjs-jquery/dimensions", "troopjs-jquery/res
 	return Widget.extend(function DimensionsWidget($element, displayName, dimensions) {
 		this[DIMENSIONS] = dimensions;
 	}, {
+		"displayName" : "browser/dimensions/widget",
+
 		"sig/initialize" : function initialize(signal) {
 			var self = this;
 
