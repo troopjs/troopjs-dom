@@ -8,6 +8,7 @@ define([ "module", "../component/widget", "when" ], function ApplicationWidgetMo
 	/*jshint strict:false, laxbreak:true */
 
 	var CHILDREN = "children";
+	var ARRAY_SLICE = Array.prototype.slice;
 
 	function forward(signal) {
 		var self = this;
@@ -35,16 +36,20 @@ define([ "module", "../component/widget", "when" ], function ApplicationWidgetMo
 		"sig/initialize" : forward,
 		"sig/start" : function start() {
 			var self = this;
+			var _weave = self.weave;
+			var args = arguments;
 
-			forward.apply(self, arguments).spread(function started() {
-				self.weave();
+			forward.apply(self, args).then(function started() {
+				_weave.apply(self, ARRAY_SLICE.call(args, 1));
 			});
 		},
 		"sig/stop" : function stop() {
 			var self = this;
+			var _unweave = self.unweave;
+			var args = arguments;
 
-			self.unweave().spread(function stopped() {
-				forward.apply(self, arguments);
+			_unweave.apply(self, ARRAY_SLICE.call(args, 1)).then(function stopped() {
+				forward.apply(self, args);
 			});
 		},
 		"sig/finalize" : forward
