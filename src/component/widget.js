@@ -87,7 +87,7 @@ define([ "troopjs-core/component/gadget", "jquery", "when", "troopjs-jquery/weav
 			self.displayName = displayName;
 		}
 	}, {
-		displayName : "browser/component/widget",
+		"displayName" : "browser/component/widget",
 
 		"sig/initialize" : function initialize() {
 			var self = this;
@@ -148,7 +148,7 @@ define([ "troopjs-core/component/gadget", "jquery", "when", "troopjs-jquery/weav
 		 * Weaves all children of $element
 		 * @returns self
 		 */
-		weave : function weave() {
+		"weave" : function weave() {
 			return this[$ELEMENT].find(ATTR_WEAVE).weave();
 		},
 
@@ -156,7 +156,7 @@ define([ "troopjs-core/component/gadget", "jquery", "when", "troopjs-jquery/weav
 		 * Unweaves all children of $element _and_ self
 		 * @returns self
 		 */
-		unweave : function unweave() {
+		"unweave" : function unweave() {
 			return this[$ELEMENT].find(ATTR_WOVEN).andSelf().unweave();
 		},
 
@@ -164,7 +164,7 @@ define([ "troopjs-core/component/gadget", "jquery", "when", "troopjs-jquery/weav
 		 * Binds event from $element, exactly once
 		 * @returns self
 		 */
-		one : function one() {
+		"one" : function one() {
 			var self = this;
 
 			$ONE.apply(self[$ELEMENT], arguments);
@@ -176,7 +176,7 @@ define([ "troopjs-core/component/gadget", "jquery", "when", "troopjs-jquery/weav
 		 * Binds event to $element
 		 * @returns self
 		 */
-		bind : function bind() {
+		"bind" : function bind() {
 			var self = this;
 
 			$BIND.apply(self[$ELEMENT], arguments);
@@ -188,7 +188,7 @@ define([ "troopjs-core/component/gadget", "jquery", "when", "troopjs-jquery/weav
 		 * Unbinds event from $element
 		 * @returns self
 		 */
-		unbind : function unbind() {
+		"unbind" : function unbind() {
 			var self = this;
 
 			$UNBIND.apply(self[$ELEMENT], arguments);
@@ -200,7 +200,7 @@ define([ "troopjs-core/component/gadget", "jquery", "when", "troopjs-jquery/weav
 		 * Triggers event on $element
 		 * @returns self
 		 */
-		trigger : function trigger() {
+		"trigger" : function trigger() {
 			var self = this;
 
 			$TRIGGER.apply(self[$ELEMENT], arguments);
@@ -211,38 +211,38 @@ define([ "troopjs-core/component/gadget", "jquery", "when", "troopjs-jquery/weav
 		/**
 		 * Renders content and inserts it before $element
 		 */
-		before : renderProxy($.fn.before),
+		"before" : renderProxy($.fn.before),
 
 		/**
 		 * Renders content and inserts it after $element
 		 */
-		after : renderProxy($.fn.after),
+		"after" : renderProxy($.fn.after),
 
 		/**
 		 * Renders content and replaces $element contents
 		 */
-		html : renderProxy($.fn.html),
+		"html" : renderProxy($.fn.html),
 
 		/**
 		 * Renders content and replaces $element contents
 		 */
-		text : renderProxy($.fn.text),
+		"text" : renderProxy($.fn.text),
 
 		/**
 		 * Renders content and appends it to $element
 		 */
-		append : renderProxy($.fn.append),
+		"append" : renderProxy($.fn.append),
 
 		/**
 		 * Renders content and prepends it to $element
 		 */
-		prepend : renderProxy($.fn.prepend),
+		"prepend" : renderProxy($.fn.prepend),
 
 		/**
 		 * Empties widget
 		 * @returns self
 		 */
-		empty : function empty() {
+		"empty" : function empty() {
 			var self = this;
 
 			// Create deferred
