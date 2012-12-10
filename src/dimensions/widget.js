@@ -21,24 +21,16 @@ define([ "../component/widget", "troopjs-jquery/dimensions", "troopjs-jquery/res
 			var self = this;
 
 			self.bind(DIMENSIONS + "." + self[DIMENSIONS], self, onDimensions);
-
-			return self;
 		},
 
-		"sig/start" : function start(signal) {
-			var self = this;
-
-			self.trigger("resize." + DIMENSIONS);
-
-			return self;
+		"sig/start" : function start() {
+			this.trigger("resize." + DIMENSIONS);
 		},
 
-		"sig/finalize" : function finalize(signal) {
+		"sig/finalize" : function finalize() {
 			var self = this;
 
 			self.unbind(DIMENSIONS + "." + self[DIMENSIONS], onDimensions);
-
-			return self;
 		}
 	});
 });
