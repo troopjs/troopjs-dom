@@ -5,7 +5,7 @@
  */
 /*global define:false */
 define([ "../component/widget" ], function ApplicationModule(Widget) {
-	/*jshint strict:false */
+	/*jshint strict:false, laxbreak:true */
 
 	var ARRAY_SLICE = Array.prototype.slice;
 
