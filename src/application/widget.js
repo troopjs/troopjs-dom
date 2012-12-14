@@ -39,8 +39,8 @@ define([ "module", "../component/widget", "when" ], function ApplicationWidgetMo
 			var _weave = self.weave;
 			var args = arguments;
 
-			forward.apply(self, args).then(function started() {
-				_weave.apply(self, ARRAY_SLICE.call(args, 1));
+			return forward.apply(self, args).then(function started() {
+				return _weave.apply(self, ARRAY_SLICE.call(args, 1));
 			});
 		},
 		"sig/stop" : function stop() {
@@ -48,8 +48,8 @@ define([ "module", "../component/widget", "when" ], function ApplicationWidgetMo
 			var _unweave = self.unweave;
 			var args = arguments;
 
-			_unweave.apply(self, ARRAY_SLICE.call(args, 1)).then(function stopped() {
-				forward.apply(self, args);
+			return _unweave.apply(self, ARRAY_SLICE.call(args, 1)).then(function stopped() {
+				return forward.apply(self, args);
 			});
 		},
 		"sig/finalize" : forward
