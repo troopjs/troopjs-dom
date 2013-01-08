@@ -22,6 +22,7 @@ define([ "troopjs-core/component/gadget", "jquery", "when", "troopjs-jquery/weav
 	var $ELEMENT = "$element";
 	var $PROXIES = "$proxies";
 	var ONE = "one";
+	var FEATURES = "features";
 	var ATTR_WEAVE = "[data-weave]";
 	var ATTR_WOVEN = "[data-woven]";
 
@@ -93,6 +94,7 @@ define([ "troopjs-core/component/gadget", "jquery", "when", "troopjs-jquery/weav
 			var self = this;
 			var $element = self[$ELEMENT];
 			var $proxies = self[$PROXIES] = [];
+			var $proxy;
 			var key;
 			var value;
 			var matches;
@@ -121,8 +123,11 @@ define([ "troopjs-core/component/gadget", "jquery", "when", "troopjs-jquery/weav
 					// Either ONE or BIND element
 					(matches[2] === ONE ? $ONE : $BIND).call($element, topic, self, value);
 
-					// Store in $proxies
-					$proxies[$proxies.length] = [topic, value];
+					// Create and store $proxy
+					$proxies[$proxies.length] = $proxy = [topic, value];
+
+					// Store features
+					$proxy[FEATURES] = matches[1];
 
 					// NULL value
 					self[key] = NULL;
