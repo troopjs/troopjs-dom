@@ -162,7 +162,7 @@ define([ "troopjs-core/component/gadget", "jquery", "when", "troopjs-jquery/weav
 		 * @returns self
 		 */
 		"unweave" : function unweave() {
-			return this[$ELEMENT].find(ATTR_WOVEN).andSelf().unweave();
+			return this[$ELEMENT].find(ATTR_WOVEN).addBack().unweave();
 		},
 
 		/**
