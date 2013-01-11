@@ -4,7 +4,7 @@
  * Released under the MIT license.
  */
 /*global define:false */
-define([ "troopjs-core/component/gadget", "jquery", "when", "troopjs-jquery/weave", "troopjs-jquery/action" ], function WidgetModule(Gadget, $, when) {
+define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "troopjs-jquery/action" ], function WidgetModule(Gadget, $) {
 	/*jshint strict:false, smarttabs:true, newcap:false */
 
 	var UNDEFINED;
@@ -18,7 +18,6 @@ define([ "troopjs-core/component/gadget", "jquery", "when", "troopjs-jquery/weav
 	var $BIND = $.fn.bind;
 	var $UNBIND = $.fn.unbind;
 	var RE = /^dom(?::(\w+))?\/([^\.]+(?:\.(.+))?)/;
-	var REFRESH = "widget/refresh";
 	var $ELEMENT = "$element";
 	var $PROXIES = "$proxies";
 	var ONE = "one";
@@ -69,11 +68,7 @@ define([ "troopjs-core/component/gadget", "jquery", "when", "troopjs-jquery/weav
 			// Call render with contents (or result of contents if it's a function)
 			$fn.call(self[$ELEMENT], contents instanceof FUNCTION ? contents.apply(self, arg) : contents);
 
-			return self.weave().then(function resolve(widgets) {
-				self.trigger(REFRESH, widgets);
-
-				return widgets;
-			});
+			return self.weave();
 		}
 
 		return render;
@@ -241,40 +236,6 @@ define([ "troopjs-core/component/gadget", "jquery", "when", "troopjs-jquery/weav
 		/**
 		 * Renders content and prepends it to $element
 		 */
-		"prepend" : renderProxy($.fn.prepend),
-
-		/**
-		 * Empties widget
-		 * @returns self
-		 */
-		"empty" : function empty() {
-			var self = this;
-
-			// Create deferred
-			var deferred = when.defer();
-
-			// Get element
-			var $element = self[$ELEMENT];
-
-			// Detach contents
-			var $contents = $element.contents().detach();
-
-			// Trigger refresh
-			self.trigger(REFRESH, self);
-
-			// Use timeout in order to yield
-			setTimeout(function emptyTimeout() {
-				// Get DOM elements
-				var contents = $contents.get();
-
-				// Remove elements from DOM
-				$contents.remove();
-
-				// Resolve deferred
-				deferred.resolve(contents);
-			}, 0);
-
-			return deferred.promise;
-		}
+		"prepend" : renderProxy($.fn.prepend)
 	});
 });
