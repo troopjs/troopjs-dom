@@ -8,7 +8,7 @@ define([ "troopjs-core/component/service", "jquery", "troopjs-utils/merge" ], fu
 	var TRACE = "trace";
 
 	return Service.extend({
-		displayName : "browser/ajax/service",
+		"displayName" : "browser/ajax/service",
 
 		"hub/ajax" : function ajax(topic, settings) {
 			// Request

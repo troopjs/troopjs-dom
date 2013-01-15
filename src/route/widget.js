@@ -29,6 +29,8 @@ define([ "../component/widget", "troopjs-utils/uri", "troopjs-jquery/hashchange"
 	}
 
 	return Widget.extend({
+		"displayName" :"browser/route/widget",
+
 		"sig/initialize" : function initialize() {
 			var self = this;
 

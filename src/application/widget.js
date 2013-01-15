@@ -31,7 +31,7 @@ define([ "module", "../component/widget", "when" ], function ApplicationWidgetMo
 	return Widget.extend(function ApplicationWidget($element, name, children) {
 		this[CHILDREN] = children;
 	}, {
-		displayName : "browser/application/widget",
+		"displayName" : "browser/application/widget",
 
 		"sig/initialize" : forward,
 		"sig/start" : function start() {
