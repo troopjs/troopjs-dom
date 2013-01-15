@@ -1,7 +1,6 @@
-/*!
+/**
  * TroopJS store/base module
- * @license TroopJS Copyright 2012, Mikael Karon <mikael@karon.se>
- * Released under the MIT license.
+ * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
 /*global define:false */
 define([ "compose", "troopjs-core/component/gadget", "when" ], function StoreModule(Compose, Gadget, when) {
