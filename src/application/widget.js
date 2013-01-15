@@ -5,7 +5,7 @@
  */
 /*global define:false */
 define([ "module", "../component/widget", "when" ], function ApplicationWidgetModule(module, Widget, when) {
-	/*jshint strict:false, laxbreak:true */
+	/*jshint laxbreak:true */
 
 	var CHILDREN = "children";
 	var ARRAY_SLICE = Array.prototype.slice;

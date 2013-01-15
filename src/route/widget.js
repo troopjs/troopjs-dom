@@ -5,8 +5,6 @@
  */
 /*global define:false */
 define([ "../component/widget", "troopjs-utils/uri", "troopjs-jquery/hashchange" ], function RouteWidgetModule(Widget, URI) {
-	/*jshint strict:false */
-
 	var HASHCHANGE = "hashchange";
 	var ROUTE = "route";
 	var RE = /^#/;

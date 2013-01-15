@@ -5,8 +5,6 @@
  */
 /*global define:false */
 define([ "troopjs-core/component/service", "jquery", "troopjs-utils/merge" ], function AjaxModule(Service, $, merge) {
-	/*jshint strict:false */
-
 	var TRACE = "trace";
 
 	return Service.extend({

@@ -5,8 +5,6 @@
  */
 /*global define:false */
 define([ "compose", "troopjs-core/component/gadget", "when" ], function StoreModule(Compose, Gadget, when) {
-	/*jshint strict:false */
-
 	var STORAGE = "storage";
 
 	return Gadget.extend({

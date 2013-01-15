@@ -5,8 +5,6 @@
  */
 /*global define:false */
 define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "troopjs-jquery/action" ], function WidgetModule(Gadget, $) {
-	/*jshint strict:false, smarttabs:true, newcap:false */
-
 	var UNDEFINED;
 	var NULL = null;
 	var FUNCTION = Function;

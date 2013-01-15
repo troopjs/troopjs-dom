@@ -5,8 +5,6 @@
  */
 /*global define:false */
 define([ "../component/widget", "troopjs-jquery/dimensions", "troopjs-jquery/resize" ], function DimensionsModule(Widget) {
-	/*jshint strict:false */
-
 	var DIMENSIONS = "dimensions";
 	function onDimensions($event, w, h) {
 		var self = $event.data;

@@ -5,8 +5,6 @@
  */
 /*global define:false */
 define([ "compose", "./base" ], function StoreLocalModule(Compose, Store) {
-	/*jshint strict:false */
-
 	return Compose.create(Store, {
 		displayName : "browser/store/local",
 

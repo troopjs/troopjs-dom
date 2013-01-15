@@ -5,8 +5,6 @@
  */
 /*global define:false */
 define([ "compose", "./base" ], function StoreSessionModule(Compose, Store) {
-	/*jshint strict:false */
-
 	return Compose.create(Store, {
 		displayName : "browser/store/session",
 
