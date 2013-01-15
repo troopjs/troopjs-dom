@@ -7,24 +7,24 @@ define([ "compose", "troopjs-core/component/gadget", "when" ], function StoreMod
 	var STORAGE = "storage";
 
 	return Gadget.extend({
-		storage : Compose.required,
+		"storage" : Compose.required,
 
-		set : function set(key, value) {
+		"set" : function set(key, value) {
 			// JSON encoded 'value' then store as 'key'
 			return when(this[STORAGE].setItem(key, JSON.stringify(value)));
 		},
 
-		get : function get(key) {
+		"get" : function get(key) {
 			// Get value from 'key', parse JSON
 			return when(JSON.parse(this[STORAGE].getItem(key)));
 		},
 
-		remove : function remove(key) {
+		"remove" : function remove(key) {
 			// Remove key
 			return when(this[STORAGE].removeItem(key));
 		},
 
-		clear : function clear() {
+		"clear" : function clear() {
 			// Clear
 			return when(this[STORAGE].clear());
 		}

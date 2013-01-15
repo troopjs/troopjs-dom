@@ -5,8 +5,8 @@
 /*global define:false */
 define([ "compose", "./base" ], function StoreLocalModule(Compose, Store) {
 	return Compose.create(Store, {
-		displayName : "browser/store/local",
+		"displayName" : "browser/store/local",
 
-		storage : window.localStorage
+		"storage" : window.localStorage
 	});
 });
