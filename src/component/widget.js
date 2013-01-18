@@ -117,7 +117,6 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 			var $element = self[$ELEMENT];
 			var properties = self[PROPERTIES][DOM];
 			var handlers;
-			var handler;
 			var key;
 			var i;
 			var iMax;
