@@ -24,10 +24,10 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 
 	/**
 	 * Creates a proxy of the inner method 'handlerProxy' with the 'topic', 'widget' and handler parameters set
-	 * @param topic event topic
-	 * @param widget target widget
-	 * @param handler target handler
-	 * @returns {Function} proxied handler
+	 * @param {string} topic event topic
+	 * @param {object} widget target widget
+	 * @param {function} handler target handler
+	 * @returns {function} proxied handler
 	 */
 	function eventProxy(topic, widget, handler) {
 		/**
@@ -51,9 +51,9 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 	function renderProxy($fn) {
 		/**
 		 * Renders contents into element
-		 * @param contents (Function | String) Template/String to render
-		 * @param data (Object) If contents is a template - template data (optional)
-		 * @returns self
+		 * @param {function|string} contents Template/String to render
+		 * @param {object} data If contents is a template - template data (optional)
+		 * @returns {object} self
 		 */
 		function render(/* contents, data, ... */) {
 			var self = this;
