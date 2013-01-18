@@ -1,7 +1,6 @@
-/*!
- * TroopJS widget/application component
- * @license TroopJS Copyright 2012, Mikael Karon <mikael@karon.se>
- * Released under the MIT license.
+/**
+ * TroopJS browser/application/widget
+ * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
 /*global define:false */
 define([ "module", "../component/widget", "when" ], function ApplicationWidgetModule(module, Widget, when) {

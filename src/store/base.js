@@ -1,5 +1,5 @@
 /**
- * TroopJS store/base module
+ * TroopJS browser/store/base module
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
 /*global define:false */
