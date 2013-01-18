@@ -104,7 +104,7 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 				for (i = 0, iMax = handlers[LENGTH];i < iMax; i++) {
 					handler = handlers[i];
 
-					$ON.call($element, key, self, handler[VALUE] = eventProxy(key, self, handler[VALUE]));
+					$ON.call($element, key, handler[FEATURES], self, handler[VALUE] = eventProxy(key, self, handler[VALUE]));
 				}
 			}
 		},
@@ -117,6 +117,7 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 			var $element = self[$ELEMENT];
 			var properties = self[PROPERTIES][DOM];
 			var handlers;
+			var handler;
 			var key;
 			var i;
 			var iMax;
@@ -128,7 +129,9 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 
 				// Iterate handlers
 				for (i = 0, iMax = handlers[LENGTH];i < iMax; i++) {
-					$OFF.call($element, key, handlers[i][VALUE]);
+					handler = handlers[i];
+
+					$OFF.call($element, key, handler[FEATURES], handler[VALUE]);
 				}
 			}
 
