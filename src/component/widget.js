@@ -5,23 +5,26 @@
  */
 /*global define:false */
 define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "troopjs-jquery/action" ], function WidgetModule(Gadget, $) {
-	var UNDEFINED;
-	var NULL = null;
 	var FUNCTION = Function;
 	var ARRAY_PROTO = Array.prototype;
-	var SHIFT = ARRAY_PROTO.shift;
-	var UNSHIFT = ARRAY_PROTO.unshift;
+	var ARRAY_SHIFT = ARRAY_PROTO.shift;
+	var ARRAY_UNSHIFT = ARRAY_PROTO.unshift;
 	var $TRIGGER = $.fn.trigger;
 	var $ONE = $.fn.one;
 	var $BIND = $.fn.bind;
 	var $UNBIND = $.fn.unbind;
-	var RE = /^dom(?::(\w+))?\/([^\.]+(?:\.(.+))?)/;
+	var $ON = $.fn.on;
+	var $OFF = $.fn.off;
 	var $ELEMENT = "$element";
-	var $PROXIES = "$proxies";
 	var ONE = "one";
-	var FEATURES = "features";
 	var ATTR_WEAVE = "[data-weave]";
 	var ATTR_WOVEN = "[data-woven]";
+
+	var DOM = "dom";
+	var LENGTH = "length";
+	var FEATURES = "features";
+	var VALUE = "value";
+	var PROPERTIES = "properties";
 
 	/**
 	 * Creates a proxy of the inner method 'handlerProxy' with the 'topic', 'widget' and handler parameters set
@@ -37,7 +40,7 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 		 */
 		return function handlerProxy() {
 			// Add topic to front of arguments
-			UNSHIFT.call(arguments, topic);
+			ARRAY_UNSHIFT.call(arguments, topic);
 
 			// Apply with shifted arguments to handler
 			return handler.apply(widget, arguments);
@@ -61,7 +64,7 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 			var arg = arguments;
 
 			// Shift contents from first argument
-			var contents = SHIFT.call(arg);
+			var contents = ARRAY_SHIFT.call(arg);
 
 			// Call render with contents (or result of contents if it's a function)
 			$fn.call(self[$ELEMENT], contents instanceof FUNCTION ? contents.apply(self, arg) : contents);
@@ -83,62 +86,58 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 	}, {
 		"displayName" : "browser/component/widget",
 
+		/**
+		 * Signal handler for 'initialize'
+		 */
 		"sig/initialize" : function initialize() {
 			var self = this;
 			var $element = self[$ELEMENT];
-			var $proxies = self[$PROXIES] = [];
-			var $proxy;
+			var properties = self[PROPERTIES][DOM];
+			var handlers;
+			var handler;
 			var key;
-			var value;
-			var matches;
-			var topic;
+			var i;
+			var iMax;
 
-			// Loop over each property in widget
-			for (key in self) {
-				// Get value
-				value = self[key];
+			// Iterate properties
+			for (key in properties) {
+				// Get handlers
+				handlers = properties[key];
 
-				// Continue if value is not a function
-				if (!(value instanceof FUNCTION)) {
-					continue;
-				}
+				// Iterate handlers
+				for (i = 0, iMax = handlers[LENGTH];i < iMax; i++) {
+					handler = handlers[i];
 
-				// Match signature in key
-				matches = RE.exec(key);
-
-				if (matches !== NULL) {
-					// Get topic
-					topic = matches[2];
-
-					// Replace value with a scoped proxy
-					value = eventProxy(topic, self, value);
-
-					// Either ONE or BIND element
-					(matches[2] === ONE ? $ONE : $BIND).call($element, topic, self, value);
-
-					// Create and store $proxy
-					$proxies[$proxies.length] = $proxy = [topic, value];
-
-					// Store features
-					$proxy[FEATURES] = matches[1];
-
-					// NULL value
-					self[key] = NULL;
+					$ON.call($element, key, self, handler[VALUE] = eventProxy(key, self, handler[VALUE]));
 				}
 			}
 		},
 
+		/**
+		 * Signal handler for 'finalize'
+		 */
 		"sig/finalize" : function finalize() {
 			var self = this;
 			var $element = self[$ELEMENT];
-			var $proxies = self[$PROXIES];
-			var $proxy;
+			var properties = self[PROPERTIES][DOM];
+			var handlers;
+			var handler;
+			var key;
+			var i;
+			var iMax;
 
-			// Loop over subscriptions
-			while (($proxy = $proxies.shift()) !== UNDEFINED) {
-				$element.unbind($proxy[0], $proxy[1]);
+			// Iterate properties
+			for (key in properties) {
+				// Get handlers
+				handlers = properties[key];
+
+				// Iterate handlers
+				for (i = 0, iMax = handlers[LENGTH];i < iMax; i++) {
+					$OFF.call($element, key, handlers[i][VALUE]);
+				}
 			}
 
+			// Delete ref to $ELEMENT (for safety)
 			delete self[$ELEMENT];
 		},
 
