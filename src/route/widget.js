@@ -34,15 +34,15 @@ define([ "../component/widget", "troopjs-utils/uri", "troopjs-jquery/hashchange"
 		"sig/initialize" : function initialize() {
 			var self = this;
 
-			self.bind(HASHCHANGE, self, onHashChange);
+			self.$on(HASHCHANGE, self, onHashChange);
 		},
 
 		"sig/start" : function start() {
-			this.trigger(HASHCHANGE);
+			this.$emit(HASHCHANGE);
 		},
 
 		"sig/finalize" : function finalize() {
-			this.unbind(HASHCHANGE, onHashChange);
+			this.$off(HASHCHANGE, onHashChange);
 		}
 	});
 });

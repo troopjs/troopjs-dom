@@ -10,13 +10,9 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 	var ARRAY_SHIFT = ARRAY_PROTO.shift;
 	var ARRAY_UNSHIFT = ARRAY_PROTO.unshift;
 	var $TRIGGER = $.fn.trigger;
-	var $ONE = $.fn.one;
-	var $BIND = $.fn.bind;
-	var $UNBIND = $.fn.unbind;
 	var $ON = $.fn.on;
 	var $OFF = $.fn.off;
 	var $ELEMENT = "$element";
-	var ONE = "one";
 	var ATTR_WEAVE = "[data-weave]";
 	var ATTR_WOVEN = "[data-woven]";
 
@@ -158,25 +154,13 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 		},
 
 		/**
-		 * Binds event from $element, exactly once
-		 * @returns self
-		 */
-		"one" : function one() {
-			var self = this;
-
-			$ONE.apply(self[$ELEMENT], arguments);
-
-			return self;
-		},
-
-		/**
 		 * Binds event to $element
 		 * @returns self
 		 */
-		"bind" : function bind() {
+		"$on" : function $on() {
 			var self = this;
 
-			$BIND.apply(self[$ELEMENT], arguments);
+			$ON.apply(self[$ELEMENT], arguments);
 
 			return self;
 		},
@@ -185,10 +169,10 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 		 * Unbinds event from $element
 		 * @returns self
 		 */
-		"unbind" : function unbind() {
+		"$off" : function $off() {
 			var self = this;
 
-			$UNBIND.apply(self[$ELEMENT], arguments);
+			$OFF.apply(self[$ELEMENT], arguments);
 
 			return self;
 		},
@@ -197,7 +181,7 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 		 * Triggers event on $element
 		 * @returns self
 		 */
-		"trigger" : function trigger() {
+		"$emit" : function $emit() {
 			var self = this;
 
 			$TRIGGER.apply(self[$ELEMENT], arguments);

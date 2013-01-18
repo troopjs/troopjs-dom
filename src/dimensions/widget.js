@@ -17,20 +17,20 @@ define([ "../component/widget", "troopjs-jquery/dimensions", "troopjs-jquery/res
 	}, {
 		"displayName" : "browser/dimensions/widget",
 
-		"sig/initialize" : function initialize(signal) {
+		"sig/initialize" : function initialize() {
 			var self = this;
 
-			self.bind(DIMENSIONS + "." + self[DIMENSIONS], self, onDimensions);
+			self.$on(DIMENSIONS + "." + self[DIMENSIONS], self, onDimensions);
 		},
 
 		"sig/start" : function start() {
-			this.trigger("resize." + DIMENSIONS);
+			this.$emit("resize." + DIMENSIONS);
 		},
 
 		"sig/finalize" : function finalize() {
 			var self = this;
 
-			self.unbind(DIMENSIONS + "." + self[DIMENSIONS], onDimensions);
+			self.$off(DIMENSIONS + "." + self[DIMENSIONS], onDimensions);
 		}
 	});
 });
