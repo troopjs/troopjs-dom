@@ -3,12 +3,10 @@
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
 /*global define:false */
-define([ "compose", "troopjs-core/component/gadget", "when" ], function StoreModule(Compose, Gadget, when) {
+define([ "troopjs-core/component/gadget", "when" ], function StoreModule(Gadget, when) {
 	var STORAGE = "storage";
 
 	return Gadget.extend({
-		"storage" : Compose.required,
-
 		"set" : function set(key, value) {
 			// JSON encoded 'value' then store as 'key'
 			return when(this[STORAGE].setItem(key, JSON.stringify(value)));
