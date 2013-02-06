@@ -12,15 +12,13 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 	var $ON = $.fn.on;
 	var $OFF = $.fn.off;
 	var $ELEMENT = "$element";
+	var $HANDLERS = "$handlers";
 	var ATTR_WEAVE = "[data-weave]";
 	var ATTR_WOVEN = "[data-woven]";
-
-	var DOM = "dom";
 	var LENGTH = "length";
 	var FEATURES = "features";
+	var TYPE = "type";
 	var VALUE = "value";
-	var SPECIALS = "specials";
-	var CONSTRUCTOR = "constructor";
 
 	/**
 	 * Creates a proxy of the inner method 'handlerProxy' with the 'topic', 'widget' and handler parameters set
@@ -75,6 +73,7 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 		var self = this;
 
 		self[$ELEMENT] = $element;
+		self[$HANDLERS] = [];
 
 		if (displayName) {
 			self.displayName = displayName;
@@ -88,24 +87,31 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 		"sig/initialize" : function initialize() {
 			var self = this;
 			var $element = self[$ELEMENT];
-			var properties = self[CONSTRUCTOR][SPECIALS][DOM];
-			var handlers;
+			var $handler;
+			var $handlers = self[$HANDLERS];
 			var handler;
-			var key;
+			var handlers = self.constructor.specials.dom;
+			var type;
+			var features;
+			var value;
 			var i;
 			var iMax;
 
-			// Iterate properties
-			for (key in properties) {
-				// Get handlers
-				handlers = properties[key];
+			// Iterate handlers
+			for (i = 0, iMax = handlers ? handlers[LENGTH] : 0; i < iMax; i++) {
+				// Get handler
+				handler = handlers[i];
 
-				// Iterate handlers
-				for (i = 0, iMax = handlers[LENGTH];i < iMax; i++) {
-					handler = handlers[i];
+				// Create $handler
+				$handler = $handlers[i] = {};
 
-					$ON.call($element, key, handler[FEATURES], self, handler[VALUE] = eventProxy(key, self, handler[VALUE]));
-				}
+				// Set $handler properties
+				$handler[TYPE] = type = handler[TYPE];
+				$handler[FEATURES] = features = handler[FEATURES];
+				$handler[VALUE] = value = eventProxy(type, self, handler[VALUE]);
+
+				// Attach event handler
+				$ON.call($element, type, features, self, value);
 			}
 		},
 
@@ -115,24 +121,18 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 		"sig/finalize" : function finalize() {
 			var self = this;
 			var $element = self[$ELEMENT];
-			var properties = self[CONSTRUCTOR][SPECIALS][DOM];
-			var handlers;
-			var handler;
-			var key;
+			var $handler;
+			var $handlers = self[$HANDLERS];
 			var i;
 			var iMax;
 
-			// Iterate properties
-			for (key in properties) {
-				// Get handlers
-				handlers = properties[key];
+			// Iterate $handlers
+			for (i = 0, iMax = $handlers[LENGTH]; i < iMax; i++) {
+				// Get $handler
+				$handler = $handlers[i];
 
-				// Iterate handlers
-				for (i = 0, iMax = handlers[LENGTH];i < iMax; i++) {
-					handler = handlers[i];
-
-					$OFF.call($element, key, handler[FEATURES], handler[VALUE]);
-				}
+				// Detach event handler
+				$OFF.call($element, $handler[TYPE], $handler[FEATURES], $handler[VALUE]);
 			}
 
 			// Delete ref to $ELEMENT (for safety)
