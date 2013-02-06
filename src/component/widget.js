@@ -20,6 +20,7 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 	var FEATURES = "features";
 	var VALUE = "value";
 	var SPECIALS = "specials";
+	var CONSTRUCTOR = "constructor";
 
 	/**
 	 * Creates a proxy of the inner method 'handlerProxy' with the 'topic', 'widget' and handler parameters set
@@ -87,7 +88,7 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 		"sig/initialize" : function initialize() {
 			var self = this;
 			var $element = self[$ELEMENT];
-			var properties = self[SPECIALS][DOM];
+			var properties = self[CONSTRUCTOR][SPECIALS][DOM];
 			var handlers;
 			var handler;
 			var key;
@@ -114,7 +115,7 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 		"sig/finalize" : function finalize() {
 			var self = this;
 			var $element = self[$ELEMENT];
-			var properties = self[SPECIALS][DOM];
+			var properties = self[CONSTRUCTOR][SPECIALS][DOM];
 			var handlers;
 			var handler;
 			var key;
