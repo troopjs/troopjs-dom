@@ -6,8 +6,8 @@
 define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "troopjs-jquery/action" ], function WidgetModule(Gadget, $) {
 	var FUNCTION = Function;
 	var ARRAY_PROTO = Array.prototype;
-	var ARRAY_SHIFT = ARRAY_PROTO.shift;
-	var ARRAY_UNSHIFT = ARRAY_PROTO.unshift;
+	var ARRAY_SLICE = ARRAY_PROTO.slice;
+	var ARRAY_PUSH = ARRAY_PROTO.push;
 	var $TRIGGER = $.fn.trigger;
 	var $ON = $.fn.on;
 	var $OFF = $.fn.off;
@@ -33,11 +33,14 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 		 * @returns result of proxied hanlder invocation
 		 */
 		return function handlerProxy() {
-			// Add topic to front of arguments
-			ARRAY_UNSHIFT.call(arguments, topic);
+			// Create args
+			var args = [ topic ];
+
+			// Add add arguments to args
+			ARRAY_PUSH.apply(args, arguments);
 
 			// Apply with shifted arguments to handler
-			return handler.apply(widget, arguments);
+			return handler.apply(widget, args);
 		};
 	}
 
@@ -49,19 +52,16 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 	function renderProxy($fn) {
 		/**
 		 * Renders contents into element
-		 * @param {function|string} contents Template/String to render
-		 * @param {object} data If contents is a template - template data (optional)
-		 * @returns {object} self
+		 * @param {Function|String} contents Template/String to render
+		 * @param {Object..} (data) If contents is a template - template data
+		 * @returns {Object} self
 		 */
-		function render(/* contents, data, ... */) {
+		function render(contents, data) {
 			var self = this;
-			var arg = arguments;
-
-			// Shift contents from first argument
-			var contents = ARRAY_SHIFT.call(arg);
+			var args = ARRAY_SLICE.call(arguments, 1);
 
 			// Call render with contents (or result of contents if it's a function)
-			$fn.call(self[$ELEMENT], contents instanceof FUNCTION ? contents.apply(self, arg) : contents);
+			$fn.call(self[$ELEMENT], contents instanceof FUNCTION ? contents.apply(self, args) : contents);
 
 			return self.weave();
 		}
