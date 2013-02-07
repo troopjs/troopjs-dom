@@ -4,6 +4,8 @@
  */
 /*global define:false */
 define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "troopjs-jquery/action" ], function WidgetModule(Gadget, $) {
+
+	var UNDEFINED;
 	var FUNCTION = Function;
 	var ARRAY_PROTO = Array.prototype;
 	var ARRAY_SLICE = ARRAY_PROTO.slice;
@@ -71,6 +73,10 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 
 	return Gadget.extend(function Widget($element, displayName) {
 		var self = this;
+
+		if ($element === UNDEFINED) {
+			throw new Error("No $element provided");
+		}
 
 		self[$ELEMENT] = $element;
 		self[$HANDLERS] = [];

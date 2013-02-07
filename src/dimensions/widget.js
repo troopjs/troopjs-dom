@@ -4,7 +4,9 @@
  */
 /*global define:false */
 define([ "../component/widget", "troopjs-jquery/dimensions", "troopjs-jquery/resize" ], function DimensionsModule(Widget) {
+	var UNDEFINED;
 	var DIMENSIONS = "dimensions";
+
 	function onDimensions($event, w, h) {
 		var self = $event.data;
 
@@ -12,6 +14,10 @@ define([ "../component/widget", "troopjs-jquery/dimensions", "troopjs-jquery/res
 	}
 
 	return Widget.extend(function DimensionsWidget($element, displayName, dimensions) {
+		if (dimensions === UNDEFINED) {
+			throw new Error("No dimensions provided");
+		}
+
 		this[DIMENSIONS] = dimensions;
 	}, {
 		"displayName" : "browser/dimensions/widget",
