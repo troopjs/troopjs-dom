@@ -73,7 +73,7 @@ define([ "troopjs-core/component/factory" ], function URIModule(Factory) {
 		return result;
 	}
 
-	Query.toString = function toString() {
+	Query.toString = function QueryToString() {
 		var self = this;
 		var key;
 		var value;
@@ -136,7 +136,7 @@ define([ "troopjs-core/component/factory" ], function URIModule(Factory) {
 		return result;
 	}
 
-	Path.toString = function() {
+	Path.toString = function PathToString() {
 		return this.join("/");
 	};
 
@@ -168,7 +168,7 @@ define([ "troopjs-core/component/factory" ], function URIModule(Factory) {
 	}, {
 		"displayName" : "utils/uri",
 
-		"toString" : function toString() {
+		"toString" : function _toString() {
 			var self = this;
 			var uri = [ PROTOCOL , "://", AUTHORITY, PATH, "?", QUERY, "#", ANCHOR ];
 			var i;
