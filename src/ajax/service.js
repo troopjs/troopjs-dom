@@ -5,6 +5,7 @@
 /*global define:false */
 define([ "troopjs-core/component/service", "jquery", "troopjs-utils/merge" ], function AjaxModule(Service, $, merge) {
 	var TRACE = "trace";
+	var TYPEOF_FUNCTION = typeof function () {};
 
 	return Service.extend({
 		"displayName" : "browser/ajax/service",
@@ -14,7 +15,7 @@ define([ "troopjs-core/component/service", "jquery", "troopjs-utils/merge" ], fu
 			return $.ajax(merge.call({
 				"headers": {
 					"x-request-id": new Date().getTime(),
-					"x-components": topic[TRACE] instanceof Function ? topic[TRACE]() : topic
+					"x-components": typeof topic[TRACE] === TYPEOF_FUNCTION ? topic[TRACE]() : topic
 				}
 			}, settings));
 		}
