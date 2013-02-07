@@ -6,10 +6,10 @@
 define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "troopjs-jquery/action" ], function WidgetModule(Gadget, $) {
 
 	var UNDEFINED;
-	var FUNCTION = Function;
 	var ARRAY_PROTO = Array.prototype;
 	var ARRAY_SLICE = ARRAY_PROTO.slice;
 	var ARRAY_PUSH = ARRAY_PROTO.push;
+	var TYPEOF_FUNCTION = typeof function () {};
 	var $TRIGGER = $.fn.trigger;
 	var $ON = $.fn.on;
 	var $OFF = $.fn.off;
@@ -63,7 +63,7 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 			var args = ARRAY_SLICE.call(arguments, 1);
 
 			// Call render with contents (or result of contents if it's a function)
-			$fn.call(self[$ELEMENT], contents instanceof FUNCTION ? contents.apply(self, args) : contents);
+			$fn.call(self[$ELEMENT], typeof contents === TYPEOF_FUNCTION ? contents.apply(self, args) : contents);
 
 			return self.weave();
 		}
@@ -81,7 +81,7 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 		self[$ELEMENT] = $element;
 		self[$HANDLERS] = [];
 
-		if (displayName) {
+		if (displayName !== UNDEFINED) {
 			self.displayName = displayName;
 		}
 	}, {
