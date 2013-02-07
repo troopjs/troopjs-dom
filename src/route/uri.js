@@ -11,8 +11,8 @@ define([ "troopjs-core/component/factory" ], function URIModule(Factory) {
 	var NULL = null;
 	var ARRAY_PROTO = Array.prototype;
 	var OBJECT_PROTO = Object.prototype;
-	var PUSH = ARRAY_PROTO.push;
-	var SPLIT = String.prototype.split;
+	var ARRAY_PUSH = ARRAY_PROTO.push;
+	var STRING_SPLIT = String.prototype.split;
 	var TOSTRING = OBJECT_PROTO.toString;
 	var TOSTRING_OBJECT = TOSTRING.call(OBJECT_PROTO);
 	var TOSTRING_ARRAY = TOSTRING.call(ARRAY_PROTO);
@@ -129,9 +129,9 @@ define([ "troopjs-core/component/factory" ], function URIModule(Factory) {
 		
 		result.toString = Path.toString;
 
-		PUSH.apply(result, TOSTRING.call(arg) === TOSTRING_ARRAY
+		ARRAY_PUSH.apply(result, TOSTRING.call(arg) === TOSTRING_ARRAY
 			? arg
-			: SPLIT.call(arg, "/"));
+			: STRING_SPLIT.call(arg, "/"));
 
 		return result;
 	}
