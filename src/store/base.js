@@ -7,6 +7,8 @@ define([ "troopjs-core/component/gadget", "when" ], function StoreModule(Gadget,
 	var STORAGE = "storage";
 
 	return Gadget.extend({
+		"displayName" : "browser/store/base",
+
 		"set" : function set(key, value) {
 			// JSON encoded 'value' then store as 'key'
 			return when(this[STORAGE].setItem(key, JSON.stringify(value)));
