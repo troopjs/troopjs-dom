@@ -166,7 +166,7 @@ define([ "troopjs-core/component/factory" ], function URIModule(Factory) {
 			self[PATH] = Path(self[PATH]);
 		}
 	}, {
-		"displayName" : "utils/uri",
+		"displayName" : "browser/route/uri",
 
 		"toString" : function _toString() {
 			var self = this;
