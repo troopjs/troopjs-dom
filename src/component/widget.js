@@ -13,6 +13,8 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 	var $TRIGGER = $.fn.trigger;
 	var $ON = $.fn.on;
 	var $OFF = $.fn.off;
+	var $WEAVE = $.fn.weave;
+	var $UNWEAVE = $.fn.unweave;
 	var $ELEMENT = "$element";
 	var $HANDLERS = "$handlers";
 	var ATTR_WEAVE = "[data-weave]";
@@ -147,18 +149,18 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 
 		/**
 		 * Weaves all children of $element
-		 * @returns self
+		 * @returns {Promise} from $.fn.weave
 		 */
 		"weave" : function weave() {
-			return this[$ELEMENT].find(ATTR_WEAVE).weave();
+			return $WEAVE.apply(this[$ELEMENT].find(ATTR_WEAVE), arguments);
 		},
 
 		/**
 		 * Unweaves all children of $element _and_ self
-		 * @returns self
+		 * @returns {Promise} from $.fn.unweave
 		 */
 		"unweave" : function unweave() {
-			return this[$ELEMENT].find(ATTR_WOVEN).addBack().unweave();
+			return $UNWEAVE.apply(this[$ELEMENT].find(ATTR_WOVEN).addBack(), arguments);
 		},
 
 		/**

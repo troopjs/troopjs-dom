@@ -9,22 +9,25 @@ define([ "module", "../component/widget", "when" ], function ApplicationWidgetMo
 	var CHILDREN = "children";
 	var ARRAY_SLICE = Array.prototype.slice;
 
-	function forward(signal) {
+	function forward() {
 		var self = this;
-		var args = arguments;
+		var _signal = this.signal;
 		var children = self[CHILDREN];
 		var length = children ? children.length : 0;
 		var index = 0;
+		var args;
 
 		function next(_args) {
+			// Update args
 			args = _args || args;
 
+			// Return a chained promise of next callback, or a promise resolved with args
 			return length > index
-				? when(children[index++].signal(signal), next)
+				? when(_signal.apply(children[index++], args), next)
 				: when.resolve(args);
 		}
 
-		return next();
+		return next(ARRAY_SLICE.call(arguments));
 	}
 
 	return Widget.extend(function ApplicationWidget($element, name, children) {
