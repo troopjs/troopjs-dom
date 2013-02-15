@@ -3,37 +3,39 @@
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
 /*global define:false */
-define([ "module", "../component/widget", "when", "troopjs-core/registry/service" ], function ApplicationWidgetModule(module, Widget, when, RegistryService) {
+define([ "module", "../component/widget", "when", "troopjs-core/registry/service", "poly/array" ], function ApplicationWidgetModule(module, Widget, when, RegistryService) {
 	/*jshint laxbreak:true */
 
-	var CHILDREN = "children";
 	var ARRAY_PROTO = Array.prototype;
 	var ARRAY_SLICE = ARRAY_PROTO.slice;
+	var REGISTRY = "registry";
 
 	function forward(signal) {
 		var self = this;
-		var _signal = self.signal;
-		var children = self[CHILDREN];
-		var length = children
-			? children.length
-			: 0;
-		var index = 0;
 		var args = ARRAY_SLICE.call(arguments);
+		var services = self[REGISTRY].get();
+		var service;
+		var index = 0;
 
 		function next() {
-			// Return a chained promise of next callback, or a promise resolved with args
-			return length > index
-				? when(_signal.apply(children[index++], args), next)
+			// Return a chained promise of next signal, or a promise resolved with signal
+			return (service = services[index++])
+				? when(service.signal.apply(service, args), next)
 				: when.resolve(signal);
 		}
 
 		return next();
 	}
 
-	return Widget.extend(function ApplicationWidget($element, name, children) {
-		this[CHILDREN] = children
-			? ARRAY_PROTO.concat(RegistryService(), children)
-			: [ RegistryService() ];
+	return Widget.extend(function ApplicationWidget() {
+		// Create registry
+		var registry = this[REGISTRY] = RegistryService();
+
+		// Slice and iterate children
+		ARRAY_SLICE.call(arguments, 2).forEach(function (service) {
+			// Register service
+			registry.add(service);
+		});
 	}, {
 		"displayName" : "browser/application/widget",
 
