@@ -3,11 +3,12 @@
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
 /*global define:false */
-define([ "module", "../component/widget", "when" ], function ApplicationWidgetModule(module, Widget, when) {
+define([ "module", "../component/widget", "when", "troopjs-core/registry/service" ], function ApplicationWidgetModule(module, Widget, when, RegistryService) {
 	/*jshint laxbreak:true */
 
 	var CHILDREN = "children";
-	var ARRAY_SLICE = Array.prototype.slice;
+	var ARRAY_PROTO = Array.prototype;
+	var ARRAY_SLICE = ARRAY_PROTO.slice;
 
 	function forward(signal) {
 		var self = this;
@@ -30,7 +31,9 @@ define([ "module", "../component/widget", "when" ], function ApplicationWidgetMo
 	}
 
 	return Widget.extend(function ApplicationWidget($element, name, children) {
-		this[CHILDREN] = children || [];
+		this[CHILDREN] = children
+			? ARRAY_PROTO.concat(RegistryService(), children)
+			: [ RegistryService() ];
 	}, {
 		"displayName" : "browser/application/widget",
 
