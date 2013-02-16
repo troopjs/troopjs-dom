@@ -97,28 +97,28 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 			var $element = self[$ELEMENT];
 			var $handler;
 			var $handlers = self[$HANDLERS];
-			var handler;
-			var handlers = self.constructor.specials.dom;
+			var special;
+			var specials = self.constructor.specials.dom;
 			var type;
 			var features;
 			var value;
 			var i;
 			var iMax;
 
-			// Iterate handlers
-			for (i = 0, iMax = handlers ? handlers[LENGTH] : 0; i < iMax; i++) {
-				// Get handler
-				handler = handlers[i];
+			// Iterate specials
+			for (i = 0, iMax = specials ? specials[LENGTH] : 0; i < iMax; i++) {
+				// Get special
+				special = specials[i];
 
 				// Create $handler
 				$handler = $handlers[i] = {};
 
 				// Set $handler properties
-				$handler[TYPE] = type = handler[TYPE];
-				$handler[FEATURES] = features = handler[FEATURES];
-				$handler[VALUE] = value = eventProxy(type, self, handler[VALUE]);
+				$handler[TYPE] = type = special[TYPE];
+				$handler[FEATURES] = features = special[FEATURES];
+				$handler[VALUE] = value = eventProxy(type, self, special[VALUE]);
 
-				// Attach event handler
+				// Attach event special
 				$ON.call($element, type, features, self, value);
 			}
 		},
