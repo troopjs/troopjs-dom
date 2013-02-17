@@ -168,7 +168,7 @@ define([ "troopjs-core/component/factory" ], function URIModule(Factory) {
 	}, {
 		"displayName" : "browser/route/uri",
 
-		"toString" : function _toString() {
+		"toString" : function URIToString() {
 			var self = this;
 			var uri = [ PROTOCOL , "://", AUTHORITY, PATH, "?", QUERY, "#", ANCHOR ];
 			var i;
