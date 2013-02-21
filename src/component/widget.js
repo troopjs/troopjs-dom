@@ -191,7 +191,7 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 		 * Triggers event on $element
 		 * @returns self
 		 */
-		"$emit" : function $emit() {
+		"$trigger" : function $trigger() {
 			var self = this;
 
 			$TRIGGER.apply(self[$ELEMENT], arguments);

@@ -29,7 +29,7 @@ define([ "../component/widget", "troopjs-jquery/dimensions", "troopjs-jquery/res
 		},
 
 		"sig/start" : function start() {
-			this.$emit("resize." + DIMENSIONS);
+			this.$trigger("resize." + DIMENSIONS);
 		},
 
 		"sig/finalize" : function finalize() {

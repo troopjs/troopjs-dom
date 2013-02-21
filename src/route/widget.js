@@ -37,7 +37,7 @@ define([ "../component/widget", "./uri", "troopjs-jquery/hashchange" ], function
 		},
 
 		"sig/start" : function start() {
-			this.$emit(HASHCHANGE);
+			this.$trigger(HASHCHANGE);
 		},
 
 		"sig/finalize" : function finalize() {
