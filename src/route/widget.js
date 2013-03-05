@@ -4,6 +4,7 @@
  */
 /*global define:false */
 define([ "../component/widget", "./uri", "troopjs-jquery/hashchange" ], function RouteWidgetModule(Widget, URI) {
+	var $ELEMENT = "$element";
 	var HASHCHANGE = "hashchange";
 	var ROUTE = "route";
 	var RE = /^#/;
@@ -33,15 +34,15 @@ define([ "../component/widget", "./uri", "troopjs-jquery/hashchange" ], function
 		"sig/initialize" : function initialize() {
 			var self = this;
 
-			self.$on(HASHCHANGE, self, onHashChange);
+			self[$ELEMENT].on(HASHCHANGE, self, onHashChange);
 		},
 
 		"sig/start" : function start() {
-			this.$trigger(HASHCHANGE);
+			this[$ELEMENT].trigger(HASHCHANGE);
 		},
 
 		"sig/finalize" : function finalize() {
-			this.$off(HASHCHANGE, onHashChange);
+			this[$ELEMENT].off(HASHCHANGE, onHashChange);
 		}
 	});
 });

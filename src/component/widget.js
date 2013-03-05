@@ -9,7 +9,6 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 	var ARRAY_PROTO = Array.prototype;
 	var ARRAY_SLICE = ARRAY_PROTO.slice;
 	var TYPEOF_FUNCTION = typeof function () {};
-	var $TRIGGER = $.fn.trigger;
 	var $ON = $.fn.on;
 	var $OFF = $.fn.off;
 	var $WEAVE = $.fn.weave;
@@ -153,42 +152,6 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 		 */
 		"unweave" : function unweave() {
 			return $UNWEAVE.apply(this[$ELEMENT].find(ATTR_WOVEN).addBack(), arguments);
-		},
-
-		/**
-		 * Binds event to $element
-		 * @returns self
-		 */
-		"$on" : function $on() {
-			var self = this;
-
-			$ON.apply(self[$ELEMENT], arguments);
-
-			return self;
-		},
-
-		/**
-		 * Unbinds event from $element
-		 * @returns self
-		 */
-		"$off" : function $off() {
-			var self = this;
-
-			$OFF.apply(self[$ELEMENT], arguments);
-
-			return self;
-		},
-
-		/**
-		 * Triggers event on $element
-		 * @returns self
-		 */
-		"$trigger" : function $trigger() {
-			var self = this;
-
-			$TRIGGER.apply(self[$ELEMENT], arguments);
-
-			return self;
 		},
 
 		/**

@@ -5,6 +5,7 @@
 /*global define:false */
 define([ "../component/widget", "troopjs-jquery/dimensions", "troopjs-jquery/resize" ], function DimensionsModule(Widget) {
 	var UNDEFINED;
+	var $ELEMENT = "$element";
 	var DIMENSIONS = "dimensions";
 
 	function onDimensions($event, w, h) {
@@ -25,17 +26,17 @@ define([ "../component/widget", "troopjs-jquery/dimensions", "troopjs-jquery/res
 		"sig/initialize" : function initialize() {
 			var self = this;
 
-			self.$on(DIMENSIONS + "." + self[DIMENSIONS], self, onDimensions);
+			self[$ELEMENT].on(DIMENSIONS + "." + self[DIMENSIONS], self, onDimensions);
 		},
 
 		"sig/start" : function start() {
-			this.$trigger("resize." + DIMENSIONS);
+			this[$ELEMENT].trigger("resize." + DIMENSIONS);
 		},
 
 		"sig/finalize" : function finalize() {
 			var self = this;
 
-			self.$off(DIMENSIONS + "." + self[DIMENSIONS], onDimensions);
+			self[$ELEMENT].off(DIMENSIONS + "." + self[DIMENSIONS], onDimensions);
 		}
 	});
 });
