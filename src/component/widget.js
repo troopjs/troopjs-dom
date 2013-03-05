@@ -25,8 +25,8 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 
 	/**
 	 * Creates a proxy that executes 'handler' in 'widget' scope
-	 * @param {object} widget target widget
-	 * @param {function} handler target handler
+	 * @param {Object} widget target widget
+	 * @param {Function} handler target handler
 	 * @returns {function} proxied handler
 	 */
 	function eventProxy(widget, handler) {
