@@ -8,7 +8,6 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 	var UNDEFINED;
 	var ARRAY_PROTO = Array.prototype;
 	var ARRAY_SLICE = ARRAY_PROTO.slice;
-	var ARRAY_PUSH = ARRAY_PROTO.push;
 	var TYPEOF_FUNCTION = typeof function () {};
 	var $TRIGGER = $.fn.trigger;
 	var $ON = $.fn.on;
@@ -25,26 +24,19 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 	var VALUE = "value";
 
 	/**
-	 * Creates a proxy of the inner method 'handlerProxy' with the 'topic', 'widget' and handler parameters set
-	 * @param {string} topic event topic
+	 * Creates a proxy that executes 'handler' in 'widget' scope
 	 * @param {object} widget target widget
 	 * @param {function} handler target handler
 	 * @returns {function} proxied handler
 	 */
-	function eventProxy(topic, widget, handler) {
+	function eventProxy(widget, handler) {
 		/**
 		 * Creates a proxy of the outer method 'handler' that first adds 'topic' to the arguments passed
 		 * @returns result of proxied hanlder invocation
 		 */
 		return function handlerProxy() {
-			// Create args
-			var args = [ topic ];
-
-			// Add add arguments to args
-			ARRAY_PUSH.apply(args, arguments);
-
 			// Apply with shifted arguments to handler
-			return handler.apply(widget, args);
+			return handler.apply(widget, arguments);
 		};
 	}
 
@@ -116,7 +108,7 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 				// Set $handler properties
 				$handler[TYPE] = type = special[TYPE];
 				$handler[FEATURES] = features = special[FEATURES];
-				$handler[VALUE] = value = eventProxy(type, self, special[VALUE]);
+				$handler[VALUE] = value = eventProxy(self, special[VALUE]);
 
 				// Attach event special
 				$ON.call($element, type, features, self, value);
