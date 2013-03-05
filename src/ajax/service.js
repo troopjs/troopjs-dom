@@ -7,7 +7,7 @@ define([ "troopjs-core/component/service", "jquery", "troopjs-utils/merge" ], fu
 	return Service.extend({
 		"displayName" : "browser/ajax/service",
 
-		"hub/ajax" : function ajax(topic, settings) {
+		"hub/ajax" : function ajax(settings) {
 			// Request
 			return $.ajax(merge.call({
 				"headers": {
