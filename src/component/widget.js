@@ -9,8 +9,6 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 	var ARRAY_PROTO = Array.prototype;
 	var ARRAY_SLICE = ARRAY_PROTO.slice;
 	var TYPEOF_FUNCTION = typeof function () {};
-	var $ON = $.fn.on;
-	var $OFF = $.fn.off;
 	var $WEAVE = $.fn.weave;
 	var $UNWEAVE = $.fn.unweave;
 	var $ELEMENT = "$element";
@@ -110,7 +108,7 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 				$handler[VALUE] = value = eventProxy(self, special[VALUE]);
 
 				// Attach event special
-				$ON.call($element, type, features, self, value);
+				$element.on(type, features, self, value);
 			}
 		},
 
@@ -131,7 +129,7 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 				$handler = $handlers[i];
 
 				// Detach event handler
-				$OFF.call($element, $handler[TYPE], $handler[FEATURES], $handler[VALUE]);
+				$element.off($handler[TYPE], $handler[FEATURES], $handler[VALUE]);
 			}
 
 			// Delete ref to $ELEMENT (for safety)
