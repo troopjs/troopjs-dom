@@ -59,9 +59,9 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 			var args = ARRAY_SLICE.call(arguments, 1);
 
 			// Call render with contents (or result of contents if it's a function)
-			$fn.call(self[$ELEMENT], typeof contents === TYPEOF_FUNCTION ? contents.apply(self, args) : contents);
-
-			return self.weave();
+			return $fn.call(self[$ELEMENT], typeof contents === TYPEOF_FUNCTION ? contents.apply(self, args) : contents)
+				.find(ATTR_WEAVE)
+				.weave();
 		}
 
 		return render;
