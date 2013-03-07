@@ -24,6 +24,7 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 
 	/**
 	 * Creates a proxy that executes 'handler' in 'widget' scope
+	 * @private
 	 * @param {Object} widget target widget
 	 * @param {Function} handler target handler
 	 * @returns {function} proxied handler
@@ -41,14 +42,16 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 
 	/**
 	 * Creates a proxy of the inner method 'render' with the '$fn' parameter set
+	 * @private
 	 * @param $fn jQuery method
 	 * @returns {Function} proxied render
 	 */
 	function renderProxy($fn) {
 		/**
 		 * Renders contents into element
+		 * @private
 		 * @param {Function|String} contents Template/String to render
-		 * @param {Object..} (data) If contents is a template - template data
+		 * @param {Object..} [data] If contents is a template - template data
 		 * @returns {Object} self
 		 */
 		function render(contents, data) {
@@ -145,7 +148,7 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 
 		/**
 		 * Weaves all children of $element
-		 * @returns {Promise} from $.fn.weave
+		 * @returns {Promise} from $WEAVE
 		 */
 		"weave" : function weave() {
 			return $WEAVE.apply(this[$ELEMENT].find(ATTR_WEAVE), arguments);
@@ -153,7 +156,7 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 
 		/**
 		 * Unweaves all children of $element _and_ self
-		 * @returns {Promise} from $.fn.unweave
+		 * @returns {Promise} from $UNWEAVE
 		 */
 		"unweave" : function unweave() {
 			return $UNWEAVE.apply(this[$ELEMENT].find(ATTR_WOVEN).addBack(), arguments);
