@@ -19,6 +19,8 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 	var FEATURES = "features";
 	var TYPE = "type";
 	var VALUE = "value";
+	var PROXY = "proxy";
+	var GUID = "guid";
 
 	/**
 	 * Creates a proxy that executes 'handler' in 'widget' scope
@@ -91,6 +93,7 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 			var type;
 			var features;
 			var value;
+			var proxy;
 			var i;
 			var iMax;
 
@@ -105,10 +108,14 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 				// Set $handler properties
 				$handler[TYPE] = type = special[TYPE];
 				$handler[FEATURES] = features = special[FEATURES];
-				$handler[VALUE] = value = eventProxy(self, special[VALUE]);
+				$handler[VALUE] = value = special[VALUE];
+				$handler[PROXY] = proxy = eventProxy(self, value);
 
-				// Attach event special
-				$element.on(type, features, self, value);
+				// Attach proxy
+				$element.on(type, features, self, proxy);
+
+				// Copy GUID from proxy to value (so you can use .off to remove it)
+				value[GUID] = proxy[GUID]
 			}
 		},
 
@@ -129,7 +136,7 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "tro
 				$handler = $handlers[i];
 
 				// Detach event handler
-				$element.off($handler[TYPE], $handler[FEATURES], $handler[VALUE]);
+				$element.off($handler[TYPE], $handler[FEATURES], $handler[PROXY]);
 			}
 
 			// Delete ref to $ELEMENT (for safety)
