@@ -3,7 +3,7 @@
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
 /*global define:false */
-define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave", "troopjs-jquery/action" ], function WidgetModule(Gadget, $) {
+define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave" ], function WidgetModule(Gadget, $) {
 
 	var UNDEFINED;
 	var ARRAY_PROTO = Array.prototype;
