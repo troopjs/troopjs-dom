@@ -141,9 +141,6 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave" ], fu
 				// Detach event handler
 				$element.off($handler[TYPE], $handler[FEATURES], $handler[PROXY]);
 			}
-
-			// Delete ref to $ELEMENT (for safety)
-			delete self[$ELEMENT];
 		},
 
 		/**
