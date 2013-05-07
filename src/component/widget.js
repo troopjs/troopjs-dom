@@ -8,7 +8,7 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave" ], fu
 	var UNDEFINED;
 	var ARRAY_PROTO = Array.prototype;
 	var ARRAY_SLICE = ARRAY_PROTO.slice;
-	var TYPEOF_FUNCTION = typeof function () {};
+	var TYPEOF_FUNCTION = "function";
 	var $WEAVE = $.fn.weave;
 	var $UNWEAVE = $.fn.unweave;
 	var $ELEMENT = "$element";
