@@ -3,24 +3,22 @@
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
 /*global define:false */
-define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave" ], function WidgetModule(Gadget, $) {
+define([ "troopjs-core/component/gadget", "jquery", "../loom/config", "../loom/weave", "../loom/unweave", "troopjs-jquery/destroy" ], function WidgetModule(Gadget, $, config, weave, unweave) {
 
 	var UNDEFINED;
-	var ARRAY_PROTO = Array.prototype;
-	var ARRAY_SLICE = ARRAY_PROTO.slice;
+	var ARRAY_SLICE = Array.prototype.slice;
 	var TYPEOF_FUNCTION = "function";
-	var $WEAVE = $.fn.weave;
-	var $UNWEAVE = $.fn.unweave;
 	var $ELEMENT = "$element";
 	var $HANDLERS = "$handlers";
-	var ATTR_WEAVE = "[data-weave]";
-	var ATTR_WOVEN = "[data-woven]";
-	var LENGTH = "length";
 	var FEATURES = "features";
 	var TYPE = "type";
 	var VALUE = "value";
 	var PROXY = "proxy";
 	var GUID = "guid";
+	var LENGTH = "length";
+	var SELECTOR_WEAVE = "[" + config["weave"] + "]";
+	var SELECTOR_UNWEAVE = "[" + config["unweave"] + "]";
+
 
 	/**
 	 * Creates a proxy that executes 'handler' in 'widget' scope
@@ -59,15 +57,13 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave" ], fu
 			var args = ARRAY_SLICE.call(arguments, 1);
 
 			// Call render with contents (or result of contents if it's a function)
-			return $fn.call(self[$ELEMENT], typeof contents === TYPEOF_FUNCTION ? contents.apply(self, args) : contents)
-				.find(ATTR_WEAVE)
-				.weave();
+			return weave.call($fn.call(self[$ELEMENT], typeof contents === TYPEOF_FUNCTION ? contents.apply(self, args) : contents).find(SELECTOR_WEAVE));
 		}
 
 		return render;
 	}
 
-	return Gadget.extend(function Widget($element, displayName) {
+	return Gadget.extend(function ($element, displayName) {
 		var self = this;
 
 		if ($element === UNDEFINED) {
@@ -86,7 +82,7 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave" ], fu
 		/**
 		 * Signal handler for 'initialize'
 		 */
-		"sig/initialize" : function initialize() {
+		"sig/initialize" : function () {
 			var self = this;
 			var $element = self[$ELEMENT];
 			var $handler;
@@ -125,7 +121,7 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave" ], fu
 		/**
 		 * Signal handler for 'finalize'
 		 */
-		"sig/finalize" : function finalize() {
+		"sig/finalize" : function () {
 			var self = this;
 			var $element = self[$ELEMENT];
 			var $handler;
@@ -145,18 +141,25 @@ define([ "troopjs-core/component/gadget", "jquery", "troopjs-jquery/weave" ], fu
 
 		/**
 		 * Weaves all children of $element
-		 * @returns {Promise} from $WEAVE
+		 * @returns {Promise} from weave
 		 */
-		"weave" : function weave() {
-			return $WEAVE.apply(this[$ELEMENT].find(ATTR_WEAVE), arguments);
+		"weave" : function () {
+			return weave.apply(this[$ELEMENT].find(SELECTOR_WEAVE), arguments);
 		},
 
 		/**
 		 * Unweaves all children of $element _and_ self
-		 * @returns {Promise} from $UNWEAVE
+		 * @returns {Promise} from unweave
 		 */
-		"unweave" : function unweave() {
-			return $UNWEAVE.apply(this[$ELEMENT].find(ATTR_WOVEN).addBack(), arguments);
+		"unweave" : function () {
+			return unweave.apply(this[$ELEMENT].find(SELECTOR_UNWEAVE).addBack(), arguments);
+		},
+
+		/**
+		 * Destroy DOM handler
+		 */
+		"dom/destroy" : function () {
+			this.unweave();
 		},
 
 		/**
