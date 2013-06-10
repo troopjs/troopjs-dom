@@ -30,7 +30,7 @@ define([ "./config", "require", "when", "troopjs-utils/getargs", "poly/array" ],
 			var $data = $element.data();
 			var $warp = $data[$WARP] || ($data[$WARP] = []);
 			var $weave = [];
-			var weave_attr = $element.attr(ATTR_WEAVE);
+			var weave_attr = $element.attr(ATTR_WEAVE) || "";
 			var weave_args;
 			var re = /[\s,]*(([\w_\-\/\.]+)(?:\(([^\)]+)\))?)/g;
 			var matches;

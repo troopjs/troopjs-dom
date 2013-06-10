@@ -32,12 +32,12 @@ define([ "./config", "when", "poly/array" ], function UnweaveModule(config, when
 			var $element = $(element);
 			var $data = $element.data();
 			var $warp = $data[$WARP] || ($data[$WARP] = []);
-			var $weft;
 			var $unweave = [];
-			var unweave_attr = $element.attr(ATTR_UNWEAVE);
+			var unweave_attr = $element.attr(ATTR_UNWEAVE) || "";
 			var unweave_re = [];
 			var re = /[\s,]*([\w_\-\/\.]+)(?:@(\d+))?/g;
 			var matches;
+			var $weft;
 			var iMax;
 			var i;
 			var j;
