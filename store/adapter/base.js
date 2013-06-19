@@ -9,14 +9,12 @@ define([ "troopjs-core/component/gadget" ], function BaseAdapterModule(Gadget) {
 	return Gadget.extend({
 		"displayName" : "browser/store/adapter/base",
 
-		"afterPut" : function (key, value) {
+		"afterPut" : function (store, key, value) {
 			this[STORAGE].setItem(key, JSON.stringify(value));
-
-			return value;
 		},
 
-		"beforeGet" : function get(key) {
-			return JSON.parse(this[STORAGE].getItem(key));
+		"beforeGet" : function get(store, key) {
+			return store.put(key, JSON.parse(this[STORAGE].getItem(key)));
 		},
 
 		"clear" : function clear() {
