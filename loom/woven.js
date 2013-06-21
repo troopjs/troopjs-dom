@@ -2,8 +2,8 @@
  * TroopJS browser/loom/woven
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
-/*global define:false */
-define([ "./config", "when", "poly/array" ], function WovenModule(config, when) {
+define([ "./config", "when", "jquery", "poly/array" ], function WovenModule(config, when, $) {
+	"use strict";
 	var ARRAY_MAP = Array.prototype.map;
 	var LENGTH = "length";
 	var WOVEN = "woven";
@@ -47,5 +47,5 @@ define([ "./config", "when", "poly/array" ], function WovenModule(config, when) 
 
 		// Return promise of $woven
 		return when.all($woven);
-	}
+	};
 });

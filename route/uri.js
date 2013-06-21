@@ -4,9 +4,8 @@
  *
  * Parts of code from parseUri 1.2.2 Copyright Steven Levithan <stevenlevithan.com>
  */
-/*global define:false */
 define([ "troopjs-core/component/factory" ], function URIModule(Factory) {
-	/*jshint strict:false, smarttabs:true, laxbreak:true, newcap:false, forin:false, loopfunc:true */
+	"use strict";
 
 	var NULL = null;
 	var ARRAY_PROTO = Array.prototype;
@@ -38,6 +37,7 @@ define([ "troopjs-core/component/factory" ], function URIModule(Factory) {
 		ANCHOR ];
 
 	function Query(arg) {
+		/*jshint forin:false*/
 		var result = {};
 		var matches;
 		var key = NULL;
@@ -74,6 +74,7 @@ define([ "troopjs-core/component/factory" ], function URIModule(Factory) {
 	}
 
 	Query.toString = function QueryToString() {
+		/*jshint forin:false*/
 		var self = this;
 		var key;
 		var value;

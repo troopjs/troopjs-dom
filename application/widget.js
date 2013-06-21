@@ -2,9 +2,8 @@
  * TroopJS browser/application/widget
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
-/*global define:false */
 define([ "module", "../component/widget", "when", "troopjs-core/registry/service", "poly/array" ], function ApplicationWidgetModule(module, Widget, when, RegistryService) {
-	/*jshint laxbreak:true */
+	"use strict";
 
 	var ARRAY_PROTO = Array.prototype;
 	var ARRAY_SLICE = ARRAY_PROTO.slice;
@@ -19,6 +18,7 @@ define([ "module", "../component/widget", "when", "troopjs-core/registry/service
 	 * @returns {Function}
 	 */
 	function forward(_signal, _args) {
+		/*jshint validthis:true*/
 		var self = this;
 		var signal = self.signal;
 		var args = [ _signal ];

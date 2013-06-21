@@ -2,8 +2,8 @@
  * TroopJS browser/loom/unweave
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
-/*global define:false */
-define([ "./config", "when", "poly/array" ], function UnweaveModule(config, when) {
+define([ "./config", "when", "jquery", "poly/array" ], function UnweaveModule(config, when, $) {
+	"use strict";
 
 	var UNDEFINED;
 	var NULL = null;
@@ -128,5 +128,5 @@ define([ "./config", "when", "poly/array" ], function UnweaveModule(config, when
 				return promise;
 			});
 		});
-	}
+	};
 });

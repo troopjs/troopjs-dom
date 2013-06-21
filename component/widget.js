@@ -2,8 +2,8 @@
  * TroopJS browser/component/widget
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
-/*global define:false */
 define([ "troopjs-core/component/gadget", "jquery", "../loom/config", "../loom/weave", "../loom/unweave", "troopjs-jquery/destroy" ], function WidgetModule(Gadget, $, config, weave, unweave) {
+	"use strict";
 
 	var UNDEFINED;
 	var ARRAY_SLICE = Array.prototype.slice;
@@ -53,6 +53,7 @@ define([ "troopjs-core/component/gadget", "jquery", "../loom/config", "../loom/w
 		 * @returns {Object} self
 		 */
 		function render(contents, data) {
+			/*jshint validthis:true*/
 			var self = this;
 			var args = ARRAY_SLICE.call(arguments, 1);
 
@@ -114,7 +115,7 @@ define([ "troopjs-core/component/gadget", "jquery", "../loom/config", "../loom/w
 				$element.on(type, features, self, proxy);
 
 				// Copy GUID from proxy to value (so you can use .off to remove it)
-				value[GUID] = proxy[GUID]
+				value[GUID] = proxy[GUID];
 			}
 		},
 

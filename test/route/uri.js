@@ -1,4 +1,9 @@
+/*globals buster:false*/
 buster.testCase("troopjs-browser/route/uri", function (run) {
+	"use strict";
+
+	var assert = buster.assert;
+
 	require( [ "troopjs-browser/route/uri" ] , function (URI) {
 		run({
 			"(empty)" : function () {

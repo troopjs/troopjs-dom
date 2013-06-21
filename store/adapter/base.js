@@ -2,8 +2,8 @@
  * TroopJS browser/store/adapter/base module
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
-/*global define:false */
 define([ "troopjs-core/component/gadget" ], function BaseAdapterModule(Gadget) {
+	"use strict";
 	var STORAGE = "storage";
 
 	return Gadget.extend({

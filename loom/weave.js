@@ -2,8 +2,8 @@
  * TroopJS browser/loom/weave
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
-/*global define:false */
-define([ "./config", "require", "when", "troopjs-utils/getargs", "poly/array" ], function WeaveModule(config, parentRequire, when, getargs) {
+define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "poly/array" ], function WeaveModule(config, parentRequire, when, $, getargs) {
+	"use strict";
 
 	var UNDEFINED;
 	var NULL = null;
@@ -62,6 +62,7 @@ define([ "./config", "require", "when", "troopjs-utils/getargs", "poly/array" ],
 			// matches[2] : widget name - "widget/name"
 			// matches[3] : widget arguments - "1, 'string', false"
 			while ((matches = re.exec(weave_attr)) !== NULL) {
+				/*jshint loopfunc:true*/
 				// Create weave_args
 				weave_args = [ $element, matches[2] ];
 
@@ -75,7 +76,7 @@ define([ "./config", "require", "when", "troopjs-utils/getargs", "poly/array" ],
 						// If value from $data if key exist
 						return value in $data
 							? $data[value]
-							: value
+							: value;
 					}));
 				}
 
@@ -125,5 +126,5 @@ define([ "./config", "require", "when", "troopjs-utils/getargs", "poly/array" ],
 				return promise;
 			});
 		});
-	}
+	};
 });

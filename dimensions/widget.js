@@ -2,8 +2,9 @@
  * TroopJS browser/dimensions/widget
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
-/*global define:false */
 define([ "../component/widget", "troopjs-jquery/dimensions", "troopjs-jquery/resize" ], function DimensionsModule(Widget) {
+	"use strict";
+
 	var UNDEFINED;
 	var $ELEMENT = "$element";
 	var DIMENSIONS = "dimensions";
