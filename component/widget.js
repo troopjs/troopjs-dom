@@ -50,32 +50,32 @@ define([ "troopjs-core/component/gadget", "jquery", "../loom/config", "../loom/w
 		 * @private
 		 * @param {Function|String} contents Template/String to render
 		 * @param {Object..} [data] If contents is a template - template data
-		 * @returns {Object} self
+		 * @returns {Object} me
 		 */
 		function render(contents, data) {
 			/*jshint validthis:true*/
-			var self = this;
+			var me = this;
 			var args = ARRAY_SLICE.call(arguments, 1);
 
 			// Call render with contents (or result of contents if it's a function)
-			return weave.call($fn.call(self[$ELEMENT], typeof contents === TYPEOF_FUNCTION ? contents.apply(self, args) : contents).find(SELECTOR_WEAVE));
+			return weave.call($fn.call(me[$ELEMENT], typeof contents === TYPEOF_FUNCTION ? contents.apply(me, args) : contents).find(SELECTOR_WEAVE));
 		}
 
 		return render;
 	}
 
 	return Gadget.extend(function ($element, displayName) {
-		var self = this;
+		var me = this;
 
 		if ($element === UNDEFINED) {
 			throw new Error("No $element provided");
 		}
 
-		self[$ELEMENT] = $element;
-		self[$HANDLERS] = [];
+		me[$ELEMENT] = $element;
+		me[$HANDLERS] = [];
 
 		if (displayName !== UNDEFINED) {
-			self.displayName = displayName;
+			me.displayName = displayName;
 		}
 	}, {
 		"displayName" : "browser/component/widget",
@@ -84,12 +84,12 @@ define([ "troopjs-core/component/gadget", "jquery", "../loom/config", "../loom/w
 		 * Signal handler for 'initialize'
 		 */
 		"sig/initialize" : function () {
-			var self = this;
-			var $element = self[$ELEMENT];
+			var me = this;
+			var $element = me[$ELEMENT];
 			var $handler;
-			var $handlers = self[$HANDLERS];
+			var $handlers = me[$HANDLERS];
 			var special;
-			var specials = self.constructor.specials.dom;
+			var specials = me.constructor.specials.dom;
 			var type;
 			var features;
 			var value;
@@ -109,10 +109,10 @@ define([ "troopjs-core/component/gadget", "jquery", "../loom/config", "../loom/w
 				$handler[TYPE] = type = special[TYPE];
 				$handler[FEATURES] = features = special[FEATURES];
 				$handler[VALUE] = value = special[VALUE];
-				$handler[PROXY] = proxy = eventProxy(self, value);
+				$handler[PROXY] = proxy = eventProxy(me, value);
 
 				// Attach proxy
-				$element.on(type, features, self, proxy);
+				$element.on(type, features, me, proxy);
 
 				// Copy GUID from proxy to value (so you can use .off to remove it)
 				value[GUID] = proxy[GUID];
@@ -123,10 +123,10 @@ define([ "troopjs-core/component/gadget", "jquery", "../loom/config", "../loom/w
 		 * Signal handler for 'finalize'
 		 */
 		"sig/finalize" : function () {
-			var self = this;
-			var $element = self[$ELEMENT];
+			var me = this;
+			var $element = me[$ELEMENT];
 			var $handler;
-			var $handlers = self[$HANDLERS];
+			var $handlers = me[$HANDLERS];
 			var i;
 			var iMax;
 
@@ -149,7 +149,7 @@ define([ "troopjs-core/component/gadget", "jquery", "../loom/config", "../loom/w
 		},
 
 		/**
-		 * Unweaves all children of $element _and_ self
+		 * Unweaves all children of $element _and_ me
 		 * @returns {Promise} from unweave
 		 */
 		"unweave" : function () {

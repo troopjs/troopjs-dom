@@ -10,9 +10,9 @@ define([ "../component/widget", "troopjs-jquery/dimensions", "troopjs-jquery/res
 	var DIMENSIONS = "dimensions";
 
 	function onDimensions($event, w, h) {
-		var self = $event.data;
+		var me = $event.data;
 
-		self.publish(self.displayName, w, h, $event);
+		me.publish(me.displayName, w, h, $event);
 	}
 
 	return Widget.extend(function DimensionsWidget($element, displayName, dimensions) {
@@ -25,9 +25,9 @@ define([ "../component/widget", "troopjs-jquery/dimensions", "troopjs-jquery/res
 		"displayName" : "browser/dimensions/widget",
 
 		"sig/initialize" : function initialize() {
-			var self = this;
+			var me = this;
 
-			self[$ELEMENT].on(DIMENSIONS + "." + self[DIMENSIONS], self, onDimensions);
+			me[$ELEMENT].on(DIMENSIONS + "." + me[DIMENSIONS], me, onDimensions);
 		},
 
 		"sig/start" : function start() {
@@ -35,9 +35,9 @@ define([ "../component/widget", "troopjs-jquery/dimensions", "troopjs-jquery/res
 		},
 
 		"sig/finalize" : function finalize() {
-			var self = this;
+			var me = this;
 
-			self[$ELEMENT].off(DIMENSIONS + "." + self[DIMENSIONS], onDimensions);
+			me[$ELEMENT].off(DIMENSIONS + "." + me[DIMENSIONS], onDimensions);
 		}
 	});
 });

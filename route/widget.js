@@ -10,7 +10,7 @@ define([ "../component/widget", "./uri", "troopjs-jquery/hashchange" ], function
 	var RE = /^#/;
 
 	function onHashChange($event) {
-		var self = $event.data;
+		var me = $event.data;
 
 		// Create URI
 		var uri = URI($event.target.location.hash.replace(RE, ""));
@@ -19,12 +19,12 @@ define([ "../component/widget", "./uri", "troopjs-jquery/hashchange" ], function
 		var route = uri.toString();
 
 		// Did anything change?
-		if (route !== self[ROUTE]) {
+		if (route !== me[ROUTE]) {
 			// Store new value
-			self[ROUTE] = route;
+			me[ROUTE] = route;
 
 			// Publish route
-			self.publish(self.displayName, uri, $event);
+			me.publish(me.displayName, uri, $event);
 		}
 	}
 
@@ -32,9 +32,9 @@ define([ "../component/widget", "./uri", "troopjs-jquery/hashchange" ], function
 		"displayName" :"browser/route/widget",
 
 		"sig/initialize" : function initialize() {
-			var self = this;
+			var me = this;
 
-			self[$ELEMENT].on(HASHCHANGE, self, onHashChange);
+			me[$ELEMENT].on(HASHCHANGE, me, onHashChange);
 		},
 
 		"sig/start" : function start() {

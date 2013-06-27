@@ -19,10 +19,10 @@ define([ "module", "../component/widget", "when", "troopjs-core/registry/service
 	 */
 	function forward(_signal, _args) {
 		/*jshint validthis:true*/
-		var self = this;
-		var signal = self.signal;
+		var me = this;
+		var signal = me.signal;
 		var args = [ _signal ];
-		var components = self[REGISTRY].get();
+		var components = me[REGISTRY].get();
 		var index = 0;
 
 		ARRAY_PUSH.apply(args, _args);
@@ -55,22 +55,22 @@ define([ "module", "../component/widget", "when", "troopjs-core/registry/service
 		},
 
 		"sig/start" : function onStart() {
-			var self = this;
-			var weave = self.weave;
+			var me = this;
+			var weave = me.weave;
 			var args = arguments;
 
-			return forward.call(self, "start", args).then(function started() {
-				return weave.apply(self, args);
+			return forward.call(me, "start", args).then(function started() {
+				return weave.apply(me, args);
 			});
 		},
 
 		"sig/stop" : function onStop() {
-			var self = this;
-			var unweave = self.unweave;
+			var me = this;
+			var unweave = me.unweave;
 			var args = arguments;
 
-			return unweave.apply(self, args).then(function stopped() {
-				return forward.call(self, "stop", args);
+			return unweave.apply(me, args).then(function stopped() {
+				return forward.call(me, "stop", args);
 			});
 		},
 

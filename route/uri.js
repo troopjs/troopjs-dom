@@ -75,7 +75,7 @@ define([ "troopjs-core/component/factory" ], function URIModule(Factory) {
 
 	Query.toString = function QueryToString() {
 		/*jshint forin:false*/
-		var self = this;
+		var me = this;
 		var key;
 		var value;
 		var values;
@@ -83,8 +83,8 @@ define([ "troopjs-core/component/factory" ], function URIModule(Factory) {
 		var i = 0;
 		var j;
 
-		for (key in self) {
-			if (TOSTRING.call(self[key]) === TOSTRING_FUNCTION) {
+		for (key in me) {
+			if (TOSTRING.call(me[key]) === TOSTRING_FUNCTION) {
 				continue;
 			}
 
@@ -95,7 +95,7 @@ define([ "troopjs-core/component/factory" ], function URIModule(Factory) {
 
 		while (i--) {
 			key = query[i];
-			value = self[key];
+			value = me[key];
 
 			if (TOSTRING.call(value) === TOSTRING_ARRAY) {
 				values = value.slice(0);
@@ -142,7 +142,7 @@ define([ "troopjs-core/component/factory" ], function URIModule(Factory) {
 	};
 
 	var URI = Factory(function URI(str) {
-		var self = this;
+		var me = this;
 		var value;
 		var matches;
 		var i;
@@ -154,44 +154,44 @@ define([ "troopjs-core/component/factory" ], function URIModule(Factory) {
 				value = matches[i];
 
 				if (value) {
-					self[KEYS[i]] = value;
+					me[KEYS[i]] = value;
 				}
 			}
 		}
 
-		if (QUERY in self) {
-			self[QUERY] = Query(self[QUERY]);
+		if (QUERY in me) {
+			me[QUERY] = Query(me[QUERY]);
 		}
 
-		if (PATH in self) {
-			self[PATH] = Path(self[PATH]);
+		if (PATH in me) {
+			me[PATH] = Path(me[PATH]);
 		}
 	}, {
 		"displayName" : "browser/route/uri",
 
 		"toString" : function URIToString() {
-			var self = this;
+			var me = this;
 			var uri = [ PROTOCOL , "://", AUTHORITY, PATH, "?", QUERY, "#", ANCHOR ];
 			var i;
 			var key;
 
-			if (!(PROTOCOL in self)) {
+			if (!(PROTOCOL in me)) {
 				uri[0] = uri[1] = "";
 			}
 
-			if (!(AUTHORITY in self)) {
+			if (!(AUTHORITY in me)) {
 				uri[2] = "";
 			}
 
-			if (!(PATH in self)) {
+			if (!(PATH in me)) {
 				uri[3] = "";
 			}
 
-			if (!(QUERY in self)) {
+			if (!(QUERY in me)) {
 				uri[4] = uri[5] = "";
 			}
 
-			if (!(ANCHOR in self)) {
+			if (!(ANCHOR in me)) {
 				uri[6] = uri[7] = "";
 			}
 
@@ -200,8 +200,8 @@ define([ "troopjs-core/component/factory" ], function URIModule(Factory) {
 			while (i--) {
 				key = uri[i];
 
-				if (key in self) {
-					uri[i] = self[key];
+				if (key in me) {
+					uri[i] = me[key];
 				}
 			}
 
