@@ -7,7 +7,9 @@ define([ "./config", "when", "jquery", "poly/array" ], function UnweaveModule(co
 
 	var UNDEFINED;
 	var NULL = null;
-	var ARRAY_PUSH = Array.prototype.push;
+	var ARRAY_PROTO = Array.prototype;
+	var ARRAY_MAP = ARRAY_PROTO.map;
+	var ARRAY_PUSH = ARRAY_PROTO.push;
 	var WEAVE = "weave";
 	var UNWEAVE = "unweave";
 	var WOVEN = "woven";
@@ -28,12 +30,12 @@ define([ "./config", "when", "jquery", "poly/array" ], function UnweaveModule(co
 		var stop_args = arguments;
 
 		// Map elements
-		return when.map(this, function (element) {
+		return when.all(ARRAY_MAP.call(this, function (element) {
 			var $element = $(element);
 			var $data = $element.data();
 			var $warp = $data[$WARP] || ($data[$WARP] = []);
 			var $unweave = [];
-			var unweave_attr = $element.attr(ATTR_UNWEAVE) || "";
+			var unweave_attr = $element.attr(ATTR_UNWEAVE);
 			var unweave_re = [];
 			var re = /[\s,]*([\w_\-\/\.]+)(?:@(\d+))?/g;
 			var matches;
@@ -127,6 +129,6 @@ define([ "./config", "when", "jquery", "poly/array" ], function UnweaveModule(co
 				// Return promise
 				return promise;
 			});
-		});
+		}));
 	};
 });

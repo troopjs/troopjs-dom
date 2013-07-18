@@ -7,7 +7,9 @@ define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "poly
 
 	var UNDEFINED;
 	var NULL = null;
-	var ARRAY_PUSH = Array.prototype.push;
+	var ARRAY_PROTO = Array.prototype;
+	var ARRAY_MAP = ARRAY_PROTO.map;
+	var ARRAY_PUSH = ARRAY_PROTO.push;
 	var WEAVE = "weave";
 	var WOVEN = "woven";
 	var $WARP = config["$warp"];
@@ -25,7 +27,7 @@ define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "poly
 		var start_args = arguments;
 
 		// Map elements
-		return when.map(this, function (element) {
+		return when.all(ARRAY_MAP.call(this, function (element) {
 			var $element = $(element);
 			var $data = $element.data();
 			var $warp = $data[$WARP] || ($data[$WARP] = []);
@@ -125,6 +127,6 @@ define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "poly
 				// Return promise
 				return promise;
 			});
-		});
+		}));
 	};
 });
