@@ -83,7 +83,7 @@ define([ "troopjs-core/component/gadget", "jquery", "../loom/config", "../loom/w
 		/**
 		 * Signal handler for 'initialize'
 		 */
-		"sig/initialize" : function () {
+		"sig/initialize" : function onInitialize() {
 			var me = this;
 			var $element = me[$ELEMENT];
 			var $handler;
@@ -122,7 +122,7 @@ define([ "troopjs-core/component/gadget", "jquery", "../loom/config", "../loom/w
 		/**
 		 * Signal handler for 'finalize'
 		 */
-		"sig/finalize" : function () {
+		"sig/finalize" : function onFinalize() {
 			var me = this;
 			var $element = me[$ELEMENT];
 			var $handler;
