@@ -140,27 +140,12 @@ define([ "troopjs-core/component/gadget", "jquery", "../loom/config", "../loom/w
 			}
 		},
 
-
 		/**
-		 * Signal handler for 'task/start'
-		 * @param {Number} id
-		 * @param {String} [name]
+		 * Signal handler for 'task'
+		 * @param {Promise} task
 		 */
-		"sig/task/start" : function (id, name) {
-			var me = this;
-
-			me[$ELEMENT].trigger("task/start", [ me, id, name ]);
-		},
-
-		/**
-		 * Signal handler for 'task/finish'
-		 * @param {Number} id
-		 * @param {String} [name]
-		 */
-		"sig/task/finish" : function (id, name) {
-			var me = this;
-
-			me[$ELEMENT].trigger("task/finish", [ me, id, name ]);
+		"sig/task" : function onTask(task) {
+			this[$ELEMENT].trigger("task", [ task ]);
 		},
 
 		/**
