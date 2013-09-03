@@ -7,6 +7,7 @@ define([ "../component/widget", "./uri", "troopjs-jquery/hashchange" ], function
 	var $ELEMENT = "$element";
 	var HASHCHANGE = "hashchange";
 	var ROUTE = "route";
+	var SET = "/set";
 	var RE = /^#/;
 
 	function onHashChange($event) {
@@ -28,13 +29,21 @@ define([ "../component/widget", "./uri", "troopjs-jquery/hashchange" ], function
 		}
 	}
 
+	function setRoute(uri) {
+		this[$ELEMENT].get(0).location.hash = uri.toString();
+	}
+
 	return Widget.extend({
-		"displayName" :"browser/route/widget",
+		"displayName" : "browser/route/widget",
 
 		"sig/initialize" : function initialize() {
 			var me = this;
 
+			// Add DOM event handler
 			me[$ELEMENT].on(HASHCHANGE, me, onHashChange);
+
+			// Add HUB event handler
+			me.subscribe(me.displayName + SET, setRoute);
 		},
 
 		"sig/start" : function start() {
@@ -42,7 +51,11 @@ define([ "../component/widget", "./uri", "troopjs-jquery/hashchange" ], function
 		},
 
 		"sig/finalize" : function finalize() {
+			// Remove DOM event handler
 			this[$ELEMENT].off(HASHCHANGE, onHashChange);
+
+			// Remove HUB event handler
+			me.unsubscribe(me.displayName + SET, setRoute);
 		}
 	});
 });
