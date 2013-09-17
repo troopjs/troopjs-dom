@@ -51,8 +51,10 @@ define([ "../component/widget", "./uri", "troopjs-jquery/hashchange" ], function
 		},
 
 		"sig/finalize" : function finalize() {
+			var me = this;
+
 			// Remove DOM event handler
-			this[$ELEMENT].off(HASHCHANGE, onHashChange);
+			me[$ELEMENT].off(HASHCHANGE, onHashChange);
 
 			// Remove HUB event handler
 			me.unsubscribe(me.displayName + SET, setRoute);
