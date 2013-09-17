@@ -4,6 +4,7 @@
  */
 define([ "../component/widget", "./uri", "troopjs-jquery/hashchange" ], function RouteWidgetModule(Widget, URI) {
 	"use strict";
+
 	var $ELEMENT = "$element";
 	var HASHCHANGE = "hashchange";
 	var ROUTE = "route";
@@ -30,6 +31,7 @@ define([ "../component/widget", "./uri", "troopjs-jquery/hashchange" ], function
 	}
 
 	function setRoute(uri) {
+		/* jshint validthis:true */
 		this[$ELEMENT].get(0).location.hash = uri.toString();
 	}
 
