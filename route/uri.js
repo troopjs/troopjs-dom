@@ -1,4 +1,4 @@
-/**
+/*
  * TroopJS browser/route/uri
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  *
@@ -141,6 +141,13 @@ define([ "troopjs-core/component/factory" ], function URIModule(Factory) {
 		return this.join("/");
 	};
 
+	/**
+	 * An URI string builder.
+	 * @member browser.route.uri
+	 * @param {String} uri The URI String to build from.
+	 * @method URI
+	 * @return this
+	 */
 	var URI = Factory(function URI(str) {
 		var me = this;
 		var value;

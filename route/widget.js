@@ -1,4 +1,4 @@
-/**
+/*
  * TroopJS browser/route/widget module
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
@@ -33,6 +33,10 @@ define([ "../component/widget", "./uri", "troopjs-jquery/hashchange" ], function
 		this[$ELEMENT].get(0).location.hash = uri.toString();
 	}
 
+	/**
+	 * Widget that connect URL hash change to pub/sub events.
+	 * @class browser.route.widget
+	 */
 	return Widget.extend({
 		"displayName" : "browser/route/widget",
 

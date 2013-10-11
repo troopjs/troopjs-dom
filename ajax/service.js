@@ -1,4 +1,4 @@
-/**
+/*
  * TroopJS browser/ajax/service
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
@@ -7,9 +7,19 @@ define([ "troopjs-core/component/service", "jquery", "troopjs-utils/merge", "whe
 
 	var ARRAY_SLICE = Array.prototype.slice;
 
+	/**
+	 * Provide ajax around-trip to the server.
+	 * @class browser.ajax.service
+	 */
 	return Service.extend({
 		"displayName" : "browser/ajax/service",
 
+		/**
+		 * Issue ajax requests to the server, yields for response.
+		 * @event
+		 * @param {Object} [settings] The ajax request configurations.
+		 * @returns {Promise}
+		 */
 		"hub/ajax" : function ajax(settings) {
 			// Request
 			var request = $.ajax(merge.call({

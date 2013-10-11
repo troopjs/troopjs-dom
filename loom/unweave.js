@@ -1,4 +1,4 @@
-/**
+/*
  * TroopJS browser/loom/unweave
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
@@ -22,8 +22,13 @@ define([ "./config", "when", "jquery", "poly/array" ], function UnweaveModule(co
 	var RE_SEPARATOR = /[\s,]+/;
 
 	/**
-	 * Unweaves elements
-	 * @returns {Promise} of unweaving
+	 * Destroy all widget instances living on this element, that are created
+	 * by {@link browser.loom.weave weaving}, it is also to clean up the attributes
+	 * and data references to the previously instantiated widgets.
+	 *
+	 * @member browser.loom.unweave
+	 * @method unweave
+	 * @returns {Promise} Promise to the completion of destroying all woven widgets.
 	 */
 	return function unweave() {
 		// Store stop_args for later
@@ -44,7 +49,7 @@ define([ "./config", "when", "jquery", "poly/array" ], function UnweaveModule(co
 			var i;
 			var j;
 
-			/**
+			/*
 			 * Updated attributes
 			 * @param {object} widget Widget
 			 * @private

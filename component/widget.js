@@ -1,4 +1,4 @@
-/**
+/*
  * TroopJS browser/component/widget
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
@@ -20,15 +20,15 @@ define([ "troopjs-core/component/gadget", "jquery", "../loom/config", "../loom/w
 	var SELECTOR_UNWEAVE = "[" + config["unweave"] + "]";
 
 
-	/**
+	/*
 	 * Creates a proxy that executes 'handler' in 'widget' scope
 	 * @private
 	 * @param {Object} widget target widget
 	 * @param {Function} handler target handler
-	 * @returns {function} proxied handler
+	 * @returns {Function} proxied handler
 	 */
 	function eventProxy(widget, handler) {
-		/**
+		/*
 		 * Creates a proxy of the outer method 'handler' that first adds 'topic' to the arguments passed
 		 * @returns result of proxied hanlder invocation
 		 */
@@ -38,14 +38,14 @@ define([ "troopjs-core/component/gadget", "jquery", "../loom/config", "../loom/w
 		};
 	}
 
-	/**
+	/*
 	 * Creates a proxy of the inner method 'render' with the '$fn' parameter set
 	 * @private
 	 * @param $fn jQuery method
 	 * @returns {Function} proxied render
 	 */
 	function renderProxy($fn) {
-		/**
+		/*
 		 * Renders contents into element
 		 * @private
 		 * @param {Function|String} contents Template/String to render
@@ -58,12 +58,18 @@ define([ "troopjs-core/component/gadget", "jquery", "../loom/config", "../loom/w
 			var args = ARRAY_SLICE.call(arguments, 1);
 
 			// Call render with contents (or result of contents if it's a function)
-			return weave.call($fn.call(me[$ELEMENT], typeof contents === TYPEOF_FUNCTION ? contents.apply(me, args) : contents).find(SELECTOR_WEAVE));
+			return weave.call($fn.call(me[$ELEMENT],
+				typeof contents === TYPEOF_FUNCTION ? contents.apply(me,args) : contents
+			).find(SELECTOR_WEAVE));
 		}
 
 		return render;
 	}
 
+	/**
+	 * Base DOM component attached to an element, that takes care of widget instantiation.
+	 * @class browser.component.widget
+	 */
 	return Gadget.extend(function ($element, displayName) {
 		var me = this;
 
@@ -80,9 +86,6 @@ define([ "troopjs-core/component/gadget", "jquery", "../loom/config", "../loom/w
 	}, {
 		"displayName" : "browser/component/widget",
 
-		/**
-		 * Signal handler for 'initialize'
-		 */
 		"sig/initialize" : function onInitialize() {
 			var me = this;
 			var $element = me[$ELEMENT];
@@ -119,9 +122,6 @@ define([ "troopjs-core/component/gadget", "jquery", "../loom/config", "../loom/w
 			}
 		},
 
-		/**
-		 * Signal handler for 'finalize'
-		 */
 		"sig/finalize" : function onFinalize() {
 			var me = this;
 			var $element = me[$ELEMENT];
@@ -140,10 +140,6 @@ define([ "troopjs-core/component/gadget", "jquery", "../loom/config", "../loom/w
 			}
 		},
 
-		/**
-		 * Signal handler for 'task'
-		 * @param {Promise} task
-		 */
 		"sig/task" : function onTask(task) {
 			this[$ELEMENT].trigger("task", [ task ]);
 		},
@@ -173,31 +169,37 @@ define([ "troopjs-core/component/gadget", "jquery", "../loom/config", "../loom/w
 
 		/**
 		 * Renders content and inserts it before $element
+		 * @method
 		 */
 		"before" : renderProxy($.fn.before),
 
 		/**
 		 * Renders content and inserts it after $element
+		 * @method
 		 */
 		"after" : renderProxy($.fn.after),
 
 		/**
 		 * Renders content and replaces $element contents
+		 * @method
 		 */
 		"html" : renderProxy($.fn.html),
 
 		/**
 		 * Renders content and replaces $element contents
+		 * @method
 		 */
 		"text" : renderProxy($.fn.text),
 
 		/**
 		 * Renders content and appends it to $element
+		 * @method
 		 */
 		"append" : renderProxy($.fn.append),
 
 		/**
 		 * Renders content and prepends it to $element
+		 * @method
 		 */
 		"prepend" : renderProxy($.fn.prepend)
 	});
