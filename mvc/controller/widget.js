@@ -11,6 +11,7 @@ define([
 
 	var UNDEFINED;
 	var CACHE = "_cache";
+	var ROUTE = "_route";
 	var DISPLAYNAME = "displayName";
 
 	function request(requests) {
@@ -45,7 +46,7 @@ define([
 								return updated
 									? me.publish(displayName + "/updates", updates)
 										.then(function () {
-											me.$element.trigger("hashset", me.data2uri(cache));
+											me.$element.trigger("hashset", me.data2uri(cache, updates));
 										})
 										.yield(updates)
 									: [ updates ];
@@ -74,7 +75,7 @@ define([
 		"dom/hashchange": function ($event) {
 			var me = this;
 
-			me.publish(me[DISPLAYNAME], me.uri2data($event.uri));
+			me.publish(me[DISPLAYNAME], me.uri2data(me[ROUTE] = $event.uri));
 		}
 	});
 });
