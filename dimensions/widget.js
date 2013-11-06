@@ -2,15 +2,17 @@
  * TroopJS browser/dimensions/widget
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
-/*global define:false */
 define([ "../component/widget", "troopjs-jquery/dimensions", "troopjs-jquery/resize" ], function DimensionsModule(Widget) {
+	"use strict";
+
 	var UNDEFINED;
+	var $ELEMENT = "$element";
 	var DIMENSIONS = "dimensions";
 
 	function onDimensions($event, w, h) {
-		var self = $event.data;
+		var me = $event.data;
 
-		self.publish(self.displayName, w, h, $event);
+		me.publish(me.displayName, w, h, $event);
 	}
 
 	return Widget.extend(function DimensionsWidget($element, displayName, dimensions) {
@@ -23,19 +25,19 @@ define([ "../component/widget", "troopjs-jquery/dimensions", "troopjs-jquery/res
 		"displayName" : "browser/dimensions/widget",
 
 		"sig/initialize" : function initialize() {
-			var self = this;
+			var me = this;
 
-			self.$on(DIMENSIONS + "." + self[DIMENSIONS], self, onDimensions);
+			me[$ELEMENT].on(DIMENSIONS + "." + me[DIMENSIONS], me, onDimensions);
 		},
 
 		"sig/start" : function start() {
-			this.$emit("resize." + DIMENSIONS);
+			this[$ELEMENT].trigger("resize." + DIMENSIONS);
 		},
 
 		"sig/finalize" : function finalize() {
-			var self = this;
+			var me = this;
 
-			self.$off(DIMENSIONS + "." + self[DIMENSIONS], onDimensions);
+			me[$ELEMENT].off(DIMENSIONS + "." + me[DIMENSIONS], onDimensions);
 		}
 	});
 });
