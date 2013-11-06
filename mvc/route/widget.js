@@ -29,10 +29,10 @@ define([ "../../component/widget" ], function (Widget) {
 			me.unsubscribe(me[DISPLAYNAME] + SET, setRoute);
 		},
 
-		"dom/hashchange" : function ($event) {
+		"dom/urichange" : function ($event, uri) {
 			var me = this;
 
-			me.publish(me[DISPLAYNAME], $event.uri, $event);
+			me.publish(me[DISPLAYNAME], uri, $event);
 		}
 	});
 });

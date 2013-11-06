@@ -22,9 +22,10 @@ define([
 
 		"dom/hashchange" : function ($event) {
 			var me = this;
+			var $element = me[$ELEMENT];
 
 			// Create URI
-			var uri = URI(me[$ELEMENT].get(0).location.hash.replace(RE, ""));
+			var uri = URI($element.get(0).location.hash.replace(RE, ""));
 
 			// Convert to string
 			var hash = uri.toString();
@@ -34,8 +35,8 @@ define([
 				// Store new value
 				me[HASH] = hash;
 
-				// Update $event.uri
-				$event.uri = uri;
+				// Retrigger URICHANGE event
+				$element.trigger("urichange", [ uri ]);
 			}
 			else {
 				// Prevent further hashchange handlers from receiving this

@@ -72,10 +72,10 @@ define([
 			me.unsubscribe(me[DISPLAYNAME], request);
 		},
 
-		"dom/hashchange": function ($event) {
+		"dom/urichange": function ($event, uri) {
 			var me = this;
 
-			me.publish(me[DISPLAYNAME], me.uri2data(me[ROUTE] = $event.uri));
+			me.publish(me[DISPLAYNAME], me.uri2data(me[ROUTE] = uri));
 		}
 	});
 });
