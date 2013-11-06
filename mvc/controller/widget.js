@@ -15,14 +15,12 @@ define([
 	var ROUTE = "_route";
 	var OPT_SILENT = "silent";
 	var DISPLAYNAME = "displayName";
-	var HASH = "_hash";
-	var ARRAY_SLICE = Array.prototype.slice;
-
 
 	function handleRequest(requests, options) {
 		var me = this;
 		var cache = me[CACHE];
 		var displayName = me[DISPLAYNAME];
+
 		options = options || {};
 
 		return me.publish(displayName + "/requests", requests)
@@ -50,25 +48,19 @@ define([
 								}, false);
 
 								return updated ? me.publish(displayName + "/updates", updates)
-										.then(function () {
-
-										var uri = me.data2uri(cache);
-
-										// Prevent from triggering the "hashchange" event.
-										if (options[OPT_SILENT])
-											me[HASH] = uri.toString();
-
-										me.$element.trigger("hashset", me.data2uri(cache, updates));
+									.then(function () {
+										// Trigger `hashset` but silently
+										me.$element.trigger("hashset", [ me.data2uri(cache, updates), options[OPT_SILENT] === true ]);
 
 									})
-										.yield(updates)
+									.yield(updates)
 									: [ updates ];
 							});
 					});
 			});
 	}
 
-	var ControllerWidget = Widget.extend(function () {
+	return Widget.extend(Hash, function () {
 		this[CACHE] = {};
 	}, {
 		"displayName": "browser/mvc/controller/widget",
@@ -93,11 +85,7 @@ define([
 		"update": function(changes, options) {
 			var me = this;
 
-			options = options || {};
-			if (options.silent === undefined)
-				options.silent = true;
-
-			me.publish(me[DISPLAYNAME],options);
+			me.publish(me[DISPLAYNAME], options);
 		},
 
 		"dom/urichange": function ($event, uri) {
@@ -106,7 +94,4 @@ define([
 			me.publish(me[DISPLAYNAME], me.uri2data(me[ROUTE] = uri));
 		}
 	});
-
-	// Make sure "dom/hashchange" handler from Hash get executed first.
-	return ControllerWidget.extend(Hash);
 });

@@ -44,9 +44,15 @@ define([
 			}
 		},
 
-		"dom/hashset" : function ($event, uri) {
-			/* jshint validthis:true */
-			this[$ELEMENT].get(0).location.hash = uri.toString();
+		"dom/hashset" : function ($event, uri, silent) {
+			var me = this;
+			var hash = uri.toString();
+
+			if (silent === true) {
+				me[HASH] = hash;
+			}
+
+			me[$ELEMENT].get(0).location.hash = hash;
 		}
 	});
 });
