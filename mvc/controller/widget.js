@@ -72,6 +72,11 @@ define([
 			var me = this;
 
 			me.subscribe(me[DISPLAYNAME], handleRequest);
+
+			// Make the requests based on the current URI.
+			me.subscribe(me[DISPLAYNAME] + "/requests", function(requests) {
+				return me[ROUTE] ? merge.call(me.uri2data(me[ROUTE]), requests) : requests;
+			});
 		},
 
 		"sig/finalize": function () {
@@ -87,14 +92,14 @@ define([
 		 */
 		"update": function(changes, options) {
 			var me = this;
-
-			me.publish(me[DISPLAYNAME], merge.call(me.uri2data(me[ROUTE]), changes), options);
+			me.publish(me[DISPLAYNAME], changes, options);
 		},
 
 		"dom/urichange": function ($event, uri) {
 			var me = this;
 
-			me.publish(me[DISPLAYNAME], me.uri2data(me[ROUTE] = uri));
+			delete me[ROUTE];
+			me.publish(me[DISPLAYNAME], me.uri2data(uri));
 		}
 	});
 });
