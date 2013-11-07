@@ -5,9 +5,10 @@
 define([
 	"../../component/widget",
 	"../../hash/widget",
+	"troopjs-utils/merge",
 	"poly/object",
 	"poly/array"
-], function (Widget, Hash) {
+], function (Widget, Hash, merge) {
 	"use strict";
 
 	var UNDEFINED;
@@ -50,7 +51,9 @@ define([
 								return updated ? me.publish(displayName + "/updates", updates)
 									.then(function () {
 										// Trigger `hashset` but silently
-										me.$element.trigger("hashset", [ me.data2uri(cache, updates), options[OPT_SILENT] === true ]);
+										me.$element.trigger("hashset",
+											[ me[ROUTE] = me.data2uri(cache, updates), options[OPT_SILENT] === true ]
+										);
 
 									})
 									.yield(updates)
@@ -85,7 +88,8 @@ define([
 		"update": function(changes, options) {
 			var me = this;
 
-			me.publish(me[DISPLAYNAME], changes, options);
+			merge.call(me.uri2data(me[ROUTE]), changes);
+			me.publish(me[DISPLAYNAME], requests, options);
 		},
 
 		"dom/urichange": function ($event, uri) {
