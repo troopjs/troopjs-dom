@@ -85,7 +85,7 @@ define([
 		"update": function(changes, options) {
 			var me = this;
 
-			me.publish(me[DISPLAYNAME], options);
+			me.publish(me[DISPLAYNAME], changes, options);
 		},
 
 		"dom/urichange": function ($event, uri) {
