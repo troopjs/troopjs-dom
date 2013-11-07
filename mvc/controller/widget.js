@@ -88,8 +88,7 @@ define([
 		"update": function(changes, options) {
 			var me = this;
 
-			merge.call(me.uri2data(me[ROUTE]), changes);
-			me.publish(me[DISPLAYNAME], requests, options);
+			me.publish(me[DISPLAYNAME], merge.call(me.uri2data(me[ROUTE]), changes), options);
 		},
 
 		"dom/urichange": function ($event, uri) {
