@@ -5,19 +5,31 @@
 define([
 	"../../component/widget",
 	"../../hash/widget",
-	"troopjs-utils/merge",
 	"poly/object",
 	"poly/array"
-], function (Widget, Hash, merge) {
+], function (Widget, Hash) {
 	"use strict";
 
 	var UNDEFINED;
 	var CACHE = "_cache";
-	var ROUTE = "_route";
+	var URI = "_uri";
 	var OPT_SILENT = "silent";
 	var DISPLAYNAME = "displayName";
+	var ARRAY_SLICE = Array.prototype.slice;
 
-	function handleRequest(requests, options) {
+	function extend() {
+		var me = this;
+
+		ARRAY_SLICE.call(arguments).forEach(function (arg) {
+			Object.keys(arg).forEach(function (key) {
+				me[key] = arg[key];
+			});
+		});
+
+		return me;
+	}
+
+	function handleControl(requests, options) {
 		var me = this;
 		var cache = me[CACHE];
 		var displayName = me[DISPLAYNAME];
@@ -41,7 +53,7 @@ define([
 								var updates = {};
 								var updated = Object.keys(_results).reduce(function (update, key) {
 									if (cache[key] !== _results[key]) {
-										cache[key] = updates[key] = _results[key];
+										updates[key] = _results[key];
 										update = true;
 									}
 
@@ -52,7 +64,7 @@ define([
 									.then(function () {
 										// Trigger `hashset` but silently
 										me.$element.trigger("hashset",
-											[ me[ROUTE] = me.data2uri(cache, updates), options[OPT_SILENT] === true ]
+											[ me[URI] = me.data2uri(me[CACHE] = _results), options[OPT_SILENT] === true ]
 										);
 
 									})
@@ -63,6 +75,12 @@ define([
 			});
 	}
 
+	function handleRequests(requests) {
+		var me = this;
+
+		return [ URI in me ? extend.call(me.uri2data(me[URI]), requests) : requests ];
+	}
+
 	return Widget.extend(Hash, function () {
 		this[CACHE] = {};
 	}, {
@@ -71,30 +89,21 @@ define([
 		"sig/initialize": function () {
 			var me = this;
 
-			me.subscribe(me[DISPLAYNAME], handleRequest);
+			me.subscribe(me[DISPLAYNAME], handleControl);
+			me.subscribe(me[DISPLAYNAME] + "/requests", handleRequests);
 		},
 
 		"sig/finalize": function () {
 			var me = this;
 
-			me.unsubscribe(me[DISPLAYNAME], handleRequest);
-		},
-
-		/**
-		 * Requests for route changes, eventually updates the browser hash.
-		 * @param {Object} changes Hash of route segments to change.
-		 * @param {Object} [options] option Various route options.
-		 */
-		"update": function(changes, options) {
-			var me = this;
-
-			me.publish(me[DISPLAYNAME], merge.call(me.uri2data(me[ROUTE]), changes), options);
+			me.unsubscribe(me[DISPLAYNAME], handleControl);
+			me.unsubscribe(me[DISPLAYNAME] + "/requests", handleRequests);
 		},
 
 		"dom/urichange": function ($event, uri) {
 			var me = this;
 
-			me.publish(me[DISPLAYNAME], me.uri2data(me[ROUTE] = uri));
+			me.publish(me[DISPLAYNAME], me.uri2data(me[URI] = uri));
 		}
 	});
 });
