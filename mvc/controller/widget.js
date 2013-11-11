@@ -36,49 +36,39 @@ define([
 
 		options = options || {};
 
-		return me.publish(displayName + "/requests", requests)
+		return me.publish(displayName + "/requests", extend.call(me.uri2data(me[URI]), requests))
 			.spread(function (_requests) {
-				if (_requests === UNDEFINED) {
-					_requests = requests;
-				}
-
-				return me.request(_requests, {})
+				return me.request(_requests !== UNDEFINED ? _requests : requests, {})
 					.then(function (results) {
-						return me.publish(displayName + "/results", results)
-							.spread(function (_results) {
-								if (_results === UNDEFINED) {
-									_results = results;
-								}
 
+						me[URI] = me.data2uri(results);
+
+						return me.publish(displayName + "/results", results)
+							.then(function () {
 								var updates = {};
-								var updated = Object.keys(_results).reduce(function (update, key) {
-									if (cache[key] !== _results[key]) {
-										updates[key] = _results[key];
+								var updated = Object.keys(results).reduce(function (update, key) {
+									if (cache[key] !== results[key]) {
+										updates[key] = results[key];
 										update = true;
 									}
 
 									return update;
 								}, false);
 
-								return updated ? me.publish(displayName + "/updates", updates)
-									.then(function () {
-										// Trigger `hashset` but silently
-										me.$element.trigger("hashset",
-											[ me[URI] = me.data2uri(me[CACHE] = _results), options[OPT_SILENT] === true ]
-										);
+								return updated
+									? me.publish(displayName + "/updates", updates)
+										.then(function () {
+											// Update cache
+											me[CACHE] = results;
 
-									})
-									.yield(updates)
+											// Trigger `hashset` but silently
+											me.$element.trigger("hashset", [ me[URI] , options[OPT_SILENT] === true ]);
+										})
+										.yield(updates)
 									: [ updates ];
 							});
 					});
 			});
-	}
-
-	function handleRequests(requests) {
-		var me = this;
-
-		return [ URI in me ? extend.call(me.uri2data(me[URI]), requests) : requests ];
 	}
 
 	return Widget.extend(Hash, function () {
@@ -90,14 +80,12 @@ define([
 			var me = this;
 
 			me.subscribe(me[DISPLAYNAME], handleControl);
-			me.subscribe(me[DISPLAYNAME] + "/requests", handleRequests);
 		},
 
 		"sig/finalize": function () {
 			var me = this;
 
 			me.unsubscribe(me[DISPLAYNAME], handleControl);
-			me.unsubscribe(me[DISPLAYNAME] + "/requests", handleRequests);
 		},
 
 		"dom/urichange": function ($event, uri) {
