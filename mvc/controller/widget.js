@@ -31,42 +31,34 @@ define([
 
 	function handleControl(requests, options) {
 		var me = this;
-		var cache = me[CACHE];
 		var displayName = me[DISPLAYNAME];
-
-		options = options || {};
+		var opt_silent = options && options[OPT_SILENT] === true
 
 		return me.publish(displayName + "/requests", extend.call(me.uri2data(me[URI]), requests))
 			.spread(function (_requests) {
 				return me.request(_requests !== UNDEFINED ? _requests : requests, {})
 					.then(function (results) {
+						var cache = me[CACHE];
+						var uri = me[URI] = me.data2uri(me[CACHE] = results);
+						var updates = {};
+						var updated = Object.keys(results).reduce(function (update, key) {
+							if (cache[key] !== results[key]) {
+								updates[key] = results[key];
+								update = true;
+							}
 
-						me[URI] = me.data2uri(results);
+							return update;
+						}, false);
 
 						return me.publish(displayName + "/results", results)
 							.then(function () {
-								var updates = {};
-								var updated = Object.keys(results).reduce(function (update, key) {
-									if (cache[key] !== results[key]) {
-										updates[key] = results[key];
-										update = true;
-									}
-
-									return update;
-								}, false);
-
-								return updated
-									? me.publish(displayName + "/updates", updates)
-										.then(function () {
-											// Update cache
-											me[CACHE] = results;
-
-											// Trigger `hashset` but silently
-											me.$element.trigger("hashset", [ me[URI] , options[OPT_SILENT] === true ]);
-										})
-										.yield(updates)
-									: [ updates ];
-							});
+								return updated && me.publish(displayName + "/updates", updates)
+									.then(function () {
+										// Trigger `hashset` but silently
+										me.$element.trigger("hashset", [ uri, opt_silent ]);
+									});
+							})
+							.yield(updates)
 					});
 			});
 	}
