@@ -1,6 +1,6 @@
 {
 	"name": "troopjs-browser",
-	"version": "2.1.0-6",
+	"version": "2.1.0-1",
 	"ignore": [
 		"**/.*",
 		"node_modules"
