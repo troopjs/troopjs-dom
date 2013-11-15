@@ -55,7 +55,7 @@ define([
 
 					// Reject if this is not the last count, otherwise resolve with results
 					if (count !== COUNT){
-						reject("COUNT is out of sync");
+						reject(results);
 					}
 					else {
 						resolve(me.publish(displayName + "/results", results)
