@@ -3,19 +3,16 @@
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
 define([
-	"../../component/widget",
 	"../../hash/widget",
 	"poly/object",
 	"poly/array"
-], function (Widget, Hash) {
+], function (Widget) {
 	"use strict";
 
-	var UNDEFINED;
 	var CACHE = "_cache";
-	var URI = "_uri";
-	var OPT_SILENT = "silent";
 	var DISPLAYNAME = "displayName";
 	var ARRAY_SLICE = Array.prototype.slice;
+	var COUNT = 0;
 
 	function extend() {
 		var me = this;
@@ -29,41 +26,53 @@ define([
 		return me;
 	}
 
-	function handleControl(requests, options) {
+	function handleRequests(requests) {
 		var me = this;
 		var displayName = me[DISPLAYNAME];
-		var opt_silent = options && options[OPT_SILENT] === true
 
-		return me.publish(displayName + "/requests", extend.call(me.uri2data(me[URI]), requests))
-			.spread(function (_requests) {
-				return me.request(_requests !== UNDEFINED ? _requests : requests, {})
-					.then(function (results) {
-						var cache = me[CACHE];
-						var uri = me[URI] = me.data2uri(me[CACHE] = results);
-						var updates = {};
-						var updated = Object.keys(results).reduce(function (update, key) {
-							if (cache[key] !== results[key]) {
-								updates[key] = results[key];
-								update = true;
-							}
+		return me.task(function (resolve, reject) {
+			// Track COUNT
+			var count = ++COUNT;
 
-							return update;
-						}, false);
+			me.request(extend.call({}, me[CACHE], requests))
+				.then(function (results) {
+					// Get old cache
+					var cache = me[CACHE];
 
-						return me.publish(displayName + "/results", results)
+					// Calculate updates
+					var updates = {};
+					var updated = Object.keys(results).reduce(function (update, key) {
+						if (!me.equals(cache[key], results[key])) {
+							updates[key] = results[key];
+							update = true;
+						}
+
+						return update;
+					}, false);
+
+					// Update cache
+					me[CACHE] = results;
+
+					// Reject if this is not the last count, otherwise resolve with results
+					if (count !== COUNT){
+						reject("COUNT is out of sync");
+					}
+					else {
+						resolve(me.publish(displayName + "/results", results)
 							.then(function () {
-								return updated && me.publish(displayName + "/updates", updates)
-									.then(function () {
-										// Trigger `hashset` but silently
-										me.$element.trigger("hashset", [ uri, opt_silent ]);
-									});
+								return updated && me.publish(displayName + "/updates", updates);
 							})
-							.yield(updates)
-					});
-			});
+							.then(function () {
+								// Trigger `hashset`
+								me.$element.trigger("hashset", [ me.data2uri(results) ]);
+							})
+							.yield(results));
+					}
+				});
+		});
 	}
 
-	return Widget.extend(Hash, function () {
+	return Widget.extend(function () {
 		this[CACHE] = {};
 	}, {
 		"displayName": "browser/mvc/controller/widget",
@@ -71,19 +80,35 @@ define([
 		"sig/initialize": function () {
 			var me = this;
 
-			me.subscribe(me[DISPLAYNAME], handleControl);
+			me.subscribe(me[DISPLAYNAME] + "/requests", handleRequests);
 		},
 
 		"sig/finalize": function () {
 			var me = this;
 
-			me.unsubscribe(me[DISPLAYNAME], handleControl);
+			me.unsubscribe(me[DISPLAYNAME]+ "/requests", handleRequests);
 		},
 
 		"dom/urichange": function ($event, uri) {
 			var me = this;
 
-			me.publish(me[DISPLAYNAME], me.uri2data(me[URI] = uri));
+			me.publish(me[DISPLAYNAME] + "/requests", me.uri2data(uri));
+		},
+
+		"request" : function (/* requests */) {
+			throw new Error("request is not implemented");
+		},
+
+		"uri2data" : function (/* uri */) {
+			throw new Error("uri2data is not implemented");
+		},
+
+		"data2uri" : function (/* data */) {
+			throw new Error("data2uri is not implemented");
+		},
+
+		"equals" : function (a, b) {
+			return a && b && a === b;
 		}
 	});
 });
