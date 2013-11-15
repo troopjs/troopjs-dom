@@ -12,7 +12,7 @@ define([
 	var CACHE = "_cache";
 	var DISPLAYNAME = "displayName";
 	var ARRAY_SLICE = Array.prototype.slice;
-	var COUNT = 0;
+	var currTaskNo = 0;
 
 	function extend() {
 		var me = this;
@@ -31,33 +31,32 @@ define([
 		var displayName = me[DISPLAYNAME];
 
 		return me.task(function (resolve, reject) {
-			// Track COUNT
-			var count = ++COUNT;
+			// Track this task.
+			var taskNo = ++currTaskNo;
 
 			me.request(extend.call({}, me[CACHE], requests))
 				.then(function (results) {
-					// Get old cache
-					var cache = me[CACHE];
-
-					// Calculate updates
-					var updates = {};
-					var updated = Object.keys(results).reduce(function (update, key) {
-						if (!me.equals(cache[key], results[key])) {
-							updates[key] = results[key];
-							update = true;
-						}
-
-						return update;
-					}, false);
-
-					// Update cache
-					me[CACHE] = results;
-
-					// Reject if this is not the last count, otherwise resolve with results
-					if (count !== COUNT){
+					// Reject if this promise is not the current pending task.
+					if (taskNo !== currTaskNo)
 						reject(results);
-					}
 					else {
+						// Get old cache
+						var cache = me[CACHE];
+
+						// Calculate updates
+						var updates = {};
+						var updated = Object.keys(results).reduce(function (update, key) {
+							if (!me.equals(cache[key], results[key])) {
+								updates[key] = results[key];
+								update = true;
+							}
+
+							return update;
+						}, false);
+
+						// Update cache
+						me[CACHE] = results;
+
 						resolve(me.publish(displayName + "/results", results)
 							.then(function () {
 								return updated && me.publish(displayName + "/updates", updates);
