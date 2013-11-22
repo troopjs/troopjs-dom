@@ -3,10 +3,11 @@
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
 define([
+	"../../component/widget",
 	"../../hash/widget",
 	"poly/object",
 	"poly/array"
-], function (Widget) {
+], function (Widget, Hash) {
 	"use strict";
 
 	var CACHE = "_cache";
@@ -109,5 +110,5 @@ define([
 		"equals" : function (a, b) {
 			return a && b && a === b;
 		}
-	});
+	}, Hash);
 });
