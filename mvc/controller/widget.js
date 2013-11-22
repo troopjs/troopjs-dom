@@ -38,9 +38,7 @@ define([
 			me.request(extend.call({}, me[CACHE], requests))
 				.then(function (results) {
 					// Reject if this promise is not the current pending task.
-					if (taskNo !== currTaskNo)
-						reject(results);
-					else {
+					if (taskNo == currTaskNo) {
 						// Get old cache
 						var cache = me[CACHE];
 
