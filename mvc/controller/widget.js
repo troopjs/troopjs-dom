@@ -62,7 +62,7 @@ define([
 							})
 							.then(function () {
 								// Trigger `hashset`
-								me.$element.trigger("hashset", [ me.data2uri(results) ]);
+								me.$element.trigger("hashset", me.data2uri(results), true);
 							})
 							.yield(results));
 					}
