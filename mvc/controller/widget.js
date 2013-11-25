@@ -27,6 +27,15 @@ define([
 		return me;
 	}
 
+	var indexes = {};
+	// Check if the object has changed since the last retrieval.
+	function checkChanged(key, val) {
+		var curr = this[CACHE][key], hash = this.hash(val);
+		var ischanged = !(curr === val && indexes[key] === hash );
+		ischanged && (indexes[key] = hash);
+		return ischanged;
+	}
+
 	function handleRequests(requests) {
 		var me = this;
 		var displayName = me[DISPLAYNAME];
@@ -45,7 +54,7 @@ define([
 						// Calculate updates
 						var updates = {};
 						var updated = Object.keys(results).reduce(function (update, key) {
-							if (!me.equals(cache[key], results[key])) {
+							if (checkChanged.apply(me, [key, results[key]])) {
 								updates[key] = results[key];
 								update = true;
 							}
@@ -105,8 +114,7 @@ define([
 			throw new Error("data2uri is not implemented");
 		},
 
-		"equals" : function (a, b) {
-			return a && b && a === b;
-		}
+		// Override me to compute the data hash.
+		"hash" : function (data) { return ""; }
 	}, Hash);
 });
