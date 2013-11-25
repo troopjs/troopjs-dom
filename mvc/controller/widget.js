@@ -5,65 +5,81 @@
 define([
 	"../../component/widget",
 	"../../hash/widget",
-	"troopjs-utils/merge",
 	"poly/object",
 	"poly/array"
-], function (Widget, Hash, merge) {
+], function (Widget, Hash) {
 	"use strict";
 
-	var UNDEFINED;
 	var CACHE = "_cache";
-	var ROUTE = "_route";
-	var OPT_SILENT = "silent";
 	var DISPLAYNAME = "displayName";
+	var ARRAY_SLICE = Array.prototype.slice;
+	var currTaskNo = 0;
 
-	function handleRequest(requests, options) {
+	function extend() {
 		var me = this;
-		var cache = me[CACHE];
-		var displayName = me[DISPLAYNAME];
 
-		options = options || {};
-
-		return me.publish(displayName + "/requests", requests)
-			.spread(function (_requests) {
-				if (_requests === UNDEFINED) {
-					_requests = requests;
-				}
-
-				return me.request(_requests, {})
-					.then(function (results) {
-						return me.publish(displayName + "/results", results)
-							.spread(function (_results) {
-								if (_results === UNDEFINED) {
-									_results = results;
-								}
-
-								var updates = {};
-								var updated = Object.keys(_results).reduce(function (update, key) {
-									if (cache[key] !== _results[key]) {
-										cache[key] = updates[key] = _results[key];
-										update = true;
-									}
-
-									return update;
-								}, false);
-
-								return updated ? me.publish(displayName + "/updates", updates)
-									.then(function () {
-										// Trigger `hashset` but silently
-										me.$element.trigger("hashset",
-											[ me[ROUTE] = me.data2uri(cache, updates), options[OPT_SILENT] === true ]
-										);
-
-									})
-									.yield(updates)
-									: [ updates ];
-							});
-					});
+		ARRAY_SLICE.call(arguments).forEach(function (arg) {
+			Object.keys(arg).forEach(function (key) {
+				me[key] = arg[key];
 			});
+		});
+
+		return me;
 	}
 
-	return Widget.extend(Hash, function () {
+	var indexes = {};
+	// Check if the object has changed since the last retrieval.
+	function checkChanged(key, val) {
+		var curr = this[CACHE][key], hash = this.hash(val);
+		var ischanged = !(curr === val && indexes[key] === hash );
+		ischanged && (indexes[key] = hash);
+		return ischanged;
+	}
+
+	function handleRequests(requests) {
+		var me = this;
+		var displayName = me[DISPLAYNAME];
+
+		return me.task(function (resolve, reject) {
+			// Track this task.
+			var taskNo = ++currTaskNo;
+
+			me.request(extend.call({}, me[CACHE], requests))
+				.then(function (results) {
+					// Reject if this promise is not the current pending task.
+					if (taskNo == currTaskNo) {
+						// Get old cache
+						var cache = me[CACHE];
+
+						// Calculate updates
+						var updates = {};
+						var updated = Object.keys(results).reduce(function (update, key) {
+							if (checkChanged.apply(me, [key, results[key]])) {
+								updates[key] = results[key];
+								update = true;
+							}
+
+							return update;
+						}, false);
+
+						// Update cache
+						me[CACHE] = results;
+
+						resolve(me.publish(displayName + "/results", results)
+							.then(function () {
+								return updated && me.publish(displayName + "/updates", updates);
+							})
+							.then(function () {
+								// Trigger `hashset`
+								me.$element.trigger("hashset", me.data2uri(results), true);
+							})
+							.yield(results));
+					}
+				});
+		});
+	}
+
+	return Widget.extend(function () {
 		this[CACHE] = {};
 	}, {
 		"displayName": "browser/mvc/controller/widget",
@@ -71,30 +87,34 @@ define([
 		"sig/initialize": function () {
 			var me = this;
 
-			me.subscribe(me[DISPLAYNAME], handleRequest);
+			me.subscribe(me[DISPLAYNAME] + "/requests", handleRequests);
 		},
 
 		"sig/finalize": function () {
 			var me = this;
 
-			me.unsubscribe(me[DISPLAYNAME], handleRequest);
-		},
-
-		/**
-		 * Requests for route changes, eventually updates the browser hash.
-		 * @param {Object} changes Hash of route segments to change.
-		 * @param {Object} [options] option Various route options.
-		 */
-		"update": function(changes, options) {
-			var me = this;
-
-			me.publish(me[DISPLAYNAME], merge.call(me.uri2data(me[ROUTE]), changes), options);
+			me.unsubscribe(me[DISPLAYNAME]+ "/requests", handleRequests);
 		},
 
 		"dom/urichange": function ($event, uri) {
 			var me = this;
 
-			me.publish(me[DISPLAYNAME], me.uri2data(me[ROUTE] = uri));
-		}
-	});
+			me.publish(me[DISPLAYNAME] + "/requests", me.uri2data(uri));
+		},
+
+		"request" : function (/* requests */) {
+			throw new Error("request is not implemented");
+		},
+
+		"uri2data" : function (/* uri */) {
+			throw new Error("uri2data is not implemented");
+		},
+
+		"data2uri" : function (/* data */) {
+			throw new Error("data2uri is not implemented");
+		},
+
+		// Override me to compute the data hash.
+		"hash" : function (data) { return ""; }
+	}, Hash);
 });
