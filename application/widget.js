@@ -1,4 +1,4 @@
-/**
+/*
  * TroopJS browser/application/widget
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
@@ -10,7 +10,7 @@ define([ "module", "../component/widget", "when", "troopjs-core/registry/service
 	var ARRAY_PUSH = ARRAY_PROTO.push;
 	var REGISTRY = "registry";
 
-	/**
+	/*
 	 * Forwards _signal to components
 	 * @private
 	 * @param {String} _signal Signal to forward
@@ -38,6 +38,11 @@ define([ "module", "../component/widget", "when", "troopjs-core/registry/service
 		return next();
 	}
 
+	/**
+	 * The application widget serves as top-most page component
+	 * that bootstrap all other components registered.
+	 * @class browser.application.widget
+	 */
 	return Widget.extend(function ApplicationWidget() {
 		// Create registry
 		var registry = this[REGISTRY] = RegistryService();

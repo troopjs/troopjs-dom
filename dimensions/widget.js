@@ -1,4 +1,4 @@
-/**
+/*
  * TroopJS browser/dimensions/widget
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
@@ -15,6 +15,10 @@ define([ "../component/widget", "troopjs-jquery/dimensions", "troopjs-jquery/res
 		me.publish(me.displayName, w, h, $event);
 	}
 
+	/**
+	 * A dimension-aware widget that publish dimension change event.
+	 * @class browser.dimensions.widget
+	 */
 	return Widget.extend(function DimensionsWidget($element, displayName, dimensions) {
 		if (dimensions === UNDEFINED) {
 			throw new Error("No dimensions provided");

@@ -1,4 +1,4 @@
-/**
+/*
  * TroopJS browser/loom/woven
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
@@ -10,8 +10,13 @@ define([ "./config", "when", "jquery", "poly/array" ], function WovenModule(conf
 	var $WARP = config["$warp"];
 
 	/**
-	 * Gets woven widgets
-	 * @returns {Promise} of woven widgets
+	 * Retrieve all or specific widget instances living on this element, that are
+	 * created by {@link browser.loom.weave weaving}.
+	 *
+	 * @member browser.loom.woven
+	 * @method woven
+	 * @param {String...} [name] One or more name of the widget to narrow down.
+	 * @returns {Promise} Promise to the completion of retrieving the woven widgets array.
 	 */
 	return function woven() {
 		var $woven = [];

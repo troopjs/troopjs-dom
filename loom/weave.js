@@ -1,4 +1,4 @@
-/**
+/*
  * TroopJS browser/loom/weave
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
@@ -19,8 +19,22 @@ define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "poly
 	var RE_SEPARATOR = /[\s,]+/;
 
 	/**
-	 * Weaves elements
-	 * @returns {Promise} of weaving
+	 * Instantiate all widget instances specified in the {@link browser.loom.config#weave weave attribute}
+	 * of this element, and to signal the widget for start with the arguments. The weaving will result in:
+	 *
+	 *  - Updates the {@link browser.loom.config#weave woven attribute} with the created widget instances names.
+	 *  - The {@link browser.loom.config#$warp $warp data property} will reference the widget instances.
+	 *
+	 * **Note:** It's not commonly to use this method directly, use instead {@link $#weave jQuery.fn.weave}.
+	 *
+	 * 	// Create element for weaving.
+	 * 	var $el = $('<div data-weave="my/widget(option)"></div>').data("option",{"foo":"bar"});
+	 * 	// Instantiate the widget defined in "my/widget" module, with one param read from the element's custom data.
+	 * 	$el.weave();
+	 * @member browser.loom.weave
+	 * @method weave
+	 * @param {Mixed...} [arg] The params that used to start the widget.
+	 * @returns {Promise} Promise to the completion of weaving all widgets.
 	 */
 	return function weave() {
 		// Store start_args for later
@@ -37,7 +51,7 @@ define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "poly
 			var re = /[\s,]*(([\w_\-\/\.]+)(?:\(([^\)]+)\))?)/g;
 			var matches;
 
-			/**
+			/*
 			 * Updated attributes
 			 * @param {object} widget Widget
 			 * @private
