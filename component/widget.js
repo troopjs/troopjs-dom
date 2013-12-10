@@ -2,7 +2,7 @@
  * TroopJS browser/component/widget
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
-define([ "troopjs-core/component/gadget", "jquery", "../loom/config", "../loom/weave", "../loom/unweave", "troopjs-jquery/destroy" ], function WidgetModule(Gadget, $, config, weave, unweave) {
+define([ "troopjs-core/component/gadget", "jquery", "../loom/config", "../loom/weave", "../loom/unweave", "../loom/plugin", "troopjs-jquery/destroy" ], function WidgetModule(Gadget, $, config, weave, unweave) {
 	"use strict";
 
 	var UNDEFINED;
