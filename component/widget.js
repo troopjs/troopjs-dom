@@ -58,9 +58,11 @@ define([ "troopjs-core/component/gadget", "jquery", "../loom/config", "../loom/w
 			var args = ARRAY_SLICE.call(arguments, 1);
 
 			// Call render with contents (or result of contents if it's a function)
-			return weave.call($fn.call(me[$ELEMENT],
-				typeof contents === TYPEOF_FUNCTION ? contents.apply(me,args) : contents
-			).find(SELECTOR_WEAVE));
+			$fn.call(
+				me[$ELEMENT],
+				typeof contents === TYPEOF_FUNCTION ? contents.apply(me, args) : contents
+			);
+			return me.weave();
 		}
 
 		return render;
@@ -149,6 +151,8 @@ define([ "troopjs-core/component/gadget", "jquery", "../loom/config", "../loom/w
 		 * @returns {Promise} from weave
 		 */
 		"weave" : function () {
+			// Publishing for weaving in, to notify parties that use a different loom configuration, e.g. other Troop versions.
+			this.publish("weave", this);
 			return weave.apply(this[$ELEMENT].find(SELECTOR_WEAVE), arguments);
 		},
 
@@ -157,6 +161,8 @@ define([ "troopjs-core/component/gadget", "jquery", "../loom/config", "../loom/w
 		 * @returns {Promise} from unweave
 		 */
 		"unweave" : function () {
+			// Publishing for unweaveing.
+			this.publish("unweave", this);
 			return unweave.apply(this[$ELEMENT].find(SELECTOR_UNWEAVE).addBack(), arguments);
 		},
 
