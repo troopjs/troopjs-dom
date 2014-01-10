@@ -144,6 +144,8 @@ define([ "troopjs-core/component/gadget", "jquery", "../loom/config", "../loom/w
 
 		"sig/task" : function onTask(task) {
 			this[$ELEMENT].trigger("task", [ task ]);
+			// Notify any running task, e.g. used for UI spinning.
+			this.publish("task", task, this);
 		},
 
 		/**
