@@ -64,8 +64,9 @@ define([ "module", "../component/widget", "when", "troopjs-core/registry/service
 			var weave = me.weave;
 			var args = arguments;
 
-			return forward.call(me, "start", args).then(function started() {
-				return weave.apply(me, args);
+			// Widgets like spinner and error handler, need to be woven before starting any service.
+			return weave.apply(me, args).then(function () {
+				return forward.call(me, "start", args);
 			});
 		},
 
