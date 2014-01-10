@@ -48,9 +48,6 @@ define([
 				.then(function (results) {
 					// Reject if this promise is not the current pending task.
 					if (taskNo == currTaskNo) {
-						// Get old cache
-						var cache = me[CACHE];
-
 						// Calculate updates
 						var updates = {};
 						var updated = Object.keys(results).reduce(function (update, key) {
@@ -71,7 +68,7 @@ define([
 							})
 							.then(function () {
 								// Trigger `hashset`
-								me.$element.trigger("hashset", me.data2uri(results), true);
+								me.$element.trigger("hashset", [me.data2uri(results), true]);
 							})
 							.yield(results));
 					}
