@@ -53,6 +53,7 @@ define([ "module", "../component/widget", "when", "troopjs-core/registry/service
 		// Create registry
 		var registry = this[REGISTRY] = RegistryService();
 
+		// TODO only register _services_
 		// Slice and iterate arguments
 		ARRAY_SLICE.call(arguments, 2).forEach(function (component) {
 			// Register component
@@ -67,20 +68,18 @@ define([ "module", "../component/widget", "when", "troopjs-core/registry/service
 
 		"sig/start" : function onStart() {
 			var me = this;
-			var weave = me.weave;
 			var args = arguments;
 
 			return forward.call(me, "start", args).then(function started() {
-				return weave.apply(me, args);
+				return me.weave.apply(me, args);
 			});
 		},
 
 		"sig/stop" : function onStop() {
 			var me = this;
-			var unweave = me.unweave;
 			var args = arguments;
 
-			return unweave.apply(me, args).then(function stopped() {
+			return me.unweave.apply(me, args).then(function stopped() {
 				return forward.call(me, "stop", args);
 			});
 		},
