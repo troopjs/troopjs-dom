@@ -5,6 +5,7 @@
 define([ "module", "../component/widget", "when", "troopjs-core/registry/service", "poly/array" ], function ApplicationWidgetModule(module, Widget, when, RegistryService) {
 	"use strict";
 
+	var UNDEFINED;
 	var ARRAY_PROTO = Array.prototype;
 	var ARRAY_SLICE = ARRAY_PROTO.slice;
 	var ARRAY_PUSH = ARRAY_PROTO.push;
@@ -15,7 +16,7 @@ define([ "module", "../component/widget", "when", "troopjs-core/registry/service
 	 * @private
 	 * @param {String} _signal Signal to forward
 	 * @param {Array} _args Signal arguments
-	 * @returns {Function}
+	 * @return {Promise} promise of next handler callback execution
 	 */
 	function forward(_signal, _args) {
 		/*jshint validthis:true*/
@@ -24,18 +25,24 @@ define([ "module", "../component/widget", "when", "troopjs-core/registry/service
 		var args = [ _signal ];
 		var components = me[REGISTRY].get();
 		var index = 0;
+		var results = [];
+		var resultsCount = 0;
 
 		ARRAY_PUSH.apply(args, _args);
 
-		var next = function () {
+		var next = function (result, skip) {
 			var component;
+
+			if (skip !== true) {
+				results[resultsCount++] = result;
+			}
 
 			return (component = components[index++])
 				? when(signal.apply(component, args), next)
-				: when.resolve(_args);
+				: when.resolve(results);
 		};
 
-		return next();
+		return next(UNDEFINED, true);
 	}
 
 	/**
