@@ -21,10 +21,9 @@ define([ "module", "../component/widget", "when", "troopjs-core/registry/service
 	function forward(_signal, _args) {
 		/*jshint validthis:true*/
 		var me = this;
-		var signal = me.signal;
 		var args = [ _signal ];
 		var components = me[REGISTRY].get();
-		var index = 0;
+		var componentsCount = 0;
 		var results = [];
 		var resultsCount = 0;
 
@@ -37,8 +36,8 @@ define([ "module", "../component/widget", "when", "troopjs-core/registry/service
 				results[resultsCount++] = result;
 			}
 
-			return (component = components[index++])
-				? when(signal.apply(component, args), next)
+			return (component = components[componentsCount++]) !== UNDEFINED
+				? when(component.signal.apply(component, args), next)
 				: when.resolve(results);
 		};
 
