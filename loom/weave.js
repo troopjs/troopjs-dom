@@ -2,7 +2,7 @@
  * TroopJS browser/loom/weave
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
-define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "./unweave", "poly/array" ], function WeaveModule(config, parentRequire, when, $, getargs, unweave) {
+define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "./unweave", "troopjs-utils/defer", "poly/array" ], function WeaveModule(config, parentRequire, when, $, getargs, unweave, Defer) {
 	"use strict";
 
 	var UNDEFINED;
@@ -10,6 +10,7 @@ define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "./un
 	var ARRAY_PROTO = Array.prototype;
 	var ARRAY_MAP = ARRAY_PROTO.map;
 	var ARRAY_PUSH = ARRAY_PROTO.push;
+	var ARRAY_SHIFT = ARRAY_PROTO.shift;
 	var WEAVE = "weave";
 	var WOVEN = "woven";
 	var LENGTH = "length";
@@ -51,7 +52,7 @@ define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "./un
 			var to_weave = [];
 			var weave_attr = $element.attr(ATTR_WEAVE) || "";
 			var weave_args;
-			var re = /[\s,]*(([\w_\-\/\.]+)(?:\(([^\)]+)\))?)/g;
+			var re = /[\s,]*(((?:\w+!)?([\w\d_\-\/\.]+)(?:#[^(\s]+)?)(?:\(([^\)]+)\))?)/g;
 			var matches;
 
 			/**
@@ -86,23 +87,30 @@ define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "./un
 					});
 			};
 
+			var args;
 
 			// Iterate weave_attr (while re matches)
-			// matches[1] : widget name and arguments - "widget/name(1, 'string', false)"
-			// matches[2] : widget name - "widget/name"
-			// matches[3] : widget arguments - "1, 'string', false"
+			// matches[1] : full widget module name (could be loaded from plugin) - "mv!widget/name#1.x(1, 'string', false)"
+			// matches[2] : widget name and arguments - "widget/name(1, 'string', false)"
+			// matches[3] : widget name - "widget/name"
+			// matches[4] : widget arguments - "1, 'string', false"
 			while ((matches = re.exec(weave_attr)) !== NULL) {
 				/*jshint loopfunc:true*/
 				// Create weave_args
-				weave_args = [ $element, matches[2] ];
+				// Require module, add error handler
+				// Arguments to pass to the widget constructor.
+				args = matches[4];
+
+				// module name, DOM element, widget display name.
+				weave_args = [ matches[2], $element.get(0), matches[3] ];
 
 				// Store matches[1] as WEAVE on weave_args
 				weave_args[WEAVE] = matches[1];
 
 				// If there were additional arguments
-				if (matches[3] !== UNDEFINED) {
+				if (args !== UNDEFINED) {
 					// Parse matches[2] using getargs, map the values and append to weave_args
-					ARRAY_PUSH.apply(weave_args, getargs.call(matches[3]).map(function (value) {
+					ARRAY_PUSH.apply(weave_args, getargs.call(args).map(function (value) {
 						// If value from $data if key exist
 						return value in $data
 							? $data[value]
@@ -120,6 +128,7 @@ define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "./un
 				var deferred = when.defer();
 				var resolver = deferred.resolver;
 				var promise = deferred.promise;
+				var module = ARRAY_SHIFT.call(widget_args);
 
 				// Copy WEAVE
 				promise[WEAVE] = widget_args[WEAVE];
@@ -128,8 +137,9 @@ define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "./un
 				ARRAY_PUSH.call($warp, promise);
 
 				setTimeout(function() {
-					parentRequire([ widget_args[1] ], function(Widget) {
+					parentRequire([ module ], function(Widget) {
 						var widget;
+						var startPromise;
 
 						// detect if weaving has been canceled somehow.
 						if ($warp.indexOf(promise) === -1) {
@@ -147,8 +157,16 @@ define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "./un
 							// Add WOVEN to promise
 							promise[WOVEN] = widget.toString();
 
-							// Resolve with start yielding widget
-							resolver.resolve(widget.start.apply(widget, start_args).yield(widget));
+							// Feature detecting 1.x widget.
+							if(widget.trigger){
+								deferred = Defer();
+								widget.start(deferred);
+								startPromise = deferred.promise;
+							}
+							else
+								startPromise = widget.start.apply(widget, start_args);
+
+							resolver.resolve(startPromise.yield(widget));
 						}
 						catch (e) {
 							resolver.reject(e);
