@@ -8,6 +8,7 @@ define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "poly
 	var UNDEFINED;
 	var NULL = null;
 	var ARRAY_PROTO = Array.prototype;
+	var ARRAY_SLICE = ARRAY_PROTO.slice;
 	var ARRAY_MAP = ARRAY_PROTO.map;
 	var ARRAY_PUSH = ARRAY_PROTO.push;
 	var WEAVE = "weave";
@@ -48,7 +49,7 @@ define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "poly
 			var $weave = [];
 			var weave_attr = $element.attr(ATTR_WEAVE) || "";
 			var weave_args;
-			var re = /[\s,]*(([\w_\-\/\.]+)(?:\(([^\)]+)\))?)/g;
+			var re = /[\s,]*(((?:\w+!)?([\w\d_\-\/\.]+)(?:#[^(\s]+)?)(?:\(([^\)]+)\))?)/g;
 			var matches;
 
 			/*
@@ -73,22 +74,32 @@ define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "poly
 			// Make sure to remove ATTR_WEAVE (so we don't try processing this again)
 			$element.removeAttr(ATTR_WEAVE);
 
+			var module,
+				widgetName,
+				args;
+
 			// Iterate weave_attr (while re matches)
-			// matches[1] : widget name and arguments - "widget/name(1, 'string', false)"
-			// matches[2] : widget name - "widget/name"
-			// matches[3] : widget arguments - "1, 'string', false"
+			// matches[1] : full widget module name (could be loaded from plugin) - "mv!widget/name#1.x(1, 'string', false)"
+			// matches[2] : widget name and arguments - "widget/name(1, 'string', false)"
+			// matches[3] : widget name - "widget/name"
+			// matches[4] : widget arguments - "1, 'string', false"
 			while ((matches = re.exec(weave_attr)) !== NULL) {
 				/*jshint loopfunc:true*/
 				// Create weave_args
-				weave_args = [ $element, matches[2] ];
+				// Require module, add error handler
+				module = matches[2];
+				widgetName = matches[3];
+				args = matches[4];
+
+				weave_args = [ $element.get(0), widgetName ];
 
 				// Store matches[1] as WEAVE on weave_args
-				weave_args[WEAVE] = matches[1];
+				weave_args[WEAVE] = widgetName;
 
 				// If there were additional arguments
-				if (matches[3] !== UNDEFINED) {
+				if (args !== UNDEFINED) {
 					// Parse matches[2] using getargs, map the values and append to weave_args
-					ARRAY_PUSH.apply(weave_args, getargs.call(matches[3]).map(function (value) {
+					ARRAY_PUSH.apply(weave_args, getargs.call(args).map(function (value) {
 						// If value from $data if key exist
 						return value in $data
 							? $data[value]
@@ -116,9 +127,8 @@ define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "poly
 				// Add deferred update of attr
 				when(promise, update_attr);
 
-				// Require module, add error handler
-				parentRequire([ widget_args[1] ], function (Widget) {
-					var widget;
+				parentRequire([ module ], function (Widget) {
+					var widget, startPromise;
 
 					try {
 						// Create widget instance
@@ -130,8 +140,19 @@ define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "poly
 						// Add WOVEN to promise
 						promise[WOVEN] = widget.toString();
 
-						// Resolve with start yielding widget
-						resolver.resolve(widget.start.apply(widget, start_args).yield(widget));
+						// Feature detecting 1.x widget.
+						if(widget.trigger){
+							deferred = new $.Deferred();
+							widget.start(deferred);
+							startPromise = deferred.promise();
+						}
+						else
+							startPromise = widget.start.apply(widget, start_args);
+
+						startPromise.then(function () {
+							// Resolve with start yielding widget
+							resolver.resolve(widget);
+						});
 					}
 					catch (e) {
 						resolver.reject(e);
