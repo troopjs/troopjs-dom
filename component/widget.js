@@ -157,13 +157,41 @@ define([ "troopjs-core/component/gadget", "jquery", "../loom/config", "../loom/w
 		},
 
 		/**
-		 * Unweaves all children of $element _and_ me
+		 * Weaves some children of this widget element.
+		 * @param {String} [selector] The CSS selector to reduces the list of child elements to weave in.
+		 * @param {Mixed...} [startArgs] Arguments to be sent over to the "start" signal of the each weaving widget.
+		 * @see {browser.loom.weave}
+		 * @returns {Promise} from weave
+		 */
+		"weaveSome": function (selector) {
+			// Publishing for weaving in, to notify parties that use a different loom configuration, e.g. other Troop versions.
+			this.publish("weave", this);
+			var $elements = this[$ELEMENT].find(SELECTOR_WEAVE);
+			return weave.apply($elements.filter(selector), ARRAY_SLICE(arguments, 1));
+		},
+
+		/**
+		 * Unweaves all children of this widget element.
 		 * @returns {Promise} from unweave
 		 */
 		"unweave" : function () {
 			// Publishing for unweaveing.
 			this.publish("unweave", this);
 			return unweave.apply(this[$ELEMENT].find(SELECTOR_UNWEAVE).addBack(), arguments);
+		},
+
+		/**
+		 * Unweaves some children of this widget element.
+		 * @param {String} [selector] A CSS selector that further reduces the set of elements to unweave.
+		 * @param {Mixed...} [Args] Arguments to be sent over to the "stop" signal of the each unweaving widget.
+		 * @see {browser.loom.unweave}
+		 * @returns {Promise} from unweave
+		 */
+		"unweaveSome": function (selector) {
+			// Publishing for unweaveing.
+			this.publish("unweave", this);
+			var $elements = this[$ELEMENT].find(SELECTOR_UNWEAVE);
+			return unweave.apply($elements.filter(selector).addBack(), ARRAY_SLICE(arguments, 1));
 		},
 
 		/**
