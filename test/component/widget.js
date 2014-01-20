@@ -39,6 +39,9 @@ buster.testCase("troopjs-browser/component/widget", function (run) {
 					});
 
 				});
+			},
+			"tearDown": function () {
+				$('body').html('');
 			}
 		});
 	});
