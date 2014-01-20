@@ -7,6 +7,7 @@ define([ "troopjs-core/component/gadget", "jquery", "../loom/config", "../loom/w
 
 	var UNDEFINED;
 	var ARRAY_SLICE = Array.prototype.slice;
+	var $GET = $.fn.get;
 	var TYPEOF_FUNCTION = "function";
 	var $ELEMENT = "$element";
 	var $HANDLERS = "$handlers";
@@ -72,22 +73,24 @@ define([ "troopjs-core/component/gadget", "jquery", "../loom/config", "../loom/w
 	 */
 	return Gadget.extend(function ($element, displayName) {
 		var me = this;
+		var $get;
 
+		// No $element
 		if ($element === UNDEFINED) {
 			throw new Error("No $element provided");
 		}
+		// Is _not_ a jQuery element
 		else if (!$element.jquery) {
-			// From a plain dom node.
-			if ($element.nodeType) {
+			// From a plain dom node
+			if ($element.nodeType)
 				$element = $($element);
-			}
 			else {
-				throw new Error('Unsupported widget element');
+				throw new Error("Unsupported widget element");
 			}
 		}
-		// Element from another jquery instance.
-		else if ($element.get !== $.fn.get) {
-			$element = $($element.get(0));
+		// Element from a different jQuery instance
+		else if (($get = $element.get) !== $GET) {
+			$element = $($get.call($element, 0));
 		}
 
 		me[$ELEMENT] = $element;

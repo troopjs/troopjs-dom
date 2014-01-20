@@ -142,7 +142,7 @@ define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "troo
 						promise[WOVEN] = widget.toString();
 
 						// TODO: Detecting TroopJS 1.x widget from *version* property.
-						if(widget.trigger){
+						if (widget.trigger) {
 							deferred = Defer();
 							widget.start(deferred);
 							startPromise = deferred.promise;
