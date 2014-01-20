@@ -2,7 +2,7 @@
  * TroopJS browser/loom/weave
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
-define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "poly/array" ], function WeaveModule(config, parentRequire, when, $, getargs) {
+define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "troopjs-utils/defer", "poly/array" ], function WeaveModule(config, parentRequire, when, $, getargs, Defer) {
 	"use strict";
 
 	var UNDEFINED;
@@ -140,19 +140,16 @@ define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "poly
 						// Add WOVEN to promise
 						promise[WOVEN] = widget.toString();
 
-						// Feature detecting 1.x widget.
+						// TODO: Detecting TroopJS 1.x widget from *version* property.
 						if(widget.trigger){
-							deferred = new $.Deferred();
+							deferred = Defer();
 							widget.start(deferred);
-							startPromise = deferred.promise();
+							startPromise = deferred.promise;
 						}
 						else
 							startPromise = widget.start.apply(widget, start_args);
 
-						startPromise.then(function () {
-							// Resolve with start yielding widget
-							resolver.resolve(widget);
-						});
+						resolver.resolve(startPromise.yield(widget));
 					}
 					catch (e) {
 						resolver.reject(e);
