@@ -74,9 +74,9 @@ define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "troo
 			// Make sure to remove ATTR_WEAVE (so we don't try processing this again)
 			$element.removeAttr(ATTR_WEAVE);
 
-			var module,
-				widgetName,
-				args;
+			var module;
+			var widgetName;
+			var args;
 
 			// Iterate weave_attr (while re matches)
 			// matches[1] : full widget module name (could be loaded from plugin) - "mv!widget/name#1.x(1, 'string', false)"
@@ -128,7 +128,8 @@ define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "troo
 				when(promise, update_attr);
 
 				parentRequire([ module ], function (Widget) {
-					var widget, startPromise;
+					var widget
+					var startPromise;
 
 					try {
 						// Create widget instance
