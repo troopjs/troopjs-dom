@@ -82,6 +82,8 @@ define([ "./config", "when", "jquery", "poly/array", "troopjs-utils/defer" ], fu
 
 						return result.join(" ");
 					});
+
+				return widget;
 			};
 
 			// Make sure to remove ATTR_UNWEAVE (so we don't try processing this again)
