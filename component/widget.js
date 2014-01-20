@@ -76,12 +76,14 @@ define([ "troopjs-core/component/gadget", "jquery", "../loom/config", "../loom/w
 		if ($element === UNDEFINED) {
 			throw new Error("No $element provided");
 		}
-		else if (!($element.jquery)) {
+		else if (!$element.jquery) {
 			// From a plain dom node.
-			if ($element.nodeType)
+			if ($element.nodeType) {
 				$element = $($element);
-			else
+			}
+			else {
 				throw new Error('Unsupported widget element');
+			}
 		}
 		// Element from another jquery instance.
 		else if ($element.get !== $.fn.get) {
