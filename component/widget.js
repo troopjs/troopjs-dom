@@ -17,8 +17,9 @@ define([ "troopjs-core/component/gadget", "jquery", "../loom/config", "../loom/w
 	var PROXY = "proxy";
 	var GUID = "guid";
 	var LENGTH = "length";
+	var $WEFT = config["$weft"];
 	var SELECTOR_WEAVE = "[" + config["weave"] + "]";
-	var SELECTOR_UNWEAVE = "[" + config["unweave"] + "]";
+	var SELECTOR_WOVEN = "[" + config["woven"] + "]";
 
 
 	/*
@@ -169,11 +170,17 @@ define([ "troopjs-core/component/gadget", "jquery", "../loom/config", "../loom/w
 		},
 
 		/**
-		 * Unweaves all children of $element _and_ me
-		 * @returns {Promise} from unweave
+		 * Unweaves all woven children widgets including the widget itself.
+		 * @returns {Promise} Promise of completeness of unweaving all widgets.
 		 */
 		"unweave" : function () {
-			return unweave.apply(this[$ELEMENT].find(SELECTOR_UNWEAVE).addBack(), arguments);
+			var woven = this[$ELEMENT].find(SELECTOR_WOVEN);
+
+			// Unweave myself only if I am woven.
+			if(this[$WEFT])
+				woven = woven.addBack();
+
+			return unweave.apply(woven, arguments);
 		},
 
 		/**
