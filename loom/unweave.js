@@ -2,7 +2,7 @@
  * TroopJS browser/loom/unweave
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
-define([ "./config", "when", "jquery", "poly/array" ], function UnweaveModule(config, when, $) {
+define([ "./config", "when", "jquery", "poly/array", "troopjs-utils/defer" ], function UnweaveModule(config, when, $, Defer) {
 	"use strict";
 
 	var UNDEFINED;
@@ -125,14 +125,22 @@ define([ "./config", "when", "jquery", "poly/array" ], function UnweaveModule(co
 
 			// Return promise of mapped $unweave
 			return when.map($unweave, function (widget) {
-				// Store promise of stop yielding widget
-				var promise = widget.stop.apply(widget, stop_args).yield(widget);
+				var deferred;
+				var stopPromise;
+
+				// TODO: Detecting TroopJS 1.x widget from *version* property.
+				if (widget.trigger) {
+					deferred = Defer();
+					widget.stop(deferred);
+					stopPromise = deferred.promise;
+				}
+				else
+					stopPromise = widget.stop.apply(widget, stop_args);
 
 				// Add deferred update of attr
-				when(promise, update_attr);
-
-				// Return promise
-				return promise;
+				return when(stopPromise).then(function () {
+					update_attr(widget);
+				});
 			});
 		}));
 	};
