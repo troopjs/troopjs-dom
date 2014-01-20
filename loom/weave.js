@@ -147,8 +147,9 @@ define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "troo
 							widget.start(deferred);
 							startPromise = deferred.promise;
 						}
-						else
+						else {
 							startPromise = widget.start.apply(widget, start_args);
+						}
 
 						resolver.resolve(startPromise.yield(widget));
 					}

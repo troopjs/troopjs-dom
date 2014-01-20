@@ -134,13 +134,12 @@ define([ "./config", "when", "jquery", "poly/array", "troopjs-utils/defer" ], fu
 					widget.stop(deferred);
 					stopPromise = deferred.promise;
 				}
-				else
+				else {
 					stopPromise = widget.stop.apply(widget, stop_args);
+				}
 
 				// Add deferred update of attr
-				return when(stopPromise).then(function () {
-					update_attr(widget);
-				});
+				return stopPromise.yield(widget).then(update_attr);
 			});
 		}));
 	};
