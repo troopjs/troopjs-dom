@@ -112,7 +112,7 @@ define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "troo
 			}
 
 			// Return promise of mapped $weave
-			return when.map($weave, function (widget_args) {
+			return when.all(when.map($weave, function (widget_args) {
 				// Create deferred
 				var deferred = when.defer();
 				var resolver = deferred.resolver;
@@ -158,6 +158,10 @@ define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "troo
 
 				// Return promise
 				return promise;
+			}))
+			// Updating the element attributes with started widgets.
+			.tap(function updateAttrFromWidget(widgets) {
+				widgets.forEach(update_attr);
 			});
 		}));
 	};
