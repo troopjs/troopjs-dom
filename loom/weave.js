@@ -94,7 +94,7 @@ define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "troo
 				weave_args = [ matches[2], $element.get(0), widgetName ];
 
 				// Store matches[1] as WEAVE on weave_args
-				weave_args[WEAVE] = widgetName;
+				weave_args[WEAVE] = matches[1];
 
 				// If there were additional arguments
 				if (args !== UNDEFINED) {
