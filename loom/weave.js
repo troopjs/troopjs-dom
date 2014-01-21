@@ -11,6 +11,7 @@ define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "troo
 	var ARRAY_SLICE = ARRAY_PROTO.slice;
 	var ARRAY_MAP = ARRAY_PROTO.map;
 	var ARRAY_PUSH = ARRAY_PROTO.push;
+	var ARRAY_UNSHIFT = ARRAY_PROTO.unshift;
 	var WEAVE = "weave";
 	var WOVEN = "woven";
 	var $WARP = config["$warp"];
@@ -63,8 +64,9 @@ define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "troo
 				$element.attr(ATTR_WOVEN, function (index, attr) {
 					var result = [ woven ];
 
+					// Maintain the original order from weave attribute.
 					if (attr !== UNDEFINED) {
-						ARRAY_PUSH.apply(result, attr.split(RE_SEPARATOR));
+						ARRAY_UNSHIFT.apply(result, attr.split(RE_SEPARATOR));
 					}
 
 					return result.join(" ");
