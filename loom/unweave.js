@@ -10,6 +10,7 @@ define([ "./config", "when", "jquery", "poly/array", "troopjs-utils/defer" ], fu
 	var ARRAY_PROTO = Array.prototype;
 	var ARRAY_MAP = ARRAY_PROTO.map;
 	var ARRAY_PUSH = ARRAY_PROTO.push;
+	var ARRAY_UNSHIFT = ARRAY_PROTO.unshift;
 	var WEAVE = "weave";
 	var UNWEAVE = "unweave";
 	var WOVEN = "woven";
@@ -77,13 +78,11 @@ define([ "./config", "when", "jquery", "poly/array", "troopjs-utils/defer" ], fu
 						var result = [ weave ];
 
 						if (attr !== UNDEFINED) {
-							ARRAY_PUSH.apply(result, attr.split(RE_SEPARATOR));
+							ARRAY_UNSHIFT.apply(result, attr.split(RE_SEPARATOR));
 						}
 
 						return result.join(" ");
 					});
-
-				return widget;
 			};
 
 			// Make sure to remove ATTR_UNWEAVE (so we don't try processing this again)
@@ -126,7 +125,7 @@ define([ "./config", "when", "jquery", "poly/array", "troopjs-utils/defer" ], fu
 			}
 
 			// Return promise of mapped $unweave
-			return when.map($unweave, function (widget) {
+			return when.all(when.map($unweave, function (widget) {
 				var deferred;
 				var stopPromise;
 
@@ -141,7 +140,11 @@ define([ "./config", "when", "jquery", "poly/array", "troopjs-utils/defer" ], fu
 				}
 
 				// Add deferred update of attr
-				return stopPromise.yield(widget).then(update_attr);
+				return stopPromise.yield(widget);
+			}))
+			// Updating the weave/woven attributes with stopped widgets.
+			.tap(function (widgets) {
+				widgets.forEach(update_attr);
 			});
 		}));
 	};
