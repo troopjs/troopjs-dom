@@ -51,22 +51,27 @@ define([ "./config", "when", "jquery", "poly/array", "troopjs-utils/defer" ], fu
 			var j;
 
 			/*
-			 * Updated attributes
-			 * @param {object} widget Widget
+			 * Updated attributes according to what have been unweaved.
+			 * @param {object} widgets List of stopped widgets.
 			 * @private
 			 */
-			var update_attr = function (widget) {
-				var $promise = widget[$WEFT];
-				var woven = $promise[WOVEN];
-				var weave = $promise[WEAVE];
+			var update_attr = function (widgets) {
+				var wovens = {};
+				var weaves = [];
+				widgets.forEach(function (widget) {
+					var $promise = widget[$WEFT];
+					wovens[$promise[WOVEN]] = 1;
+					weaves.push($promise[WEAVE]);
+				});
 
 				$element
+					// Remove those widgets from data-woven.
 					.attr(ATTR_WOVEN, function (index, attr) {
 						var result = [];
 
 						if (attr !== UNDEFINED) {
 							ARRAY_PUSH.apply(result, attr.split(RE_SEPARATOR).filter(function (part) {
-								return part !== woven;
+								return !( part in wovens );
 							}));
 						}
 
@@ -74,14 +79,13 @@ define([ "./config", "when", "jquery", "poly/array", "troopjs-utils/defer" ], fu
 							? null
 							: result.join(" ");
 					})
+					// Added back those widget names to data-weave.
 					.attr(ATTR_WEAVE, function (index, attr) {
-						var result = [ weave ];
-
 						if (attr !== UNDEFINED) {
-							ARRAY_UNSHIFT.apply(result, attr.split(RE_SEPARATOR));
+							ARRAY_UNSHIFT.apply(weaves, attr.split(RE_SEPARATOR));
 						}
 
-						return result.join(" ");
+						return weaves.join(" ");
 					});
 			};
 
@@ -143,9 +147,7 @@ define([ "./config", "when", "jquery", "poly/array", "troopjs-utils/defer" ], fu
 				return stopPromise.yield(widget);
 			}))
 			// Updating the weave/woven attributes with stopped widgets.
-			.tap(function (widgets) {
-				widgets.forEach(update_attr);
-			});
+			.tap(update_attr);
 		}));
 	};
 });

@@ -54,22 +54,23 @@ define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "troo
 			var matches;
 
 			/*
-			 * Updated attributes
-			 * @param {object} widget Widget
+			 * Updated attributes according to what have been weaved.
+			 * @param {object} widgets List of started widgets.
 			 * @private
 			 */
-			var update_attr = function (widget) {
-				var woven = widget[$WEFT][WOVEN];
+			var update_attr = function (widgets) {
+				var wovens = [];
+				widgets.forEach(function (widget) {
+					wovens.push(widget[$WEFT][WOVEN]);
+				});
 
 				$element.attr(ATTR_WOVEN, function (index, attr) {
-					var result = [ woven ];
-
 					// Maintain the original order from weave attribute.
 					if (attr !== UNDEFINED) {
-						ARRAY_UNSHIFT.apply(result, attr.split(RE_SEPARATOR));
+						ARRAY_UNSHIFT.apply(wovens, attr.split(RE_SEPARATOR));
 					}
 
-					return result.join(" ");
+					return wovens.join(" ");
 				});
 			};
 
@@ -160,9 +161,7 @@ define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "troo
 				return promise;
 			}))
 			// Updating the element attributes with started widgets.
-			.tap(function updateAttrFromWidget(widgets) {
-				widgets.forEach(update_attr);
-			});
+			.tap(update_attr);
 		}));
 	};
 });
