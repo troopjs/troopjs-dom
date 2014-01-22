@@ -153,7 +153,7 @@ define([ "troopjs-core/component/gadget", "jquery", "../loom/config", "../loom/w
 				$handler = $handlers[i];
 
 				// Leave the "destroy" event as the last handler, for jQuery to remove when removing the element.
-				if ($handler[TYPE] === 'destroy')
+				if ($handler[TYPE] === "destroy")
 					continue;
 
 				// Detach event handler
@@ -181,8 +181,9 @@ define([ "troopjs-core/component/gadget", "jquery", "../loom/config", "../loom/w
 			var woven = this[$ELEMENT].find(SELECTOR_WOVEN);
 
 			// Unweave myself only if I am woven.
-			if(this[$WEFT])
+			if(this[$WEFT]) {
 				woven = woven.addBack();
+			}
 
 			return unweave.apply(woven, arguments);
 		},

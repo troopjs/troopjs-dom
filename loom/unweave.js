@@ -129,7 +129,7 @@ define([ "./config", "when", "jquery", "poly/array", "troopjs-utils/defer" ], fu
 			}
 
 			// Return promise of mapped $unweave
-			return when.all(when.map($unweave, function (widget) {
+			return when.map($unweave, function (widget) {
 				var deferred;
 				var stopPromise;
 
@@ -145,7 +145,7 @@ define([ "./config", "when", "jquery", "poly/array", "troopjs-utils/defer" ], fu
 
 				// Add deferred update of attr
 				return stopPromise.yield(widget);
-			}))
+			})
 			// Updating the weave/woven attributes with stopped widgets.
 			.tap(update_attr);
 		}));
