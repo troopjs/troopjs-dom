@@ -152,6 +152,10 @@ define([ "troopjs-core/component/gadget", "jquery", "../loom/config", "../loom/w
 				// Get $handler
 				$handler = $handlers[i];
 
+				// Leave the "destroy" event as the last handler, for jQuery to remove when removing the element.
+				if ($handler[TYPE] === 'destroy')
+					continue;
+
 				// Detach event handler
 				$element.off($handler[TYPE], $handler[FEATURES], $handler[PROXY]);
 			}
