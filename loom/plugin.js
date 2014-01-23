@@ -1,4 +1,4 @@
-/**
+/*
  * TroopJS browser/loom/plugin
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
