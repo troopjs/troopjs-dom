@@ -76,6 +76,21 @@ define([
 		});
 	}
 
+	/**
+	 * Abstracted URL based router used for single-page application page flow control. Extend this widget with the following
+	 * methods implemented:
+	 *
+	 *  - {@link #uri2data} This method is to parse the requested URL.
+	 *  - {@link #request} This method is to do whatever you like with the request object, potentially load any server data.
+	 *  - {@link #data2uri} This method is to serialize the new URL afterward.
+	 *
+	 * Implementation can subscribe to the following topics for data retrieval:
+	 *
+	 *  - [display name]/results Subscribe to this topic for list of all data from the resolved request.
+	 *  - [display name]/updates Subscribe to this topic for only updated resolved data that changes from the last request.
+	 *
+	 * @class browser.mvc.controller
+	 */
 	return Widget.extend(function () {
 		this[CACHE] = {};
 	}, {
@@ -99,15 +114,77 @@ define([
 			me.publish(me[DISPLAYNAME] + "/requests", me.uri2data(uri));
 		},
 
-		"request" : function (/* requests */) {
+		/**
+		 * Implement this method to load application data requested by the page, e.g. query the server for each of the request key.
+		 *
+		 * @param {Object} spec The value returned from {@link #uri2data} as the page routing request.
+		 * @return {Promise} data The promise that resolved to the page data fulfilled by the application logic.
+		 */
+		"request" : function (spec) {
 			throw new Error("request is not implemented");
 		},
 
-		"uri2data" : function (/* uri */) {
+		/**
+		 * Implement this method to convert a {@link core.net.uri} that reflects the current page URL into a hash with key
+		 * values presenting each segment of the URL.
+		 *
+		 * Suppose we load the page with this URL: `http://example.org/foo/#page1/section2/3`, the implementation would look
+		 * like:
+		 *
+		 * 	"uri2data": function (uri){
+		 * 		var data = {};
+		 * 		var path = uri.path;
+		 * 	 	// Let the first path segment (page1) presents the "page".
+		 * 		data["page"] = path[0];
+		 * 		// Let the second path segment (section2) presents the "section"
+		 * 		data["section"] = path[1];
+		 * 		// Let the third path segment (3) be the item no. default to be zero.
+		 * 		data["item"] = path[2] || 0;
+		 * 	}
+		 *
+		 * @return {Object} the hash that represents the current URL.
+		 * @method
+		 */
+		"uri2data" : function (uri) {
 			throw new Error("uri2data is not implemented");
 		},
 
-		"data2uri" : function (/* data */) {
+		/**
+		 * Implement this method to convert a hash back to {@link core.net.uri} that reflects the new page URL to change to.
+		 *
+		 * Suppose that we'd like to structure the following application data on page URL:
+		 *
+		 * 	{
+		 * 		"page": {
+		 * 			title: "page1"
+		 * 			...
+		 * 		}
+		 *
+		 * 		"section": {
+		 * 			"name": "section3"
+		 * 			...
+		 * 		}
+		 *
+		 * 		"item": {
+		 * 			"id": 4
+		 * 			...
+		 * 		}
+		 * 	}
+		 *
+		 * The implementation of this method would look like:
+		 *
+		 * 	var URI = require('troopjs-core/net/uri');
+		 * 	"data2uri": function (data){
+		 * 		var uri = URI();
+		 * 		var paths = [data.page.title, data.section.name];
+		 * 		if(data.item)
+		 * 			paths.push(data.item.id);
+		 * 		uri.path = URI.Path(paths);
+		 * 		return uri;
+		 * 	}
+		 *
+		 */
+		"data2uri" : function (data) {
 			throw new Error("data2uri is not implemented");
 		},
 
