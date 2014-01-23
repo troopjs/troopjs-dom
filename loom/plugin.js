@@ -25,7 +25,7 @@ define([
 	var ATTR_WOVEN = config[WOVEN];
 	var RE_SEPARATOR = /[\s,]+/;
 
-	/**
+	/*
 	 * Tests if element has a data-weave attribute
 	 * @param element to test
 	 * @returns {boolean}
@@ -35,7 +35,7 @@ define([
 		return $(element).attr(ATTR_WEAVE) !== UNDEFINED;
 	}
 
-	/**
+	/*
 	 * Tests if element has a data-woven attribute
 	 * @param element to test
 	 * @returns {boolean}
@@ -45,9 +45,8 @@ define([
 		return $(element).attr(ATTR_WOVEN) !== UNDEFINED;
 	}
 
-	/**
+	/*
 	 * :weave expression
-	 * @type {*}
 	 */
 	$EXPR[":"][WEAVE] = $CREATEPSEUDO
 		// If we have jQuery >= 1.8 we want to use .createPseudo
@@ -84,9 +83,8 @@ define([
 						}).join("|"), "m").test(weave.replace(RE_SEPARATOR, "\n"));
 			};
 
-	/**
+	/*
 	 * :woven expression
-	 * @type {*}
 	 */
 	$EXPR[":"][WOVEN] = $CREATEPSEUDO
 		// If we have jQuery >= 1.8 we want to use .createPseudo
@@ -123,19 +121,28 @@ define([
 		};
 
 	/**
+	 * @class $
+	 */
+
+	/**
 	 * Weaves elements
+	 * @member $
+	 * @method weave
 	 * @returns {Promise} of weaving
 	 */
 	$FN[WEAVE] = weave;
 
 	/**
 	 * Unweaves elements
+	 * @member $
+	 * @method unweave
 	 * @returns {Promise} of unweaving
 	 */
 	$FN[UNWEAVE] = unweave;
 
 	/**
 	 * Gets woven widgets
+	 * @method woven
 	 * @returns {Promise} of woven widgets
 	 */
 	$FN[WOVEN] = woven;

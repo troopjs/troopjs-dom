@@ -1,4 +1,4 @@
-/**
+/*
  * TroopJS browser/hash/widget module
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
