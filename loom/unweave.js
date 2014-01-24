@@ -10,7 +10,6 @@ define([ "./config", "when", "jquery", "poly/array", "troopjs-utils/defer" ], fu
 	var ARRAY_PROTO = Array.prototype;
 	var ARRAY_MAP = ARRAY_PROTO.map;
 	var ARRAY_PUSH = ARRAY_PROTO.push;
-	var ARRAY_UNSHIFT = ARRAY_PROTO.unshift;
 	var WEAVE = "weave";
 	var UNWEAVE = "unweave";
 	var WOVEN = "woven";
