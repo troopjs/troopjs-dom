@@ -81,11 +81,7 @@ define([ "./config", "when", "jquery", "poly/array", "troopjs-utils/defer" ], fu
 					})
 					// Added back those widget names to data-weave.
 					.attr(ATTR_WEAVE, function (index, attr) {
-						if (attr !== UNDEFINED) {
-							ARRAY_UNSHIFT.apply(weaves, attr.split(RE_SEPARATOR));
-						}
-
-						return weaves.join(" ");
+							return (attr !== UNDEFINED ? attr.split(RE_SEPARATOR) : []).concat(weaves).join(" ");
 					});
 			};
 

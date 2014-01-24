@@ -65,12 +65,7 @@ define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "troo
 				});
 
 				$element.attr(ATTR_WOVEN, function (index, attr) {
-					// Maintain the original order from weave attribute.
-					if (attr !== UNDEFINED) {
-						ARRAY_UNSHIFT.apply(wovens, attr.split(RE_SEPARATOR));
-					}
-
-					return wovens.join(" ");
+					return (attr !== UNDEFINED ? attr.split(RE_SEPARATOR) : []).concat(wovens).join(" ");
 				});
 			};
 
