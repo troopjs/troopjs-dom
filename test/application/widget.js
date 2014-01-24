@@ -12,25 +12,26 @@ buster.testCase("troopjs-browser/application/widget", function (run) {
 	],
 		function (Application, html, $) {
 
+		function assertWidgets (widgets, widgets2) {
+			assert.same(2, widgets.length);
+			assert.same(1, widgets2.length);
+			var foo = widgets[0];
+			var bar = widgets[1];
+			var baz = widgets2[0];
+			assert.same("troopjs-browser/test/component/foo", foo.displayName);
+			assert.same("troopjs-browser/test/component/bar", bar.displayName);
+			assert.same("troopjs-browser/test/component/baz", baz.displayName);
+		}
+
 		var app;
 		run({
 			"setUp": function () {
 				$('body').html(html);
 				app = Application($('html'));
 			},
-			"weaving": function (done) {
-				this.timeout = 500;
-				app.start().spread(function (widgets) {
-					var widget = widgets[0];
-					assert("troopjs-browser/component/widget", widget.displayName);
-				}).then(function () {
-						app.unweave().spread(function (fooWidgets) {
-							var widget = fooWidgets[0];
-							var $el = widget.$element;
-							refute($el.attr('data-woven'));
-							assert.same('troopjs-browser/test/component/foo', $el.attr('data-weave'));
-							done();
-						});
+			"weaving": function () {
+				return app.weave(456, 'def').spread(assertWidgets).then(function () {
+						return app.unweave().spread(assertWidgets);
 				});
 			},
 			"tearDown": function () {
