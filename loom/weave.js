@@ -59,13 +59,13 @@ define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "troo
 			 * @private
 			 */
 			var update_attr = function (widgets) {
-				var wovens = [];
+				var woven = [];
 				widgets.forEach(function (widget) {
-					wovens.push(widget[$WEFT][WOVEN]);
+					woven.push(widget[$WEFT][WOVEN]);
 				});
 
 				$element.attr(ATTR_WOVEN, function (index, attr) {
-					return (attr !== UNDEFINED ? attr.split(RE_SEPARATOR) : []).concat(wovens).join(" ");
+					return (attr !== UNDEFINED ? attr.split(RE_SEPARATOR) : []).concat(woven).join(" ");
 				});
 			};
 
