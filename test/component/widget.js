@@ -94,8 +94,10 @@ buster.testCase("troopjs-browser/component/widget", function (run) {
 						var $el = $(".foobar2");
 						return $el.weave().spread(function (widgets) {
 							var foo = widgets[0];
-							return $el.attr("data-weave", "troopjs-browser/test/component/bar(123, 'abc')")
-								.weave(456, "def").spread(function (widgets) {
+							return $el
+								.attr("data-weave", "troopjs-browser/test/component/bar(123, 'abc')")
+								.weave(456, "def")
+								.spread(function (widgets) {
 
 									assert.same(1, widgets.length);
 									var bar = widgets[0];
