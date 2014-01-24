@@ -72,7 +72,6 @@ define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "troo
 			// Make sure to remove ATTR_WEAVE (so we don't try processing this again)
 			$element.removeAttr(ATTR_WEAVE);
 
-			var widgetName;
 			var args;
 
 			// Iterate weave_attr (while re matches)
@@ -84,10 +83,11 @@ define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "troo
 				/*jshint loopfunc:true*/
 				// Create weave_args
 				// Require module, add error handler
-				widgetName = matches[3];
+				// Arguments to pass to the widget constructor.
 				args = matches[4];
 
-				weave_args = [ matches[2], $element.get(0), widgetName ];
+				// module name, DOM element, widget display name.
+				weave_args = [ matches[2], $element.get(0), matches[3] ];
 
 				// Store matches[1] as WEAVE on weave_args
 				weave_args[WEAVE] = matches[1];
