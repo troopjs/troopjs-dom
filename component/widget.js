@@ -57,11 +57,10 @@ define([ "troopjs-core/component/gadget", "jquery", "../loom/config", "../loom/w
 		function render(contents, data) {
 			/*jshint validthis:true*/
 			var me = this;
-			var args = ARRAY_SLICE.call(arguments, 1);
 
 			// Call render with contents (or result of contents if it's a function)
 			return weave.call($fn.call(me[$ELEMENT],
-				typeof contents === TYPEOF_FUNCTION ? contents.apply(me,args) : contents
+				typeof contents === TYPEOF_FUNCTION ? contents.apply(me, ARRAY_SLICE.call(arguments, 1)) : contents
 			).find(SELECTOR_WEAVE));
 		}
 
