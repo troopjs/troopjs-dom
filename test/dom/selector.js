@@ -45,6 +45,20 @@ buster.testCase("troopjs-browser/dom/selector", function (run) {
 				assert.equals(selector.last("tag #id .class[attr = '\\[#123\\]'"), ".class");
 				assert.equals(selector.last("tag #id.class[attr = '\\[#123\\]']"), "#id");
 				assert.equals(selector.last("tag#id.class[attr = '\\[#123\\]']"), "tag");
+			},
+
+			".last able to extract tag from shortest possible selector": function() {
+				var selector = Selector();
+
+				assert.equals(selector.last(".a"), ".a");
+				assert.equals(selector.last("#a"), "#a");
+				assert.equals(selector.last("a"), "a");
+			},
+
+			".last able to extract from empty selector": function () {
+				var selector = Selector();
+
+				assert.equals(selector.last(""), "");
 			}
 		});
 	});

@@ -15,7 +15,7 @@ define([ "troopjs-core/object/factory" ], function (Factory) {
 			var char = selector[--index];
 			var skip = false;
 
-			step: while (index) {
+			step: while (index > 0) {
 				switch (char) {
 					case SPACE:
 						/* Marks EOT if:
