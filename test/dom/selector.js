@@ -75,7 +75,8 @@ buster.testCase("troopjs-browser/dom/selector", function (run) {
 					selector
 						.add("tag")
 						.add("#id")
-						.add(".class");
+						.add(".class")
+						.add("*");
 
 					expected[TAG] = expected[0] = {};
 					expected[TAG][INDEXED] = {};
@@ -85,6 +86,9 @@ buster.testCase("troopjs-browser/dom/selector", function (run) {
 
 					expected[CLASS] = expected[2] = {};
 					expected[CLASS][INDEXED] = {};
+
+					expected[UNIVERSAL] = expected[3] = {};
+					expected[UNIVERSAL][INDEXED] = {};
 
 					assert.match(indexes, expected);
 				}
@@ -99,7 +103,8 @@ buster.testCase("troopjs-browser/dom/selector", function (run) {
 						.add("tag")
 						.add("#id")
 						.add(".class")
-						.matches(element), [ [ "tag" ], [ "#id" ], [ ".class" ] ]);
+						.add("*")
+						.matches(element), [ [ "tag" ], [ "#id" ], [ ".class" ], [ "*" ] ]);
 				},
 
 				"excludes unmatched rules": function () {
@@ -113,7 +118,8 @@ buster.testCase("troopjs-browser/dom/selector", function (run) {
 						.add("#otherId")
 						.add(".class")
 						.add(".otherClass")
-						.matches(element), [ [ "tag" ], [ "#id" ], [ ".class" ] ]);
+						.add("*")
+						.matches(element), [ [ "tag" ], [ "#id" ], [ ".class" ], [ "*" ] ]);
 				}
 			}
 		});
