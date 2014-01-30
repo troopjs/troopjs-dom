@@ -5,8 +5,15 @@ buster.testCase("troopjs-browser/dom/selector", function (run) {
 	var assert = buster.referee.assert;
 	var refute = buster.referee.refute;
 
-	require([ "troopjs-browser/dom/selector", "jquery" ], function (Selector, $) {
+	require([ "troopjs-browser/dom/selector", "troopjs-browser/dom/constants", "jquery" ], function (Selector, CONST, $) {
 		var tail = Selector.tail;
+
+		var TAG = CONST["tag"];
+		var ID = CONST["id"];
+		var CLASS = CONST["class"];
+		var UNIVERSAL = CONST["universal"];
+		var INDEXES = CONST["indexes"];
+		var INDEXED = CONST["indexed"];
 
 		run({
 			"tail": {
@@ -51,20 +58,36 @@ buster.testCase("troopjs-browser/dom/selector", function (run) {
 				}
 			},
 
-			"add": function () {
-				var selector = Selector();
+			"add": {
+				"starts with empty INDEXES": function () {
+					var selector = Selector();
+					var indexes = selector[INDEXES];
+					var expected = [];
 
-				selector.add("tag", 1);
-				selector.add("tag#id", 2);
-				selector.add("tag#id.class1", 3);
-				selector.add(".class1", 4);
-				selector.add(".class2", 5);
-				selector.add("#id", 6);
-				selector.add("*", 7);
+					assert.equals(indexes, expected);
+				},
 
-				console.log(selector.matches($("<tag id='id' class='class1 class2' />").get(0)));
+				"groups indexes correctly": function () {
+					var selector = Selector();
+					var indexes = selector[INDEXES];
+					var expected = [];
 
-				assert(true);
+					selector
+						.add("tag")
+						.add("#id")
+						.add(".class");
+
+					expected[TAG] = expected[0] = {};
+					expected[TAG][INDEXED] = {};
+
+					expected[ID] = expected[1] = {};
+					expected[ID][INDEXED] = {};
+
+					expected[CLASS] = expected[2] = {};
+					expected[CLASS][INDEXED] = {};
+
+					assert.match(indexes, expected);
+				}
 			}
 		});
 	});

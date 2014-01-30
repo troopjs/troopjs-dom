@@ -1,15 +1,19 @@
 define([ "troopjs-core/object/factory", "./constants", "./config" ], function (Factory, CONSTANTS, CONFIG) {
 	var UNDEFINED;
+	var ARRAY_SLICE = Array.prototype.slice;
 	var LENGTH = "length";
 	var INDEXES = CONSTANTS["indexes"];
 	var INDEXED = CONSTANTS["indexed"];
 	var INDEXER = CONSTANTS["indexer"];
+	var CLASS = CONSTANTS["class"];
+	var ID = CONSTANTS["id"];
+	var TAG = CONSTANTS["tag"];
+	var UNIVERSAL = CONSTANTS["universal"];
 	var SLASH = "\\";
 	var SPACE = " ";
-	var CLASS = "class";
-	var ID = "id";
-	var TAG = "tag";
-	var UNIVERSAL = "universal";
+	var STAR = "*";
+	var POUND = "#";
+	var PERIOD = ".";
 	var RE_SPACE = /\s+/;
 	var querySelectorAll = CONFIG[CONSTANTS["querySelectorAll"]];
 	var matchesSelector = CONFIG[CONSTANTS["matchesSelector"]];
@@ -20,7 +24,7 @@ define([ "troopjs-core/object/factory", "./constants", "./config" ], function (F
 	 * @return {String[]}
 	 */
 	function getElementUniversal() {
-		return [ "*" ];
+		return [ STAR ];
 	}
 
 	/**
@@ -115,8 +119,8 @@ define([ "troopjs-core/object/factory", "./constants", "./config" ], function (F
 					}
 					break;
 
-				case "#":
-				case ".":
+				case POUND:
+				case PERIOD:
 					/* Marks stop if:
 					 * * Next char is not SLASH
 					 * * Next char is not SPACE
@@ -156,20 +160,23 @@ define([ "troopjs-core/object/factory", "./constants", "./config" ], function (F
 			var name;
 			var key = tail(selector);
 
+			// Convert arguments to array
+			args = ARRAY_SLICE.call(arguments);
+
 			switch (key[0]) {
-				case "#":
+				case POUND:
 					name = ID;
 					key = key.substring(1);
 					indexer = getElementId;
 					break;
 
-				case ".":
+				case PERIOD:
 					name = CLASS;
 					key = key.substring(1);
 					indexer = getElementClassNames;
 					break;
 
-				case "*":
+				case STAR:
 					name = UNIVERSAL;
 					indexer = getElementUniversal;
 					break;
@@ -191,10 +198,10 @@ define([ "troopjs-core/object/factory", "./constants", "./config" ], function (F
 			}
 
 			if (key in indexed) {
-				indexed[key].push(arguments);
+				indexed[key].push(args);
 			}
 			else {
-				indexed[key] = [ arguments ];
+				indexed[key] = [ args ];
 			}
 
 			return me;
