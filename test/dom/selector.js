@@ -6,59 +6,49 @@ buster.testCase("troopjs-browser/dom/selector", function (run) {
 	var refute = buster.referee.refute;
 
 	require([ "troopjs-browser/dom/selector", "jquery" ], function (Selector, $) {
+		var tail = Selector.tail;
+
 		run({
-			".last able to extract tag/id/class": function () {
-				var selector = Selector();
+			"tail": {
+				"able to extract tag/id/class": function () {
+					assert.equals(tail(".class"), ".class");
+					assert.equals(tail("#id"), "#id");
+					assert.equals(tail("tag"), "tag");
+				},
 
-				assert.equals(selector.last(".class"), ".class");
-				assert.equals(selector.last("#id"), "#id");
-				assert.equals(selector.last("tag"), "tag");
-			},
+				"able to extract tag/id/class with stacking": function() {
+					assert.equals(tail("tag #id .class"), ".class");
+					assert.equals(tail("tag #id.class"), "#id");
+					assert.equals(tail("tag#id.class"), "tag");
+				},
 
-			".last able to extract tag/id/class with stacking": function() {
-				var selector = Selector();
+				"able to extract tag/id/class with attributes": function() {
+					assert.equals(tail(".class[attr = '#123']"), ".class");
+					assert.equals(tail("#id[attr = '#123']"), "#id");
+					assert.equals(tail("tag[attr = '#123']"), "tag");
+				},
 
-				assert.equals(selector.last("tag #id .class"), ".class");
-				assert.equals(selector.last("tag #id.class"), "#id");
-				assert.equals(selector.last("tag#id.class"), "tag");
-			},
+				"able to extract tag/id/class with attributes and stacking": function() {
+					assert.equals(tail("tag #id .class[attr = '#123']"), ".class");
+					assert.equals(tail("tag #id.class[attr = '#123']"), "#id");
+					assert.equals(tail("tag#id.class[attr = '#123']"), "tag");
+				},
 
-			".last able to extract tag/id/class with attributes": function() {
-				var selector = Selector();
+				"able to extract tag/id/class with attributes, stacking and escaped chars": function() {
+					assert.equals(tail("tag #id .class[attr = '\\[#123\\]'"), ".class");
+					assert.equals(tail("tag #id.class[attr = '\\[#123\\]']"), "#id");
+					assert.equals(tail("tag#id.class[attr = '\\[#123\\]']"), "tag");
+				},
 
-				assert.equals(selector.last(".class[attr = '#123']"), ".class");
-				assert.equals(selector.last("#id[attr = '#123']"), "#id");
-				assert.equals(selector.last("tag[attr = '#123']"), "tag");
-			},
+				"able to extract tag from shortest possible selector": function() {
+					assert.equals(tail(".a"), ".a");
+					assert.equals(tail("#a"), "#a");
+					assert.equals(tail("a"), "a");
+				},
 
-			".last able to extract tag/id/class with attributes and stacking": function() {
-				var selector = Selector();
-
-				assert.equals(selector.last("tag #id .class[attr = '#123']"), ".class");
-				assert.equals(selector.last("tag #id.class[attr = '#123']"), "#id");
-				assert.equals(selector.last("tag#id.class[attr = '#123']"), "tag");
-			},
-
-			".last able to extract tag/id/class with attributes, stacking and escaped chars": function() {
-				var selector = Selector();
-
-				assert.equals(selector.last("tag #id .class[attr = '\\[#123\\]'"), ".class");
-				assert.equals(selector.last("tag #id.class[attr = '\\[#123\\]']"), "#id");
-				assert.equals(selector.last("tag#id.class[attr = '\\[#123\\]']"), "tag");
-			},
-
-			".last able to extract tag from shortest possible selector": function() {
-				var selector = Selector();
-
-				assert.equals(selector.last(".a"), ".a");
-				assert.equals(selector.last("#a"), "#a");
-				assert.equals(selector.last("a"), "a");
-			},
-
-			".last able to extract from empty selector": function () {
-				var selector = Selector();
-
-				assert.equals(selector.last(""), "");
+				"able to extract from empty selector": function () {
+					assert.equals(tail(""), "");
+				}
 			},
 
 			"add": function () {
