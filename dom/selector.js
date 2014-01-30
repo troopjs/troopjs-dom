@@ -14,6 +14,7 @@ define([ "troopjs-core/object/factory", "./constants", "./config" ], function (F
 	var STAR = "*";
 	var POUND = "#";
 	var PERIOD = ".";
+	var COUNT = "count";
 	var RE_SPACE = /\s+/;
 	var querySelectorAll = CONFIG[CONSTANTS["querySelectorAll"]];
 	var matchesSelector = CONFIG[CONSTANTS["matchesSelector"]];
@@ -142,8 +143,22 @@ define([ "troopjs-core/object/factory", "./constants", "./config" ], function (F
 		return selector.substring(index, stop);
 	}
 
+	/**
+	 * Compares candidates (that have COUNT properties)
+	 * @private
+	 * @param {Object} a
+	 * @param {Object} b
+	 * @return {Number}
+	 */
+	function compareCandidates(a, b) {
+		return a[COUNT] - b[COUNT];
+	}
+
 	var Selector = Factory(function () {
-		this[INDEXES] = [];
+		var me = this;
+
+		me[INDEXES] = [];
+		me[COUNT] = 0;
 	}, {
 		/**
 		 * Adds candidate
@@ -162,6 +177,9 @@ define([ "troopjs-core/object/factory", "./constants", "./config" ], function (F
 
 			// Convert arguments to array
 			args = ARRAY_SLICE.call(arguments);
+
+			// Set COUNT on args
+			args[COUNT] = me[COUNT]++;
 
 			// Check the first char to determine name/indexer and transform key
 			switch (key[0]) {
@@ -260,7 +278,7 @@ define([ "troopjs-core/object/factory", "./constants", "./config" ], function (F
 				}
 			}
 
-			return result;
+			return result.sort(compareCandidates);
 		}
 	});
 
