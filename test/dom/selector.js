@@ -90,8 +90,31 @@ buster.testCase("troopjs-browser/dom/selector", function (run) {
 				}
 			},
 
-			"matches": function () {
+			"matches": {
+				"tag/id/class": function () {
+					var selector = Selector();
+					var element = $("<tag id='id' class='class'/>").get(0);
 
+					assert.match(selector
+						.add("tag")
+						.add("#id")
+						.add(".class")
+						.matches(element), [ [ "tag" ], [ "#id" ], [ ".class" ] ]);
+				},
+
+				"excludes unmatched rules": function () {
+					var selector = Selector();
+					var element = $("<tag id='id' class='class'/>").get(0);
+
+					assert.match(selector
+						.add("tag")
+						.add("otherTag")
+						.add("#id")
+						.add("#otherId")
+						.add(".class")
+						.add(".otherClass")
+						.matches(element), [ [ "tag" ], [ "#id" ], [ ".class" ] ]);
+				}
 			}
 		});
 	});
