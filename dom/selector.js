@@ -163,17 +163,18 @@ define([ "troopjs-core/object/factory", "./constants", "./config" ], function (F
 			// Convert arguments to array
 			args = ARRAY_SLICE.call(arguments);
 
+			// Check the first char to determine name/indexer and transform key
 			switch (key[0]) {
 				case POUND:
 					name = ID;
-					key = key.substring(1);
 					indexer = getElementId;
+					key = key.substring(1);
 					break;
 
 				case PERIOD:
 					name = CLASS;
-					key = key.substring(1);
 					indexer = getElementClassNames;
+					key = key.substring(1);
 					break;
 
 				case STAR:
@@ -183,23 +184,27 @@ define([ "troopjs-core/object/factory", "./constants", "./config" ], function (F
 
 				default:
 					name = TAG;
-					key = key.toUpperCase();
 					indexer = getElementTagName;
+					key = key.toUpperCase();
 					break;
 			}
 
-			if ((index = indexes[name]) === UNDEFINED) {
+			// Get index and indexed
+			if ((index = indexes[name]) !== UNDEFINED) {
+				indexed = index[INDEXED];
+			}
+			// Or create index and indexed
+			else {
 				index = indexes[name] = indexes[indexes[LENGTH]] = {};
 				index[INDEXER] = indexer;
 				indexed = index[INDEXED] = {};
 			}
-			else {
-				indexed = index[INDEXED];
-			}
 
+			// Add args to index[key]
 			if (key in indexed) {
 				indexed[key].push(args);
 			}
+			// Or create index[key] and initialize with args
 			else {
 				indexed[key] = [ args ];
 			}

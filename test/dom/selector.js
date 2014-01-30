@@ -67,7 +67,7 @@ buster.testCase("troopjs-browser/dom/selector", function (run) {
 					assert.equals(indexes, expected);
 				},
 
-				"groups indexes correctly": function () {
+				"groups INDEXES correctly": function () {
 					var selector = Selector();
 					var indexes = selector[INDEXES];
 					var expected = [];
@@ -88,6 +88,10 @@ buster.testCase("troopjs-browser/dom/selector", function (run) {
 
 					assert.match(indexes, expected);
 				}
+			},
+
+			"matches": function () {
+
 			}
 		});
 	});
