@@ -1,9 +1,9 @@
 define([ "troopjs-core/object/factory", "./constants", "./config" ], function (Factory, CONSTANTS, CONFIG) {
 	var UNDEFINED;
 	var LENGTH = "length";
-	var INDEXES = "indexes";
-	var INDEXED = "indexed";
-	var INDEXER = "indexer";
+	var INDEXES = CONSTANTS["indexes"];
+	var INDEXED = CONSTANTS["indexed"];
+	var INDEXER = CONSTANTS["indexer"];
 	var SLASH = "\\";
 	var SPACE = " ";
 	var CLASS = "class";
