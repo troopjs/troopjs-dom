@@ -47,7 +47,7 @@ define([
 	 * @param {Array} args Initial arguments
 	 * @returns {*} Result from last handler
 	 */
-	function dom(handlers, candidates, args) {
+	function dom_sequence(handlers, candidates, args) {
 		var $event = args[0];
 		var selector;
 		var modified = handlers[MODIFIED];
@@ -102,7 +102,7 @@ define([
 		var me = $event.data;
 
 		// Prepare args[0]
-		var args = [ "dom/" + $event.type + ":dom" ];
+		var args = [ "dom/" + $event.type + ":dom_sequence" ];
 
 		// Push rest of arguments
 		ARRAY_PUSH.apply(args, arguments);
@@ -293,7 +293,7 @@ define([
 		var result = {};
 
 		result[RUNNERS] = merge.call({}, runners, {
-			"dom" : dom
+			"dom_sequence" : dom_sequence
 		});
 
 		return result;
