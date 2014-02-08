@@ -21,6 +21,7 @@ define([ "troopjs-core/object/factory", "./constants", "./config" ], function (F
 	var POUND = "#";
 	var PERIOD = ".";
 	var COUNT = "count";
+	var BASEVAL = "baseVal";
 	var RE_SPACE = /\s+/;
 	var querySelectorAll = CONFIG[CONSTANTS["querySelectorAll"]];
 	var matchesSelector = CONFIG[CONSTANTS["matchesSelector"]];
@@ -61,8 +62,8 @@ define([ "troopjs-core/object/factory", "./constants", "./config" ], function (F
 				result = className.split(RE_SPACE);
 			}
 			// SVG `className`
-			else if (className instanceof SVGAnimatedString) {
-				result = className.baseVal.split(RE_SPACE);
+			else if (typeof className === "object" && BASEVAL in className) {
+				result = className[BASEVAL].split(RE_SPACE);
 			}
 		}
 
