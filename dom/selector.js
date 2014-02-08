@@ -1,3 +1,9 @@
+/*
+ * TroopJS browser/dom/selector
+ * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
+ *
+ * Heavily influenced by selector-set (https://github.com/josh/selector-set/) Copyright 2013 Joshua Peek
+ */
 define([ "troopjs-core/object/factory", "./constants", "./config" ], function (Factory, CONSTANTS, CONFIG) {
 	var UNDEFINED;
 	var ARRAY_SLICE = Array.prototype.slice;
