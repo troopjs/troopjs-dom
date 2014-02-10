@@ -6,6 +6,7 @@
 		"node_modules"
 	],
 	"dependencies":  {
+		"troopjs-composer": "develop",
 		"troopjs-core": "develop",
 		"troopjs-jquery": "develop",
 		"troopjs-utils": "develop",
