@@ -2,8 +2,7 @@
 buster.testCase("troopjs-browser/application/widget", function (run) {
 	"use strict";
 
-	var assert = buster.referee.assert,
-		refute = buster.referee.refute;
+	var assert = buster.referee.assert;
 
 	require( [
 		"troopjs-browser/application/widget",
@@ -26,7 +25,8 @@ buster.testCase("troopjs-browser/application/widget", function (run) {
 		var app;
 		run({
 			"setUp": function () {
-				$('body').html(html);
+				this.$el = $(html).appendTo("body");
+
 				app = Application($('html'));
 			},
 			"weaving": function () {
@@ -35,7 +35,7 @@ buster.testCase("troopjs-browser/application/widget", function (run) {
 				});
 			},
 			"tearDown": function () {
-				$('body').html('');
+				this.$el.remove();
 			}
 		});
 	});
