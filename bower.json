@@ -6,12 +6,9 @@
 		"node_modules"
 	],
 	"dependencies":  {
-		"troopjs-composer": "develop",
-		"troopjs-core": "develop",
-		"troopjs-jquery": "develop",
-		"troopjs-utils": "develop",
-		"jquery": "~2",
-		"poly": "~0.6",
-		"when": "~2.7"
+		"troopjs-composer": "*",
+		"troopjs-core": ">=2.1.0",
+		"troopjs-jquery": ">=2.0.0",
+		"troopjs-utils": ">=2.0.0"
 	}
 }
