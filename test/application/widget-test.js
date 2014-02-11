@@ -11,25 +11,22 @@ buster.testCase("troopjs-browser/application/widget", function (run) {
 	],
 		function (Application, html, $) {
 
-		function assertWidgets (widgets, widgets2) {
-			assert.same(2, widgets.length);
-			assert.same(1, widgets2.length);
-			var foo = widgets[0];
-			var bar = widgets[1];
-			var baz = widgets2[0];
-			assert.same("troopjs-browser/test/component/foo", foo.displayName);
-			assert.same("troopjs-browser/test/component/bar", bar.displayName);
-			assert.same("troopjs-browser/test/component/baz", baz.displayName);
+		function assertWidgets (widgets1, widgets2) {
+			assert.equals(widgets1.length, 2);
+			assert.equals(widgets2.length, 1);
+			assert.equals(widgets1[0].displayName, "troopjs-browser/test/component/foo");
+			assert.equals(widgets1[1].displayName, "troopjs-browser/test/component/bar");
+			assert.equals(widgets2[0].displayName, "troopjs-browser/test/component/baz");
 		}
 
-		var app;
 		run({
 			"setUp": function () {
 				this.$el = $(html).appendTo("body");
-
-				app = Application($('html'));
+				this.app = Application($('html'));
 			},
 			"weaving": function () {
+				var app = this.app;
+
 				return app.weave(456, 'def').spread(assertWidgets).then(function () {
 						return app.unweave().spread(assertWidgets);
 				});
