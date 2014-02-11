@@ -23,6 +23,7 @@ define([
 	var $GET = $.fn.get;
 	var TYPEOF_FUNCTION = "function";
 	var $ELEMENT = "$element";
+	var $HANDLER = "$handler";
 	var DOM = "dom";
 	var FEATURES = "features";
 	var VALUE = "value";
@@ -92,26 +93,6 @@ define([
 	}
 
 	/**
-	 * Handles DOM events by emitting them
-	 * @private
-	 * @param $event jQuery Event
-	 * @returns {*} Result from last executed handler
-	 */
-	function $handle($event) {
-		// Get scope from $event.data
-		var me = $event.data;
-
-		// Prepare args[0]
-		var args = [ "dom/" + $event.type + ":dom_sequence" ];
-
-		// Push rest of arguments
-		ARRAY_PUSH.apply(args, arguments);
-
-		// Return result of emit
-		return me.emit.apply(me, args);
-	}
-
-	/**
 	 * Creates a proxy of the inner method 'render' with the '$fn' parameter set
 	 * @private
 	 * @param $fn jQuery method
@@ -165,7 +146,25 @@ define([
 			$element = $($get.call($element, 0));
 		}
 
+		// Store $ELEMENT
 		me[$ELEMENT] = $element;
+
+		/**
+		 * Handles DOM events by emitting them
+		 * @private
+		 * @param $event jQuery Event
+		 * @returns {*} Result from last executed handler
+		 */
+		me[$HANDLER] = function $handler($event) {
+			// Prepare args[0]
+			var args = [ "dom/" + $event.type + ":dom_sequence" ];
+
+			// Push rest of arguments
+			ARRAY_PUSH.apply(args, arguments);
+
+			// Return result of emit
+			return me.emit.apply(me, args);
+		};
 
 		if (displayName !== UNDEFINED) {
 			me.displayName = displayName;
@@ -177,6 +176,7 @@ define([
 		"sig/initialize" : function onInitialize() {
 			var me = this;
 			var $element = me[$ELEMENT];
+			var $handler = me[$HANDLER];
 			var special;
 			var specials;
 			var i;
@@ -192,14 +192,15 @@ define([
 					me.on(special[NAME], special[VALUE], special[FEATURES]);
 				}
 
-				// Bind $handle to $element
-				$element.on(specials.keys.join(" "), null, me, $handle);
+				// Bind $handler to $element
+				$element.on(specials.keys.join(" "), null, me, $handler);
 			}
 		},
 
 		"sig/finalize" : function onFinalize() {
 			var me = this;
 			var $element = me[$ELEMENT];
+			var $handler = me[$HANDLER];
 			var special;
 			var specials;
 			var i;
@@ -211,12 +212,12 @@ define([
 				for (i = 0, iMax = specials[LENGTH]; i < iMax; i++) {
 					special = specials[i];
 
-					// Add special to emitter
+					// Remove special from emitter
 					me.off(special[NAME], special[VALUE]);
 				}
 
-				// Unbind $handle from $element
-				$element.off(specials.keys.join(" "), null, $handle);
+				// Unbind $handler from $element
+				$element.off(specials.keys.join(" "), null, $handler);
 			}
 		},
 
