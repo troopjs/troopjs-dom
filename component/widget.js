@@ -28,6 +28,7 @@ define([
 	var FEATURES = "features";
 	var VALUE = "value";
 	var NAME = "name";
+	var TYPES = "types";
 	var LENGTH = "length";
 	var SELECTOR = "selector";
 	var $WEFT = LOOM_CONF["$weft"];
@@ -193,7 +194,7 @@ define([
 				}
 
 				// Bind $handler to $element
-				$element.on(specials.keys.join(" "), null, me, $handler);
+				$element.on(specials[TYPES].join(" "), null, me, $handler);
 			}
 		},
 
@@ -217,7 +218,7 @@ define([
 				}
 
 				// Unbind $handler from $element
-				$element.off(specials.keys.join(" "), null, $handler);
+				$element.off(specials[TYPES].join(" "), null, $handler);
 			}
 		},
 
