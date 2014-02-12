@@ -89,21 +89,21 @@ define([ "troopjs-composer/mixin/factory", "./constants", "./config" ], function
 	 * @return {String} last token
 	 */
 	function tail(selector) {
-		var index = selector[LENGTH];
-		var stop = index;
-		var char = selector[--index];
+		var start = selector[LENGTH];
+		var stop = start;
+		var c = selector[--start];
 		var skip = false;
 
-		step: while (index > 0) {
-			switch (char) {
+		step: while (start > 0) {
+			switch (c) {
 				case SPACE:
 					/* Marks EOT if:
-					 * * Next char is not SLASH
+					 * * Next c is not SLASH
 					 * * Not in skip mode
 					 */
-					if ((char = selector[--index]) !== SLASH && !skip) {
+					if ((c = selector[--start]) !== SLASH && !skip) {
 						// We're 2 steps passed the end of the selector so we should adjust for that
-						index += 2;
+						start += 2;
 
 						// Break the outer while
 						break step;
@@ -112,42 +112,42 @@ define([ "troopjs-composer/mixin/factory", "./constants", "./config" ], function
 
 				case "]":
 					/* Marks begin of skip if:
-					 * * Next char is not SLASH
+					 * * Next c is not SLASH
 					 */
-					skip = (char = selector[--index]) !== SLASH;
+					skip = (c = selector[--start]) !== SLASH;
 					break;
 
 				case "[":
 					/* Marks end of skip if:
-					 * * Next char is not SLASH
+					 * * Next c is not SLASH
 					 */
-					if (!(skip = (char = selector[--index]) === SLASH)) {
-						// Compensate for index already decreased
-						stop = index + 1;
+					if (!(skip = (c = selector[--start]) === SLASH)) {
+						// Compensate for start already decreased
+						stop = start + 1;
 					}
 					break;
 
 				case POUND:
 				case PERIOD:
 					/* Marks stop if:
-					 * * Next char is not SLASH
-					 * * Next char is not SPACE
+					 * * Next c is not SLASH
+					 * * Next c is not SPACE
 					 * * Not in skip mode
 					 */
-					if ((char = selector[--index]) !== SLASH && char !== SPACE && !skip) {
-						// Compensate for index already decreased
-						stop = index + 1;
+					if ((c = selector[--start]) !== SLASH && c !== SPACE && !skip) {
+						// Compensate for start already decreased
+						stop = start + 1;
 					}
 					break;
 
 				default:
-					// Store next char
-					char = selector[--index];
+					// Store next c
+					c = selector[--start];
 					break;
 			}
 		}
 
-		return selector.substring(index, stop);
+		return selector.substring(start, stop);
 	}
 
 	/**

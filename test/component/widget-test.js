@@ -119,6 +119,36 @@ buster.testCase("troopjs-browser/component/widget", function (run) {
 					}
 				},
 
+				"dom event handlers": function() {
+					// See foo-dom-event.js
+					var $el = this.$el.filter(".foo-dom-event");
+					var $btn;
+					var $txt;
+					var spy = this.spy();
+
+					function dispatch() {
+						// Trigger click with two arguments.
+						$btn.trigger("click", ["foo", "bar"]);
+						// Trigger keydown with arbitary object.
+						$txt.trigger("keydown", { "foo": "bar"});
+					}
+
+					return $el.weave(spy).then(function() {
+						$btn = $el.find("input[type='button']");
+						$txt = $el.find("input[type='text']");
+						dispatch();
+
+						// Assert all matched handlers are invoked.
+						assert.equals(spy.callCount, 4);
+
+						$el.unweave().then(function() {
+							dispatch();
+							// Assert all listeners are removed after widget stopped.
+							refute.called(spy);
+						});
+					});
+				},
+
 				"tearDown": function () {
 					this.$el.remove();
 				}

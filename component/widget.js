@@ -2,59 +2,112 @@
  * TroopJS browser/component/widget
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
-define([ "troopjs-core/component/gadget", "jquery", "../loom/config", "../loom/weave", "../loom/unweave", "../loom/plugin", "troopjs-jquery/destroy" ], function WidgetModule(Gadget, $, config, weave, unweave) {
+define([
+	"troopjs-core/component/gadget",
+	"jquery",
+	"../dom/selector",
+	"troopjs-utils/merge",
+	"troopjs-core/event/constants",
+	"../loom/config",
+	"../loom/weave",
+	"../loom/unweave",
+	"../loom/plugin",
+	"troopjs-jquery/destroy"
+], function WidgetModule(Gadget, $, Selector, merge, EVENT_CONST, LOOM_CONF, weave, unweave) {
 	"use strict";
 
 	var UNDEFINED;
 	var ARRAY_SLICE = Array.prototype.slice;
+	var ARRAY_PUSH = Array.prototype.push;
+	var COMPONENT_PROTOTYPE = Gadget.prototype;
 	var $GET = $.fn.get;
 	var TYPEOF_FUNCTION = "function";
 	var $ELEMENT = "$element";
-	var $HANDLERS = "$handlers";
+	var $HANDLER = "$handler";
+	var DOM = "dom";
 	var FEATURES = "features";
-	var TYPE = "type";
 	var VALUE = "value";
-	var PROXY = "proxy";
-	var GUID = "guid";
+	var NAME = "name";
+	var TYPES = "types";
 	var LENGTH = "length";
-	var $WEFT = config["$weft"];
-	var SELECTOR_WEAVE = "[" + config["weave"] + "]";
-	var SELECTOR_WOVEN = "[" + config["woven"] + "]";
+	var SELECTOR = "selector";
+	var $WEFT = LOOM_CONF["$weft"];
+	var SELECTOR_WEAVE = "[" + LOOM_CONF["weave"] + "]";
+	var SELECTOR_WOVEN = "[" + LOOM_CONF["woven"] + "]";
 
+	var RUNNERS = EVENT_CONST["runners"];
+	var CONTEXT = EVENT_CONST["context"];
+	var CALLBACK = EVENT_CONST["callback"];
+	var DATA = EVENT_CONST["data"];
+	var MODIFIED = EVENT_CONST["modified"];
 
 	/*
-	 * Creates a proxy that executes 'handler' in 'widget' scope
+	 * Internal runner that executes candidates in sequence without overlap
 	 * @private
-	 * @param {Object} widget target widget
-	 * @param {Function} handler target handler
-	 * @returns {Function} proxied handler
+	 * @param {Object} handlers List of handlers
+	 * @param {Array} candidates Array of candidates
+	 * @param {Array} args Initial arguments
+	 * @returns {*} Result from last handler
 	 */
-	function eventProxy(widget, handler) {
-		/*
-		 * Creates a proxy of the outer method 'handler' that first adds 'topic' to the arguments passed
-		 * @returns result of proxied hanlder invocation
-		 */
-		return function handlerProxy() {
-			// Apply with shifted arguments to handler
-			return handler.apply(widget, arguments);
-		};
+	function dom_sequence(handlers, candidates, args) {
+		var $event = args[0];
+		var selector;
+		var modified = handlers[MODIFIED];
+
+		// Try get SELECTOR from handlers and check if MODIFIED
+		if ((selector = handlers[SELECTOR]) === UNDEFINED || selector[MODIFIED] !== modified) {
+			// Create and cache SELECTOR
+			selector = handlers[SELECTOR] = Selector();
+
+			// Set MODIFIED on selector
+			selector[MODIFIED] = modified;
+
+			// Iterate candidates
+			candidates.forEach(function (candidate) {
+				// Add candidate with selector or default selector '*'
+				selector.add(candidate[DATA] || "*", candidate);
+			});
+		}
+
+		return selector
+			// Filter to only selectors that match target
+			.matches($event.target)
+			// Reduce so we can catch the end value
+			.reduce(function (result, selector) {
+				// Get candidate from selector
+				var candidate = selector[1];
+
+				// If immediate propagation is stopped we should just return last result
+				if ($event.isImmediatePropagationStopped()) {
+					return result;
+				}
+
+					// Did the previous candidate return false we should stopPropagation and preventDefault
+				if (result === false) {
+					$event.stopPropagation();
+					$event.preventDefault();
+				}
+
+				// Run candidate, provide result to next run
+				return candidate[CALLBACK].apply(candidate[CONTEXT], args);
+			}, UNDEFINED);
 	}
 
-	/*
+	/**
 	 * Creates a proxy of the inner method 'render' with the '$fn' parameter set
 	 * @private
 	 * @param $fn jQuery method
 	 * @returns {Function} proxied render
 	 */
-	function renderProxy($fn) {
+	function $render($fn) {
 		/*
 		 * Renders contents into element
 		 * @private
 		 * @param {Function|String} contents Template/String to render
-		 * @param {Object..} [data] If contents is a template - template data
-		 * @returns {Object} me
+		 * @param {...*} [args] Template arguments
+		 * @returns {Promise} Promise of  render
 		 */
-		function render(contents, data) {
+		function render(contents, args) {
 			/*jshint validthis:true*/
 			var me = this;
 
@@ -94,71 +147,78 @@ define([ "troopjs-core/component/gadget", "jquery", "../loom/config", "../loom/w
 			$element = $($get.call($element, 0));
 		}
 
+		// Store $ELEMENT
 		me[$ELEMENT] = $element;
-		me[$HANDLERS] = [];
+
+		/**
+		 * Handles DOM events by emitting them
+		 * @private
+		 * @param $event jQuery Event
+		 * @returns {*} Result from last executed handler
+		 */
+		me[$HANDLER] = function $handler($event) {
+			// Prepare args[0]
+			var args = [ "dom/" + $event.type + ":dom_sequence" ];
+
+			// Push rest of arguments
+			ARRAY_PUSH.apply(args, arguments);
+
+			// Return result of emit
+			return me.emit.apply(me, args);
+		};
 
 		if (displayName !== UNDEFINED) {
 			me.displayName = displayName;
 		}
+
 	}, {
 		"displayName" : "browser/component/widget",
 
 		"sig/initialize" : function onInitialize() {
 			var me = this;
 			var $element = me[$ELEMENT];
-			var $handler;
-			var $handlers = me[$HANDLERS];
+			var $handler = me[$HANDLER];
 			var special;
-			var specials = me.constructor.specials.dom;
-			var type;
-			var features;
-			var value;
-			var proxy;
+			var specials;
 			var i;
 			var iMax;
 
-			// Iterate specials
-			for (i = 0, iMax = specials ? specials[LENGTH] : 0; i < iMax; i++) {
-				// Get special
-				special = specials[i];
+			// Make sure we have DOM specials
+			if ((specials = me.constructor.specials[DOM]) !== UNDEFINED) {
+				// Iterate specials
+				for (i = 0, iMax = specials[LENGTH]; i < iMax; i++) {
+					special = specials[i];
 
-				// Create $handler
-				$handler = $handlers[i] = {};
+					// Add special to emitter
+					me.on(special[NAME], special[VALUE], special[FEATURES]);
+				}
 
-				// Set $handler properties
-				$handler[TYPE] = type = special[TYPE];
-				$handler[FEATURES] = features = special[FEATURES];
-				$handler[VALUE] = value = special[VALUE];
-				$handler[PROXY] = proxy = eventProxy(me, value);
-
-				// Attach proxy
-				$element.on(type, features, me, proxy);
-
-				// Copy GUID from proxy to value (so you can use .off to remove it)
-				value[GUID] = proxy[GUID];
+				// Bind $handler to $element
+				$element.on(specials[TYPES].join(" "), null, me, $handler);
 			}
 		},
 
 		"sig/finalize" : function onFinalize() {
 			var me = this;
 			var $element = me[$ELEMENT];
-			var $handler;
-			var $handlers = me[$HANDLERS];
+			var $handler = me[$HANDLER];
+			var special;
+			var specials;
 			var i;
 			var iMax;
 
-			// Iterate $handlers
-			for (i = 0, iMax = $handlers[LENGTH]; i < iMax; i++) {
-				// Get $handler
-				$handler = $handlers[i];
+			// Make sure we have DOM specials
+			if ((specials = me.constructor.specials[DOM]) !== UNDEFINED) {
+				// Iterate specials
+				for (i = 0, iMax = specials[LENGTH]; i < iMax; i++) {
+					special = specials[i];
 
-				// Leave the "destroy" event as the last handler, for jQuery to remove when removing the element.
-				if ($handler[TYPE] === "destroy") {
-					continue;
+					// Remove special from emitter
+					me.off(special[NAME], special[VALUE]);
 				}
 
-				// Detach event handler
-				$element.off($handler[TYPE], $handler[FEATURES], $handler[PROXY]);
+				// Unbind $handler from $element
+				$element.off(specials[TYPES].join(" "), null, $handler);
 			}
 		},
 
@@ -200,36 +260,44 @@ define([ "troopjs-core/component/gadget", "jquery", "../loom/config", "../loom/w
 		 * Renders content and inserts it before $element
 		 * @method
 		 */
-		"before" : renderProxy($.fn.before),
+		"before" : $render($.fn.before),
 
 		/**
 		 * Renders content and inserts it after $element
 		 * @method
 		 */
-		"after" : renderProxy($.fn.after),
+		"after" : $render($.fn.after),
 
 		/**
 		 * Renders content and replaces $element contents
 		 * @method
 		 */
-		"html" : renderProxy($.fn.html),
+		"html" : $render($.fn.html),
 
 		/**
 		 * Renders content and replaces $element contents
 		 * @method
 		 */
-		"text" : renderProxy($.fn.text),
+		"text" : $render($.fn.text),
 
 		/**
 		 * Renders content and appends it to $element
 		 * @method
 		 */
-		"append" : renderProxy($.fn.append),
+		"append" : $render($.fn.append),
 
 		/**
 		 * Renders content and prepends it to $element
 		 * @method
 		 */
-		"prepend" : renderProxy($.fn.prepend)
-	});
+		"prepend" : $render($.fn.prepend)
+	}, (function (runners) {
+		var result = {};
+
+		result[RUNNERS] = merge.call({}, runners, {
+			"dom_sequence" : dom_sequence
+		});
+
+		return result;
+	})(COMPONENT_PROTOTYPE[RUNNERS]));
 });
