@@ -9,6 +9,10 @@ define([
 ], function (Widget, URI) {
 	"use strict";
 
+	/**
+	 * Widget lives on the window object that handles `window.location.hash` changes.
+	 * @class browser.hash.widget
+	 */
 	var $ELEMENT = "$element";
 	var HASH = "_hash";
 	var RE = /^#/;
@@ -44,6 +48,12 @@ define([
 			}
 		},
 
+		/**
+		 * Event that changes the URI hash of the current page.
+		 * @param {Object} $event The jQuery DOM event.
+		 * @param {String|core.net.uri} uri The new URI to change the hash to.
+		 * @param {Boolean} silent Change the hash silently without triggering @{link #event-urichange} event.
+		 */
 		"dom/hashset" : function ($event, uri, silent) {
 			var me = this;
 			var hash = uri.toString();
@@ -54,5 +64,11 @@ define([
 
 			me[$ELEMENT].get(0).location.hash = hash;
 		}
+
+		/**
+		 * Custom DOM event that tells the page URI hash has changed.
+		 * @event urichange
+		 */
+
 	});
 });

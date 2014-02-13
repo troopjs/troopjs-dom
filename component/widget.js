@@ -32,7 +32,7 @@ define([
 	var SELECTOR_WOVEN = "[" + LOOM_CONF["woven"] + "]";
 
 
-	/**
+	/*
 	 * Creates a proxy of the inner method 'render' with the '$fn' parameter set
 	 * @private
 	 * @param $fn jQuery method
@@ -89,7 +89,7 @@ define([
 		// Store $ELEMENT
 		me[$ELEMENT] = $element;
 
-		/**
+		/*
 		 * Handles DOM events by emitting them
 		 * @private
 		 * @param {jQuery.Event} $event jQuery Event

@@ -26,7 +26,7 @@ define([ "troopjs-composer/mixin/factory", "./constants", "./config" ], function
 	var querySelectorAll = CONFIG[CONSTANTS["querySelectorAll"]];
 	var matchesSelector = CONFIG[CONSTANTS["matchesSelector"]];
 
-	/**
+	/*
 	 * Extracts key for universal indexer
 	 * @private
 	 * @return {String[]}
@@ -35,7 +35,7 @@ define([ "troopjs-composer/mixin/factory", "./constants", "./config" ], function
 		return [ STAR ];
 	}
 
-	/**
+	/*
 	 * Extracts key for tag indexer
 	 * @private
 	 * @param element
@@ -45,7 +45,7 @@ define([ "troopjs-composer/mixin/factory", "./constants", "./config" ], function
 		return [ element.nodeName.toUpperCase() ];
 	}
 
-	/**
+	/*
 	 * Extracts key for class indexer
 	 * @private
 	 * @param element
@@ -70,7 +70,7 @@ define([ "troopjs-composer/mixin/factory", "./constants", "./config" ], function
 		return result;
 	}
 
-	/**
+	/*
 	 * Extracts key for id indexer
 	 * @private
 	 * @param element
@@ -82,7 +82,7 @@ define([ "troopjs-composer/mixin/factory", "./constants", "./config" ], function
 		return (id = element.id) !== UNDEFINED && [ id ];
 	}
 
-	/**
+	/*
 	 * Gets last token from selector
 	 * @private
 	 * @param {String} selector CSS selector
@@ -150,7 +150,7 @@ define([ "troopjs-composer/mixin/factory", "./constants", "./config" ], function
 		return selector.substring(start, stop);
 	}
 
-	/**
+	/*
 	 * Compares candidates (that have COUNT properties)
 	 * @private
 	 * @param {Object} a
@@ -167,7 +167,7 @@ define([ "troopjs-composer/mixin/factory", "./constants", "./config" ], function
 		me[INDEXES] = [];
 		me[COUNT] = 0;
 	}, {
-		/**
+		/*
 		 * Adds candidate
 		 * @param {String} selector CSS selector
 		 * @param {...*} [args] Additional arguments attached with candidate
@@ -237,7 +237,7 @@ define([ "troopjs-composer/mixin/factory", "./constants", "./config" ], function
 			return me;
 		},
 
-		/**
+		/*
 		 * Matches candidates against element
 		 * @param element DOM Element
 		 * @return {Array} Matching array of candidates
@@ -289,7 +289,7 @@ define([ "troopjs-composer/mixin/factory", "./constants", "./config" ], function
 		}
 	});
 
-	/**
+	/*
 	 * @inheritdoc #tail
 	 */
 	Selector.tail = tail;
