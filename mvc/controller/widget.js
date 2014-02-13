@@ -36,42 +36,8 @@ define([
 		return ischanged;
 	}
 
-	function handleRequests(requests) {
-		var me = this;
-		return me.task(function (resolve, reject) {
-			// Track this task.
-			var taskNo = ++currTaskNo;
-
-			me.request(extend.call({}, me[CACHE], requests))
-				.then(function (results) {
-					// Reject if this promise is not the current pending task.
-					if (taskNo == currTaskNo) {
-						// Calculate updates
-						var updates = {};
-						var updated = Object.keys(results).reduce(function (update, key) {
-							if (checkChanged.apply(me, [key, results[key]])) {
-								updates[key] = results[key];
-								update = true;
-							}
-
-							return update;
-						}, false);
-
-						// Update cache
-						me[CACHE] = results;
-
-						resolve(me.emit("results", results)
-							.then(function () {
-								return updated && me.emit("updates", updates);
-							})
-							.then(function () {
-								// Trigger `hashset`
-								me.$element.trigger("hashset", [me.data2uri(results), true]);
-							})
-							.yield(results));
-					}
-				});
-		});
+	function lastValue(values) {
+		return values[values.length - 1];
 	}
 
 	/**
@@ -80,7 +46,7 @@ define([
 	 *
 	 *  1. {@link #uri2data} Implement this method to parse the requested URL into a route hash object which is basically a
 	 *  hash composed of URI segments.
-	 *  1. {@link #request} Implement this method to fulfill the requested route hash value with actual application
+	 *  1. {@link #event-requests on/requests} Implement this method to fulfill the requested route hash value with actual application
 	 *  states, potentially loaded from server side.
 	 *  1. {@link #data2uri} Implement this method to serialize the application states to a new URL afterwards.
 	 *  1. {@link #event-updates on/updates} (Optional) Event to notify about the only application states that has changed.
@@ -98,17 +64,49 @@ define([
 		 * The "urichange" event is triggered by {@link browser.hash.widget} on application start or page hash changes.
 		 */
 		"dom/urichange": function ($event, uri) {
-			handleRequests(this.uri2data(uri));
+			this.request(this.uri2data(uri));
 		},
 
 		/**
-		 * Implement this method to load application data requested by the page, e.g. query the server for each of the request key.
-		 *
-		 * @param {Object} spec The value returned from {@link #uri2data} as the page routing request.
-		 * @return {Promise} data The promise that resolved to the page data fulfilled by the application logic.
+		 * Request for route changes to the current URI.
+		 * @param {Object} requests The hash of segments and values to be changed.
 		 */
-		"request" : function (spec) {
-			throw new Error("request is not implemented");
+		"request": function requestRouteChanges(requests) {
+			var me = this;
+			return me.task(function(resolve) {
+				// Track this task.
+				var taskNo = ++currTaskNo;
+				// Emit the requested route hash.
+				return me.emit("request", extend.call({}, me[CACHE], requests))
+				 .then(lastValue)
+				 .then(function(results) {
+						// Reject if this promise is not the current pending task.
+					if (taskNo == currTaskNo) {
+						// Calculate updates
+						var updates = {};
+						var updated = Object.keys(results).reduce(function(update, key) {
+							if (checkChanged.apply(me, [key, results[key]])) {
+								updates[key] = results[key];
+								update = true;
+							}
+
+							return update;
+						}, false);
+
+						// Update cache
+						me[CACHE] = results;
+
+						// Emit all cached properties.
+						resolve(me.emit("results", results).then(function() {
+								// Emit only the changed properties.
+								return updated && me.emit("updates", updates).then(lastValue);
+						}).then(function() {
+							// Change the hash to new URI.
+							me.$element.trigger("hashset", [me.data2uri(results), true]);
+						}).yield(results));
+					}
+				});
+			});
 		},
 
 		/**
@@ -179,7 +177,7 @@ define([
 		},
 
 		/**
-		 * Implement this method to return a "timestamp" alike value that determinate whether a data object has ever changed.
+		 * Implement this method to return a "timestamp" alike value that determinate whether one data object has ever changed since the last route.
 		 *
 		 * @param {Object} data Arbitrary data object.
 		 * @return {String} The index string that indicates the freshness of the data.
@@ -187,14 +185,22 @@ define([
 		"hash" : function (data) { return ""; }
 
 		/**
-		 * The hub topic on which data changes are published after each routing, those that reflects the route changes
-		 * happens to the URI.
-		 * @event updates
+		 * Listen to this event for requested route hash, to resolve it with actual values that are probably loaded from server side.
+		 * @event requests
+		 * @param {Object} requests A hash of URI segments to be changed.
+		 * @return {Object} The fulfilled data object.
 		 */
 
 		/**
-		 * The hub topic on which all application route data are published after each routing.
+		 * Listen to this event for data changes that are triggered by routing, reflects only the segments that has changed on the URI.
+		 * @event updates
+		 * @param {Object} data Arbitrary data object.
+		 */
+
+		/**
+		 * Listen to this event for all application data triggered by routing.
 		 * @event results
+		 * @param {Object} data Arbitrary data object.
 		 */
 
 	}, Hash);
