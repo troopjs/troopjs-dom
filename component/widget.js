@@ -3,16 +3,15 @@
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
 define([
-	"troopjs-core/component/gadget",
 	"jquery",
+	"troopjs-core/component/gadget",
 	"troopjs-utils/merge",
+	"./runner/sequence",
 	"../loom/config",
 	"../loom/weave",
 	"../loom/unweave",
-	"../loom/plugin",
-	"./runner/sequence",
 	"troopjs-jquery/destroy"
-], function WidgetModule(Gadget, $, merge, LOOM_CONF, weave, unweave, sequence) {
+], function WidgetModule($, Gadget, merge, sequence, LOOM_CONF, weave, unweave) {
 	"use strict";
 
 	var UNDEFINED;
