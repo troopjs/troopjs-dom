@@ -3,23 +3,20 @@
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
 define([
-	"troopjs-core/component/gadget",
 	"jquery",
-	"../dom/selector",
+	"troopjs-core/component/gadget",
 	"troopjs-utils/merge",
-	"troopjs-core/event/constants",
+	"./runner/sequence",
 	"../loom/config",
 	"../loom/weave",
 	"../loom/unweave",
-	"../loom/plugin",
 	"troopjs-jquery/destroy"
-], function WidgetModule(Gadget, $, Selector, merge, EVENT_CONST, LOOM_CONF, weave, unweave) {
+], function WidgetModule($, Gadget, merge, sequence, LOOM_CONF, weave, unweave) {
 	"use strict";
 
 	var UNDEFINED;
 	var ARRAY_SLICE = Array.prototype.slice;
 	var ARRAY_PUSH = Array.prototype.push;
-	var COMPONENT_PROTOTYPE = Gadget.prototype;
 	var $GET = $.fn.get;
 	var TYPEOF_FUNCTION = "function";
 	var $ELEMENT = "$element";
@@ -30,68 +27,10 @@ define([
 	var NAME = "name";
 	var TYPES = "types";
 	var LENGTH = "length";
-	var SELECTOR = "selector";
 	var $WEFT = LOOM_CONF["$weft"];
 	var SELECTOR_WEAVE = "[" + LOOM_CONF["weave"] + "]";
 	var SELECTOR_WOVEN = "[" + LOOM_CONF["woven"] + "]";
 
-	var RUNNERS = EVENT_CONST["runners"];
-	var CONTEXT = EVENT_CONST["context"];
-	var CALLBACK = EVENT_CONST["callback"];
-	var DATA = EVENT_CONST["data"];
-	var MODIFIED = EVENT_CONST["modified"];
-
-	/*
-	 * Internal runner that executes candidates in sequence without overlap
-	 * @private
-	 * @param {Object} handlers List of handlers
-	 * @param {Array} candidates Array of candidates
-	 * @param {Array} args Initial arguments
-	 * @returns {*} Result from last handler
-	 */
-	function dom_sequence(handlers, candidates, args) {
-		var $event = args[0];
-		var selector;
-		var modified = handlers[MODIFIED];
-
-		// Try get SELECTOR from handlers and check if MODIFIED
-		if ((selector = handlers[SELECTOR]) === UNDEFINED || selector[MODIFIED] !== modified) {
-			// Create and cache SELECTOR
-			selector = handlers[SELECTOR] = Selector();
-
-			// Set MODIFIED on selector
-			selector[MODIFIED] = modified;
-
-			// Iterate candidates
-			candidates.forEach(function (candidate) {
-				// Add candidate with selector or default selector '*'
-				selector.add(candidate[DATA] || "*", candidate);
-			});
-		}
-
-		return selector
-			// Filter to only selectors that match target
-			.matches($event.target)
-			// Reduce so we can catch the end value
-			.reduce(function (result, selector) {
-				// Get candidate from selector
-				var candidate = selector[1];
-
-				// If immediate propagation is stopped we should just return last result
-				if ($event.isImmediatePropagationStopped()) {
-					return result;
-				}
-
-					// Did the previous candidate return false we should stopPropagation and preventDefault
-				if (result === false) {
-					$event.stopPropagation();
-					$event.preventDefault();
-				}
-
-				// Run candidate, provide result to next run
-				return candidate[CALLBACK].apply(candidate[CONTEXT], args);
-			}, UNDEFINED);
-	}
 
 	/**
 	 * Creates a proxy of the inner method 'render' with the '$fn' parameter set
@@ -153,14 +92,18 @@ define([
 		/**
 		 * Handles DOM events by emitting them
 		 * @private
-		 * @param $event jQuery Event
+		 * @param {jQuery.Event} $event jQuery Event
+		 * @param {...*} [args] Additional handler arguments
 		 * @returns {*} Result from last executed handler
 		 */
-		me[$HANDLER] = function $handler($event) {
-			// Prepare args[0]
-			var args = [ "dom/" + $event.type + ":dom_sequence" ];
+		me[$HANDLER] = function $handler($event, args) {
+			// Redefine args
+			args = [ {
+				"type" : "dom/" + $event.type,
+				"runner" : sequence
+			} ];
 
-			// Push rest of arguments
+			// Push original arguments on args
 			ARRAY_PUSH.apply(args, arguments);
 
 			// Return result of emit
@@ -291,13 +234,5 @@ define([
 		 * @method
 		 */
 		"prepend" : $render($.fn.prepend)
-	}, (function (runners) {
-		var result = {};
-
-		result[RUNNERS] = merge.call({}, runners, {
-			"dom_sequence" : dom_sequence
-		});
-
-		return result;
-	})(COMPONENT_PROTOTYPE[RUNNERS]));
+	});
 });

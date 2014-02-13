@@ -21,10 +21,10 @@ define([ "troopjs-browser/component/widget"], function FooWidgetModule(Widget) {
 		assert.equals($evt.type, "keydown", "keydown event is not called");
 		assert.equals({"foo": "bar"}, data);
 		this.spy();
-	};
+	}
 
 	function assertFails() {
-		assert.fail("this method shouldn't be called");
+		assert(false, "this method shouldn't be called");
 	}
 
 
