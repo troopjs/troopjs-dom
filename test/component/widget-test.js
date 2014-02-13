@@ -7,10 +7,12 @@ buster.testCase("troopjs-browser/component/widget", function (run) {
 
 	require([
 		"troopjs-browser/component/widget",
+		"troopjs-browser/loom/weave",
+		"troopjs-browser/loom/unweave",
 		"text!troopjs-browser/test/component/widget.html",
 		"jquery"
 	],
-		function (Widget, html, $) {
+		function (Widget, weave, unweave, html, $) {
 
 			run({
 				"setUp": function () {
@@ -21,7 +23,7 @@ buster.testCase("troopjs-browser/component/widget", function (run) {
 				"single widget, no parameter": {
 					"weave/unweave": function () {
 						var $el = this.$el.filter(".foo");
-						return $el.weave().spread(function (widgets) {
+						return weave.call($el).spread(function (widgets) {
 							var widget = widgets[0];
 
 							// data-weave attribute is cleared.
@@ -30,7 +32,7 @@ buster.testCase("troopjs-browser/component/widget", function (run) {
 							assert.equals($el.attr("data-woven"), widget.toString());
 							assert.equals(widget.phase, "started");
 
-							return $el.unweave().then(function () {
+							return unweave.call($el).then(function () {
 								refute.defined($el.attr("data-woven"));
 								assert.equals($el.attr("data-weave"), "troopjs-browser/test/component/foo");
 							});
@@ -41,7 +43,7 @@ buster.testCase("troopjs-browser/component/widget", function (run) {
 				"two widgets, one with parameters": {
 					"weaving": function () {
 						var $el = this.$el.filter(".foobar");
-						return $el.weave(456, "def").spread(function (widgets) {
+						return weave.call($el, 456, "def").spread(function (widgets) {
 							// Two widgets received.
 							var foo = widgets[0];
 							var bar = widgets[1];
@@ -59,7 +61,7 @@ buster.testCase("troopjs-browser/component/widget", function (run) {
 							assert.equals(foo.phase, "started");
 							assert.equals(bar.phase, "started");
 
-							return $el.unweave().then(function () {
+							return unweave.call($el).then(function () {
 								refute.defined($el.attr("data-woven"));
 								assert.equals($el.attr("data-weave"), "troopjs-browser/test/component/foo troopjs-browser/test/component/bar(123, 'abc')");
 							});
@@ -70,9 +72,9 @@ buster.testCase("troopjs-browser/component/widget", function (run) {
 				"two widgets, with unweave attributes": {
 					"weave/unweave": function () {
 						var $el = this.$el.filter(".bar");
-						return $el.weave(456, "def").spread(function (widgets) {
+						return weave.call($el, 456, "def").spread(function (widgets) {
 							var bar = widgets[1];
-							return $el.unweave().spread(function (widgets) {
+							return unweave.call($el).spread(function (widgets) {
 								assert.equals(widgets.length, 1);
 								var foo = widgets[0];
 								assert.equals(foo.displayName, "troopjs-browser/test/component/foo");
@@ -89,12 +91,10 @@ buster.testCase("troopjs-browser/component/widget", function (run) {
 				"dynamic weaving/unweave": {
 					"weave/unweave": function () {
 						var $el = this.$el.filter(".foobar2");
-						return $el.weave().spread(function (widgets) {
+						return weave.call($el).spread(function (widgets) {
 							var foo = widgets[0];
-							return $el
-								.attr("data-weave", "troopjs-browser/test/component/bar(123, 'abc')")
-								.weave(456, "def")
-								.spread(function (widgets) {
+							$el.attr("data-weave", "troopjs-browser/test/component/bar(123, 'abc')");
+							return weave.call($el, 456, "def").spread(function (widgets) {
 
 									assert.equals(widgets.length, 1);
 									var bar = widgets[0];
@@ -107,7 +107,7 @@ buster.testCase("troopjs-browser/component/widget", function (run) {
 
 									$el.attr("data-unweave", "troopjs-browser/test/component/bar");
 
-									return $el.unweave().spread(function (unweaved) {
+									return unweave.call($el).spread(function (unweaved) {
 										assert.equals(unweaved.length, 1);
 
 										// data-unweave attribute should be cleared afterward.
@@ -133,7 +133,7 @@ buster.testCase("troopjs-browser/component/widget", function (run) {
 						$txt.trigger("keydown", { "foo": "bar"});
 					}
 
-					return $el.weave(spy).then(function() {
+					return weave.call($el, spy).then(function() {
 						$btn = $el.find("input[type='button']");
 						$txt = $el.find("input[type='text']");
 						dispatch();
@@ -141,10 +141,10 @@ buster.testCase("troopjs-browser/component/widget", function (run) {
 						// Assert all matched handlers are invoked.
 						assert.equals(spy.callCount, 4);
 
-						$el.unweave().then(function() {
+						unweave.call($el).then(function() {
 							dispatch();
-							// Assert all listeners are removed after widget stopped.
-							refute.called(spy);
+							// Assert all listeners are removed after widget stopped, no more calls.
+							assert.equals(spy.callCount, 4);
 						});
 					});
 				},
