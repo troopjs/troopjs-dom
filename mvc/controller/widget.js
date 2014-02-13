@@ -11,7 +11,7 @@ define([
 	"use strict";
 
 	var CACHE = "_cache";
-	var DISPLAYNAME = "displayName";
+
 	var ARRAY_SLICE = Array.prototype.slice;
 	var currTaskNo = 0;
 
@@ -38,8 +38,6 @@ define([
 
 	function handleRequests(requests) {
 		var me = this;
-		var displayName = me[DISPLAYNAME];
-
 		return me.task(function (resolve, reject) {
 			// Track this task.
 			var taskNo = ++currTaskNo;
@@ -62,9 +60,9 @@ define([
 						// Update cache
 						me[CACHE] = results;
 
-						resolve(me.publish(displayName + "/results", results)
+						resolve(me.emit("results", results)
 							.then(function () {
-								return updated && me.publish(displayName + "/updates", updates);
+								return updated && me.emit("updates", updates);
 							})
 							.then(function () {
 								// Trigger `hashset`
@@ -77,18 +75,18 @@ define([
 	}
 
 	/**
-	 * Abstracted URL based router used for single-page application page flow control. Extend this widget with the following
-	 * methods implemented:
+	 * An abstracted routing widget for single-page application page-flow control. It basically processes the page URI
+	 * through a list of following methods in sequence, most of which are to be implemented by subclassing this widget.
 	 *
-	 *  - {@link #uri2data} This method is to parse the requested URL.
-	 *  - {@link #request} This method is to do whatever you like with the request object, potentially load any server data.
-	 *  - {@link #data2uri} This method is to serialize the new URL afterward.
+	 *  1. {@link #uri2data} Implement this method to parse the requested URL into a route hash object which is basically a
+	 *  hash composed of URI segments.
+	 *  1. {@link #request} Implement this method to fulfill the requested route hash value with actual application
+	 *  states, potentially loaded from server side.
+	 *  1. {@link #data2uri} Implement this method to serialize the application states to a new URL afterwards.
+	 *  1. {@link #event-updates on/updates} (Optional) Event to notify about the only application states that has changed.
+	 *  1. {@link #event-results on/results} (Optional) Event to notify about the all application states.
 	 *
-	 * Implementation can subscribe to the following topics for data retrieval:
-	 *
-	 *  - [display name]/results Subscribe to this topic for list of all data from the resolved request.
-	 *  - [display name]/updates Subscribe to this topic for only updated resolved data that changes from the last request.
-	 *
+	 * Application subscribes to {@link #event-updates} and {@link #event-results} for consuming the processed data.
 	 * @class browser.mvc.controller
 	 */
 	return Widget.extend(function () {
@@ -96,22 +94,11 @@ define([
 	}, {
 		"displayName": "browser/mvc/controller/widget",
 
-		"sig/initialize": function () {
-			var me = this;
-
-			me.subscribe(me[DISPLAYNAME] + "/requests", handleRequests);
-		},
-
-		"sig/finalize": function () {
-			var me = this;
-
-			me.unsubscribe(me[DISPLAYNAME]+ "/requests", handleRequests);
-		},
-
+		/*
+		 * The "urichange" event is triggered by {@link browser.hash.widget} on application start or page hash changes.
+		 */
 		"dom/urichange": function ($event, uri) {
-			var me = this;
-
-			me.publish(me[DISPLAYNAME] + "/requests", me.uri2data(uri));
+			handleRequests(this.uri2data(uri));
 		},
 
 		/**
@@ -142,6 +129,7 @@ define([
 		 * 		data["item"] = path[2] || 0;
 		 * 	}
 		 *
+		 * @param {core.net.uri} uri URI that reflects the requested URI.
 		 * @return {Object} the hash that represents the current URL.
 		 * @method
 		 */
@@ -183,12 +171,31 @@ define([
 		 * 		return uri;
 		 * 	}
 		 *
+		 * @param {Object} data Arbitrary data object that reflects the current states of the page.
+		 * @return {String|core.net.uri} The new URI to update the current location with.
 		 */
 		"data2uri" : function (data) {
 			throw new Error("data2uri is not implemented");
 		},
 
-		// Override me to compute the data hash.
+		/**
+		 * Implement this method to return a "timestamp" alike value that determinate whether a data object has ever changed.
+		 *
+		 * @param {Object} data Arbitrary data object.
+		 * @return {String} The index string that indicates the freshness of the data.
+		 */
 		"hash" : function (data) { return ""; }
+
+		/**
+		 * The hub topic on which data changes are published after each routing, those that reflects the route changes
+		 * happens to the URI.
+		 * @event updates
+		 */
+
+		/**
+		 * The hub topic on which all application route data are published after each routing.
+		 * @event results
+		 */
+
 	}, Hash);
 });
