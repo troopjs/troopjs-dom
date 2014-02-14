@@ -1,5 +1,6 @@
 define([
-	"../../dom/selector"
+	"../../dom/selector",
+	"poly/array"
 ], function SequenceModule(Selector) {
 
 	var UNDEFINED;
