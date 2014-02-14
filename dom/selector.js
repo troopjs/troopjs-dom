@@ -142,7 +142,7 @@ define([ "troopjs-composer/mixin/factory", "./constants", "./config" ], function
 
 				default:
 					// Store next c
-					c = selector[--start];
+					c = selector.charAt(--start);
 					break;
 			}
 		}
@@ -189,7 +189,7 @@ define([ "troopjs-composer/mixin/factory", "./constants", "./config" ], function
 			args[COUNT] = me[COUNT]++;
 
 			// Check the first char to determine name/indexer and transform key
-			switch (key[0]) {
+			switch (key.charAt(0)) {
 				case POUND:
 					name = ID;
 					indexer = getElementId;
