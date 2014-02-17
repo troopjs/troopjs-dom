@@ -3,34 +3,37 @@
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
 define([
-	"jquery",
 	"troopjs-core/component/gadget",
-	"troopjs-utils/merge",
 	"./runner/sequence",
+	"jquery",
+	"when",
+	"troopjs-utils/merge",
 	"../loom/config",
 	"../loom/weave",
 	"../loom/unweave",
 	"troopjs-jquery/destroy"
-], function WidgetModule($, Gadget, merge, sequence, LOOM_CONF, weave, unweave) {
+], function WidgetModule(Gadget, sequence, $, when, merge, LOOM_CONF, weave, unweave) {
 	"use strict";
 
 	var UNDEFINED;
-	var ARRAY_SLICE = Array.prototype.slice;
-	var ARRAY_PUSH = Array.prototype.push;
+	var NULL = null;
+	var ARRAY_PROTO = Array.prototype;
+	var ARRAY_SLICE = ARRAY_PROTO.slice;
+	var ARRAY_PUSH = ARRAY_PROTO.push;
 	var $GET = $.fn.get;
 	var TYPEOF_FUNCTION = "function";
 	var $ELEMENT = "$element";
 	var $HANDLER = "$handler";
 	var DOM = "dom";
 	var FEATURES = "features";
-	var VALUE = "value";
 	var NAME = "name";
-	var TYPES = "types";
-	var LENGTH = "length";
+	var VALUE = "value";
+	var TYPE = "type";
+	var RUNNER = "runner";
 	var $WEFT = LOOM_CONF["$weft"];
 	var SELECTOR_WEAVE = "[" + LOOM_CONF["weave"] + "]";
 	var SELECTOR_WOVEN = "[" + LOOM_CONF["woven"] + "]";
-
+	var RE = new RegExp("^" + DOM + "/(.+)");
 
 	/*
 	 * Creates a proxy of the inner method 'render' with the '$fn' parameter set
@@ -90,27 +93,6 @@ define([
 		// Store $ELEMENT
 		me[$ELEMENT] = $element;
 
-		/*
-		 * Handles DOM events by emitting them
-		 * @private
-		 * @param {jQuery.Event} $event jQuery Event
-		 * @param {...*} [args] Additional handler arguments
-		 * @returns {*} Result from last executed handler
-		 */
-		me[$HANDLER] = function $handler($event, args) {
-			// Redefine args
-			args = [ {
-				"type" : "dom/" + $event.type,
-				"runner" : sequence
-			} ];
-
-			// Push original arguments on args
-			ARRAY_PUSH.apply(args, arguments);
-
-			// Return result of emit
-			return me.emit.apply(me, args);
-		};
-
 		if (displayName !== UNDEFINED) {
 			me.displayName = displayName;
 		}
@@ -120,54 +102,53 @@ define([
 
 		"sig/initialize" : function onInitialize() {
 			var me = this;
-			var $element = me[$ELEMENT];
-			var $handler = me[$HANDLER];
-			var special;
-			var specials;
-			var i;
-			var iMax;
 
-			// Make sure we have DOM specials
-			if ((specials = me.constructor.specials[DOM]) !== UNDEFINED) {
-				// Iterate specials
-				for (i = 0, iMax = specials[LENGTH]; i < iMax; i++) {
-					special = specials[i];
+			return when.map(me.constructor.specials[DOM] || ARRAY_PROTO, function (special) {
+				return me.on(special[NAME], special[VALUE], special[FEATURES]);
+			});
+		},
 
-					// Add special to emitter
-					me.on(special[NAME], special[VALUE], special[FEATURES]);
-				}
+		"sig/setup": function onSetup(type, handlers) {
+			var me = this;
+			var matches;
 
-				// Bind $handler to $element
-				$element.on(specials[TYPES].join(" "), null, me, $handler);
+			if ((matches = RE.exec(type)) !== NULL) {
+				// $element.on handlers[$HANDLER]
+				me[$ELEMENT].on(matches[1], NULL, me, handlers[$HANDLER] = function $handler($event, args) {
+					// Redefine args
+					args = {};
+					args[TYPE] = type;
+					args[RUNNER] = sequence;
+					args = [ args];
+
+					// Push original arguments on args
+					ARRAY_PUSH.apply(args, arguments);
+
+					// Return result of emit
+					return me.emit.apply(me, args);
+				});
 			}
 		},
 
-		"sig/finalize" : function onFinalize() {
+		"sig/teardown": function onTeardown(type, handlers) {
 			var me = this;
-			var $element = me[$ELEMENT];
-			var $handler = me[$HANDLER];
-			var special;
-			var specials;
-			var i;
-			var iMax;
+			var matches;
 
-			// Make sure we have DOM specials
-			if ((specials = me.constructor.specials[DOM]) !== UNDEFINED) {
-				// Iterate specials
-				for (i = 0, iMax = specials[LENGTH]; i < iMax; i++) {
-					special = specials[i];
-
-					// Remove special from emitter
-					me.off(special[NAME], special[VALUE]);
-				}
-
-				// Unbind $handler from $element
-				$element.off(specials[TYPES].join(" "), null, $handler);
+			if ((matches = RE.exec(type)) !== NULL) {
+				// $element.off handlers[$HANDLER]
+				me[$ELEMENT].off(matches[1], NULL, handlers[$HANDLER]);
 			}
 		},
 
 		"sig/task" : function onTask(task) {
 			this[$ELEMENT].trigger("task", [ task ]);
+		},
+
+		/**
+		 * Destroy DOM handler
+		 */
+		"dom/destroy" : function () {
+			this.unweave();
 		},
 
 		/**
@@ -191,13 +172,6 @@ define([
 			}
 
 			return unweave.apply(woven, arguments);
-		},
-
-		/**
-		 * Destroy DOM handler
-		 */
-		"dom/destroy" : function () {
-			this.unweave();
 		},
 
 		/**
