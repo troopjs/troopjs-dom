@@ -139,7 +139,7 @@ buster.testCase("troopjs-browser/component/widget", function (run) {
 						dispatch();
 
 						// Assert all matched handlers are invoked.
-						assert.equals(spy.callCount, 4);
+						assert.equals(spy.callCount, 6);
 
 						unweave.call($el).then(function() {
 							dispatch();
