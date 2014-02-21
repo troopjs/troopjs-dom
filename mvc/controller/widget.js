@@ -98,7 +98,7 @@ define([
 		 * The "urichange" event is triggered by {@link browser.hash.widget} on application start or page hash changes.
 		 */
 		"dom/urichange": function ($event, uri) {
-			handleRequests(this.uri2data(uri));
+			handleRequests.call(this, this.uri2data(uri));
 		},
 
 		/**
