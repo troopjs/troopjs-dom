@@ -119,7 +119,7 @@ buster.testCase("troopjs-browser/component/widget", function (run) {
 					}
 				},
 
-				"// dom event handlers": function() {
+				"dom event handlers": function() {
 					// See foo-dom-event.js
 					var $el = this.$el.filter(".foo-dom-event");
 					var $btn;
