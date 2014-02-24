@@ -12,7 +12,7 @@ define([
 	"../loom/weave",
 	"../loom/unweave",
 	"troopjs-jquery/destroy"
-], function WidgetModule(Gadget, sequence, $, when, merge, LOOM_CONF, weave, unweave) {
+], function WidgetModule(Gadget, sequence, $, when, merge, LOOM_CONF, loom_weave, loom_unweave) {
 	"use strict";
 
 	var UNDEFINED;
@@ -23,7 +23,7 @@ define([
 	var $GET = $.fn.get;
 	var TYPEOF_FUNCTION = "function";
 	var $ELEMENT = "$element";
-	var $HANDLER = "$handler";
+	var PROXY = "proxy";
 	var DOM = "dom";
 	var FEATURES = "features";
 	var NAME = "name";
@@ -54,7 +54,7 @@ define([
 			var me = this;
 
 			// Call render with contents (or result of contents if it's a function)
-			return weave.call($fn.call(me[$ELEMENT],
+			return loom_weave.call($fn.call(me[$ELEMENT],
 				typeof contents === TYPEOF_FUNCTION ? contents.apply(me, ARRAY_SLICE.call(arguments, 1)) : contents
 			).find(SELECTOR_WEAVE));
 		}
@@ -67,7 +67,7 @@ define([
 	 * @class browser.component.widget
 	 * @extends core.component.gadget
 	 */
-	return Gadget.extend(function ($element, displayName) {
+	return Gadget.extend(function Widget($element, displayName) {
 		var me = this;
 		var $get;
 
@@ -113,8 +113,8 @@ define([
 			var matches;
 
 			if ((matches = RE.exec(type)) !== NULL) {
-				// $element.on handlers[$HANDLER]
-				me[$ELEMENT].on(matches[1], NULL, me, handlers[$HANDLER] = function $handler($event, args) {
+				// $element.on handlers[PROXY]
+				me[$ELEMENT].on(matches[1], NULL, me, handlers[PROXY] = function dom_proxy($event, args) {
 					// Redefine args
 					args = {};
 					args[TYPE] = type;
@@ -135,8 +135,8 @@ define([
 			var matches;
 
 			if ((matches = RE.exec(type)) !== NULL) {
-				// $element.off handlers[$HANDLER]
-				me[$ELEMENT].off(matches[1], NULL, handlers[$HANDLER]);
+				// $element.off handlers[PROXY]
+				me[$ELEMENT].off(matches[1], NULL, handlers[PROXY]);
 			}
 		},
 
@@ -147,7 +147,7 @@ define([
 		/**
 		 * Destroy DOM handler
 		 */
-		"dom/destroy" : function () {
+		"dom/destroy" : function onDestroy() {
 			this.unweave();
 		},
 
@@ -155,15 +155,15 @@ define([
 		 * Weaves all children of $element
 		 * @returns {Promise} from weave
 		 */
-		"weave" : function () {
-			return weave.apply(this[$ELEMENT].find(SELECTOR_WEAVE), arguments);
+		"weave" : function weave() {
+			return loom_weave.apply(this[$ELEMENT].find(SELECTOR_WEAVE), arguments);
 		},
 
 		/**
 		 * Unweaves all woven children widgets including the widget itself.
 		 * @returns {Promise} Promise of completeness of unweaving all widgets.
 		 */
-		"unweave" : function () {
+		"unweave" : function unweave() {
 			var woven = this[$ELEMENT].find(SELECTOR_WOVEN);
 
 			// Unweave myself only if I am woven.
@@ -171,7 +171,7 @@ define([
 				woven = woven.addBack();
 			}
 
-			return unweave.apply(woven, arguments);
+			return loom_unweave.apply(woven, arguments);
 		},
 
 		/**
