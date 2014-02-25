@@ -20,6 +20,9 @@ define([ "troopjs-composer/mixin/factory", "./constants", "./config" ], function
 	var STAR = "*";
 	var POUND = "#";
 	var PERIOD = ".";
+	var COLON = ":";
+	var LEFT_BRACKET = "[";
+	var RIGHT_BRACKET = "]";
 	var COUNT = "count";
 	var BASEVAL = "baseVal";
 	var RE_SPACE = /\s+/;
@@ -83,7 +86,19 @@ define([ "troopjs-composer/mixin/factory", "./constants", "./config" ], function
 	}
 
 	/*
-	 * Gets last token from selector
+	 * Gets the last **SIGNIFICANT** of a CSS selector, the "significant" is defined as - any leading id, class name or
+	 * tag name component of the last selector.
+	 *
+	 * Examples:
+	 * 	tail("div.bar"); 	// "div"
+	 * 	tail("#foo.bar"); 	// "#foo"
+	 * 	tail("p > div.bar"); 	// "div"
+	 * 	tail("p > a:active"); 	// "a"
+	 * 	tail(".bar");	// ".bar"
+	 * 	tail("input.foo[type='button']");	// "input"
+	 * 	tail("[type='button']");	// "*"
+	 *
+	 * @see [CSS3 selector spec](http://www.w3.org/TR/selectors/#w3cselgrammar)
 	 * @private
 	 * @param {String} selector CSS selector
 	 * @return {String} last token
@@ -94,7 +109,7 @@ define([ "troopjs-composer/mixin/factory", "./constants", "./config" ], function
 		var c = selector[--start];
 		var skip = false;
 
-		step: while (start > 0) {
+		step: while (start >= 0) {
 			switch (c) {
 				case SPACE:
 					/* Marks EOT if:
@@ -110,14 +125,14 @@ define([ "troopjs-composer/mixin/factory", "./constants", "./config" ], function
 					}
 					break;
 
-				case "]":
+				case RIGHT_BRACKET:
 					/* Marks begin of skip if:
 					 * * Next c is not SLASH
 					 */
 					skip = (c = selector[--start]) !== SLASH;
 					break;
 
-				case "[":
+				case LEFT_BRACKET:
 					/* Marks end of skip if:
 					 * * Next c is not SLASH
 					 */
@@ -128,13 +143,14 @@ define([ "troopjs-composer/mixin/factory", "./constants", "./config" ], function
 					break;
 
 				case POUND:
+				case COLON:
 				case PERIOD:
 					/* Marks stop if:
 					 * * Next c is not SLASH
 					 * * Next c is not SPACE
 					 * * Not in skip mode
 					 */
-					if ((c = selector[--start]) !== SLASH && c !== SPACE && !skip) {
+					if ((c = selector[--start]) && c!== UNDEFINED && c!== SLASH && c !== SPACE && !skip) {
 						// Compensate for start already decreased
 						stop = start + 1;
 					}
@@ -147,7 +163,7 @@ define([ "troopjs-composer/mixin/factory", "./constants", "./config" ], function
 			}
 		}
 
-		return selector.substring(start, stop);
+		return selector.substring(start, stop) || "*";
 	}
 
 	/*
