@@ -177,7 +177,7 @@ define([ "troopjs-composer/mixin/factory", "./constants", "./config" ], function
 		return a[COUNT] - b[COUNT];
 	}
 
-	var Selector = Factory(function () {
+	var Selector = Factory(function Selector() {
 		var me = this;
 
 		me[INDEXES] = [];

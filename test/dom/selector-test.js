@@ -54,7 +54,7 @@ buster.testCase("troopjs-browser/dom/selector", function (run) {
 				},
 
 				"able to extract from empty selector": function () {
-					assert.equals(tail(""), "");
+					assert.equals(tail(""), "*");
 				}
 			},
 
