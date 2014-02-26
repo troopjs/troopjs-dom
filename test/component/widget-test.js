@@ -119,7 +119,7 @@ buster.testCase("troopjs-browser/component/widget", function (run) {
 					}
 				},
 
-				"// dom event handlers": function() {
+				"dom event handlers": function() {
 					// See foo-dom-event.js
 					var $el = this.$el.filter(".foo-dom-event");
 					var $btn;
@@ -139,7 +139,7 @@ buster.testCase("troopjs-browser/component/widget", function (run) {
 						dispatch();
 
 						// Assert all matched handlers are invoked.
-						assert.equals(spy.callCount, 6);
+						assert.equals(spy.callCount, 7);
 
 						unweave.call($el).then(function() {
 							dispatch();
