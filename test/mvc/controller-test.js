@@ -111,17 +111,32 @@ buster.testCase("troopjs-browser/mvc/controller/widget", function (run) {
 			run({
 				"setUp" : function() {
 					spy = controller.spy = this.spy();
-					this.timeout = 1000;
+					this.timeout = 2000;
+					(this.location = window.location).hash = "";
 				},
-				"route start": function() {
-					window.location.hash = "shanghai/street/1";
+
+				"route": function() {
+					var me = this;
+					var loc = me.location;
+
+					// Test for uri.
+					loc.hash = "shanghai/street/1";
 					return controller.start().then(function() {
-						return delay(500).then(assertMethodCalls);
+						return delay(0).then(function() {
+
+							// Test for uri change.
+							spy.reset();
+							loc.hash = "beijing/";
+							return delay(0).then(function() {
+								assertMethodCalls();
+								return controller.stop();
+							});
+						});
 					});
 				},
-				"route change": function() {
-					window.location.hash = "beijing/";
-					return delay(500).then(assertMethodCalls);
+
+				"tearDown": function() {
+					this.location.hash = "";
 				}
 			});
 		});
