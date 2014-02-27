@@ -11,7 +11,6 @@ define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "troo
 	var ARRAY_MAP = ARRAY_PROTO.map;
 	var ARRAY_PUSH = ARRAY_PROTO.push;
 	var ARRAY_SHIFT = ARRAY_PROTO.shift;
-	var ARRAY_UNSHIFT = ARRAY_PROTO.unshift;
 	var WEAVE = "weave";
 	var WOVEN = "woven";
 	var $WARP = config["$warp"];
@@ -35,7 +34,7 @@ define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "troo
 	 * 	$el.weave();
 	 * @member browser.loom.weave
 	 * @method weave
-	 * @param {Mixed...} [arg] The params that used to start the widget.
+	 * @param {*...} [arg] The params that used to start the widget.
 	 * @returns {Promise} Promise to the completion of weaving all widgets.
 	 */
 	return function weave() {
