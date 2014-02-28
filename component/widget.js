@@ -123,11 +123,13 @@ define([
 		},
 
 		/**
+		 * @method
 		 * @inheritdoc
 		 */
 		"on": Factory.around(set_modified),
 
 		/**
+		 * @method
 		 * @inheritdoc
 		 */
 		"off": Factory.around(set_modified),
