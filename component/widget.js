@@ -3,6 +3,7 @@
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
 define([
+	"troopjs-composer/mixin/factory",
 	"troopjs-core/component/gadget",
 	"./runner/sequence",
 	"jquery",
@@ -12,7 +13,7 @@ define([
 	"../loom/weave",
 	"../loom/unweave",
 	"troopjs-jquery/destroy"
-], function WidgetModule(Gadget, sequence, $, when, merge, LOOM_CONF, loom_weave, loom_unweave) {
+], function WidgetModule(Factory, Gadget, sequence, $, when, merge, LOOM_CONF, loom_weave, loom_unweave) {
 	"use strict";
 
 	var UNDEFINED;
@@ -23,6 +24,7 @@ define([
 	var $GET = $.fn.get;
 	var TYPEOF_FUNCTION = "function";
 	var $ELEMENT = "$element";
+	var MODIFIED = "modified";
 	var PROXY = "proxy";
 	var DOM = "dom";
 	var FEATURES = "features";
@@ -60,6 +62,18 @@ define([
 		}
 
 		return render;
+	}
+
+	// Decorates emitter#on and emitter#off, for adding timestamp on DOM handlers.
+	function set_modified(fn) {
+		return function(type) {
+			fn.apply(this, arguments);
+
+			if (RE.test(type)) {
+				// Set modified
+				this.handlers[type][MODIFIED] = new Date().getTime();
+			}
+		};
 	}
 
 	/**
@@ -107,6 +121,16 @@ define([
 				return me.on(special[NAME], special[VALUE], special[FEATURES]);
 			});
 		},
+
+		/**
+		 * @inheritdoc
+		 */
+		"on": Factory.around(set_modified),
+
+		/**
+		 * @inheritdoc
+		 */
+		"off": Factory.around(set_modified),
 
 		"sig/setup": function onSetup(type, handlers) {
 			var me = this;
