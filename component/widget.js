@@ -62,6 +62,7 @@ define([
 	/**
 	 * Base DOM component attached to an element, that takes care of widget instantiation.
 	 * @class browser.component.widget
+	 * @extends core.component.gadget
 	 */
 	return Gadget.extend(function ($element, displayName) {
 		var me = this;

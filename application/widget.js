@@ -48,6 +48,7 @@ define([ "module", "../component/widget", "when", "troopjs-core/registry/service
 	 * The application widget serves as top-most page component
 	 * that bootstrap all other components registered.
 	 * @class browser.application.widget
+	 * @extends browser.component.widget
 	 */
 	return Widget.extend(function ApplicationWidget() {
 		// Create registry
