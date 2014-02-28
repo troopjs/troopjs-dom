@@ -42,7 +42,7 @@ define([ "./config", "when", "jquery", "poly/array", "troopjs-utils/defer" ], fu
 			var $unweave = [];
 			var unweave_attr = $element.attr(ATTR_UNWEAVE);
 			var unweave_re = [];
-			var re = /[\s,]*([\w_\-\/\.]+)(?:@(\d+))?/g;
+			var re = /[\s,]*([\w_\/\.\-]+)(?:@(\d+))?/g;
 			var matches;
 			var $weft;
 			var iMax;

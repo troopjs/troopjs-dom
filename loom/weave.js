@@ -49,7 +49,7 @@ define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "troo
 			var $weave = [];
 			var weave_attr = $element.attr(ATTR_WEAVE) || "";
 			var weave_args;
-			var re = /[\s,]*(((?:\w+!)?([\w\d_\-\/\.]+)(?:#[^(\s]+)?)(?:\(([^\)]+)\))?)/g;
+			var re = /[\s,]*(((?:\w+!)?([\w\d_\/\.\-]+)(?:#[^(\s]+)?)(?:\(([^\)]+)\))?)/g;
 			var matches;
 
 			/*
