@@ -7,7 +7,7 @@
 	],
 	"dependencies": {
 		"troopjs-composer": "~1",
-		"troopjs-core": "~2.1",
+		"troopjs-core": "~3.0",
 		"troopjs-jquery": "~3",
 		"troopjs-utils": "~2.1",
 		"jquery": ">=1.7.0 <2.1.0"
