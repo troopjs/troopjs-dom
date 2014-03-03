@@ -71,23 +71,6 @@ define([
 	}
 
 	/**
-	 * Decorates emitter#on and emitter#off, for adding timestamp on DOM handlers.
-	 * @private
-	 * @param fn {Function}
-	 * @return {Function}
-	 */
-	function set_modified(fn) {
-		return function(type) {
-			fn.apply(this, arguments);
-
-			if (RE.test(type)) {
-				// Set modified
-				this.handlers[type][MODIFIED] = new Date().getTime();
-			}
-		};
-	}
-
-	/**
 	 * Creates a new widget
 	 * @param $element {jQuery}
 	 * @param displayName {String}
@@ -138,13 +121,36 @@ define([
 		 * @method
 		 * @inheritdoc
 		 */
-		"on": Factory.around(set_modified),
+		"on": Factory.around(function (fn) {
+				return function on(type) {
+					var me = this;
+					var result = fn.apply(me, arguments);
+
+					if (RE.test(type)) {
+						// Set modified
+						me.handlers[type][MODIFIED] = new Date().getTime();
+					}
+
+					return result;
+				};
+			}),
 
 		/**
 		 * @method
 		 * @inheritdoc
 		 */
-		"off": Factory.around(set_modified),
+		"off": Factory.around(function (fn) {
+			return function off(type) {
+				var me = this;
+
+				if (RE.test(type)) {
+					// Set modified
+					me.handlers[type][MODIFIED] = new Date().getTime();
+				}
+
+				return fn.apply(me, arguments);
+			};
+		}),
 
 		"sig/setup": function onSetup(type, handlers) {
 			var me = this;
