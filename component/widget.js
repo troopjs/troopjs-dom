@@ -16,6 +16,12 @@ define([
 ], function WidgetModule(Factory, Gadget, sequence, $, when, merge, LOOM_CONF, loom_weave, loom_unweave) {
 	"use strict";
 
+	/**
+	 * Base DOM component attached to an element, that takes care of widget instantiation.
+	 * @class browser.component.widget
+	 * @extends core.component.gadget
+	 */
+
 	var UNDEFINED;
 	var NULL = null;
 	var ARRAY_PROTO = Array.prototype;
@@ -37,14 +43,14 @@ define([
 	var SELECTOR_WOVEN = "[" + LOOM_CONF["woven"] + "]";
 	var RE = new RegExp("^" + DOM + "/(.+)");
 
-	/*
+	/**
 	 * Creates a proxy of the inner method 'render' with the '$fn' parameter set
 	 * @private
 	 * @param $fn jQuery method
 	 * @returns {Function} proxied render
 	 */
 	function $render($fn) {
-		/*
+		/**
 		 * Renders contents into element
 		 * @private
 		 * @param {Function|String} contents Template/String to render
@@ -64,7 +70,12 @@ define([
 		return render;
 	}
 
-	// Decorates emitter#on and emitter#off, for adding timestamp on DOM handlers.
+	/**
+	 * Decorates emitter#on and emitter#off, for adding timestamp on DOM handlers.
+	 * @private
+	 * @param fn {Function}
+	 * @return {Function}
+	 */
 	function set_modified(fn) {
 		return function(type) {
 			fn.apply(this, arguments);
@@ -77,9 +88,10 @@ define([
 	}
 
 	/**
-	 * Base DOM component attached to an element, that takes care of widget instantiation.
-	 * @class browser.component.widget
-	 * @extends core.component.gadget
+	 * Creates a new widget
+	 * @param $element {jQuery}
+	 * @param displayName {String}
+	 * @constructor
 	 */
 	return Gadget.extend(function Widget($element, displayName) {
 		var me = this;
