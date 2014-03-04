@@ -3,9 +3,9 @@
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
 define([
+	"troopjs-core/component/gadget",
 	"troopjs-composer/decorator/before",
 	"troopjs-composer/decorator/after",
-	"troopjs-core/component/gadget",
 	"./runner/sequence",
 	"jquery",
 	"when",
@@ -14,7 +14,7 @@ define([
 	"../loom/weave",
 	"../loom/unweave",
 	"troopjs-jquery/destroy"
-], function WidgetModule(before, after, Gadget, sequence, $, when, merge, LOOM_CONF, loom_weave, loom_unweave) {
+], function WidgetModule(Gadget, before, after, sequence, $, when, merge, LOOM_CONF, loom_weave, loom_unweave) {
 	"use strict";
 
 	/**
