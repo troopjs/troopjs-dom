@@ -119,7 +119,7 @@ buster.testCase("troopjs-browser/component/widget", function (run) {
 					}
 				},
 
-				"dom event handlers": function() {
+				"dom event handler - declaritive": function() {
 					// See foo-dom-event.js
 					var me = this;
 					var $el = me.$el.filter(".foo-dom-event");
@@ -149,6 +149,39 @@ buster.testCase("troopjs-browser/component/widget", function (run) {
 							$btn.trigger("keydown");
 							refute.called(spy);
 						});
+					});
+				},
+
+				"dom event handler - dynamic": function() {
+					// See foo-dom-event.js
+					var me = this;
+					var $el = me.$el.filter(".foo-dom-event");
+					var $btn;
+					var $txt;
+					var spy = me.spy();
+
+					var foo = Widget($el);
+					return foo.start().then(function() {
+						$btn = $el.find("input[type='button']");
+						$txt = $el.find("input[type='text']");
+
+						foo.on("dom/click", function() {
+							spy();
+						});
+
+						var handlers = foo.handlers['dom/click'];
+						var modified;
+						assert((modified = handlers.modified));
+
+						$btn.trigger("click", ["foo", "bar"]);
+
+						assert.called(spy);
+
+						foo.on("dom/click", function() {}, ".btn");
+
+						refute.equals(handlers.modified, modified, 'assert modified is updated');
+
+						return foo.stop();
 					});
 				},
 

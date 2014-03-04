@@ -4,17 +4,20 @@
  *
  * Heavily influenced by selector-set (https://github.com/josh/selector-set/) Copyright 2013 Joshua Peek
  */
-define([ "troopjs-composer/mixin/factory", "./constants", "./config" ], function (Factory, CONSTANTS, CONFIG) {
+define([
+	"troopjs-composer/mixin/factory",
+	"./config"
+], function (Factory, CONFIG) {
 	var UNDEFINED;
 	var ARRAY_SLICE = Array.prototype.slice;
 	var LENGTH = "length";
-	var INDEXES = CONSTANTS["indexes"];
-	var INDEXED = CONSTANTS["indexed"];
-	var INDEXER = CONSTANTS["indexer"];
-	var CLASS = CONSTANTS["class"];
-	var ID = CONSTANTS["id"];
-	var TAG = CONSTANTS["tag"];
-	var UNIVERSAL = CONSTANTS["universal"];
+	var INDEXES = "indexes";
+	var INDEXED = "indexed";
+	var INDEXER = "indexer";
+	var CLASS = "class";
+	var ID = "id";
+	var TAG = "tag";
+	var UNIVERSAL = "universal";
 	var SLASH = "\\";
 	var SPACE = " ";
 	var STAR = "*";
@@ -26,8 +29,8 @@ define([ "troopjs-composer/mixin/factory", "./constants", "./config" ], function
 	var COUNT = "count";
 	var BASEVAL = "baseVal";
 	var RE_SPACE = /\s+/;
-	var querySelectorAll = CONFIG[CONSTANTS["querySelectorAll"]];
-	var matchesSelector = CONFIG[CONSTANTS["matchesSelector"]];
+	var querySelectorAll = CONFIG["querySelectorAll"];
+	var matchesSelector = CONFIG["matchesSelector"];
 
 	/*
 	 * Extracts key for universal indexer
@@ -106,7 +109,7 @@ define([ "troopjs-composer/mixin/factory", "./constants", "./config" ], function
 	function tail(selector) {
 		var start = selector[LENGTH];
 		var stop = start;
-		var c = selector[--start];
+		var c = selector.charAt(--start);
 		var skip = false;
 
 		step: while (start >= 0) {
@@ -116,7 +119,7 @@ define([ "troopjs-composer/mixin/factory", "./constants", "./config" ], function
 					 * * Next c is not SLASH
 					 * * Not in skip mode
 					 */
-					if ((c = selector[--start]) !== SLASH && !skip) {
+					if ((c = selector.charAt(--start)) !== SLASH && !skip) {
 						// We're 2 steps passed the end of the selector so we should adjust for that
 						start += 2;
 
@@ -129,14 +132,14 @@ define([ "troopjs-composer/mixin/factory", "./constants", "./config" ], function
 					/* Marks begin of skip if:
 					 * * Next c is not SLASH
 					 */
-					skip = (c = selector[--start]) !== SLASH;
+					skip = (c = selector.charAt(--start)) !== SLASH;
 					break;
 
 				case LEFT_BRACKET:
 					/* Marks end of skip if:
 					 * * Next c is not SLASH
 					 */
-					if (!(skip = (c = selector[--start]) === SLASH)) {
+					if (!(skip = (c = selector.charAt(--start)) === SLASH)) {
 						// Compensate for start already decreased
 						stop = start + 1;
 					}
@@ -150,7 +153,7 @@ define([ "troopjs-composer/mixin/factory", "./constants", "./config" ], function
 					 * * Next c is not SPACE
 					 * * Not in skip mode
 					 */
-					if ((c = selector[--start]) && c!== UNDEFINED && c!== SLASH && c !== SPACE && !skip) {
+					if ((c = selector.charAt(--start)) && c!== UNDEFINED && c!== SLASH && c !== SPACE && !skip) {
 						// Compensate for start already decreased
 						stop = start + 1;
 					}
@@ -163,7 +166,7 @@ define([ "troopjs-composer/mixin/factory", "./constants", "./config" ], function
 			}
 		}
 
-		return selector.substring(start, stop) || "*";
+		return selector.substring(start, stop) || STAR;
 	}
 
 	/*
@@ -258,7 +261,7 @@ define([ "troopjs-composer/mixin/factory", "./constants", "./config" ], function
 		 * @param element DOM Element
 		 * @return {Array} Matching array of candidates
 		 */
-		"matches": function (element) {
+		"matches": function matches(element) {
 			var me = this;
 			var indexer;
 			var indexed;
