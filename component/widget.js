@@ -3,7 +3,8 @@
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
 define([
-	"troopjs-composer/mixin/factory",
+	"troopjs-composer/decorator/before",
+	"troopjs-composer/decorator/after",
 	"troopjs-core/component/gadget",
 	"./runner/sequence",
 	"jquery",
@@ -13,7 +14,7 @@ define([
 	"../loom/weave",
 	"../loom/unweave",
 	"troopjs-jquery/destroy"
-], function WidgetModule(Factory, Gadget, sequence, $, when, merge, LOOM_CONF, loom_weave, loom_unweave) {
+], function WidgetModule(before, after, Gadget, sequence, $, when, merge, LOOM_CONF, loom_weave, loom_unweave) {
 	"use strict";
 
 	/**
@@ -121,35 +122,22 @@ define([
 		 * @method
 		 * @inheritdoc
 		 */
-		"on": Factory.around(function (fn) {
-				return function on(type) {
-					var me = this;
-					var result = fn.apply(me, arguments);
-
-					if (RE.test(type)) {
-						// Set modified
-						me.handlers[type][MODIFIED] = new Date().getTime();
-					}
-
-					return result;
-				};
-			}),
+		"on": after(function set_modified(type) {
+			if (RE.test(type)) {
+				// Set modified
+				this.handlers[type][MODIFIED] = new Date().getTime();
+			}
+		}),
 
 		/**
 		 * @method
 		 * @inheritdoc
 		 */
-		"off": Factory.around(function (fn) {
-			return function off(type) {
-				var me = this;
-
-				if (RE.test(type)) {
-					// Set modified
-					me.handlers[type][MODIFIED] = new Date().getTime();
-				}
-
-				return fn.apply(me, arguments);
-			};
+		"off": before(function set_modified(type) {
+			if (RE.test(type)) {
+				// Set modified
+				this.handlers[type][MODIFIED] = new Date().getTime();
+			}
 		}),
 
 		"sig/setup": function onSetup(type, handlers) {
