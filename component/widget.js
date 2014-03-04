@@ -72,6 +72,18 @@ define([
 	}
 
 	/**
+	 * Sets MODIFIED on handlers
+	 * @private
+	 * @param type {String}
+	 */
+	function set_modified(type) {
+		if (RE.test(type)) {
+			// Set modified
+			this.handlers[type][MODIFIED] = new Date().getTime();
+		}
+	}
+
+	/**
 	 * Creates a new widget
 	 * @param $element {jQuery}
 	 * @param displayName {String}
@@ -122,23 +134,13 @@ define([
 		 * @method
 		 * @inheritdoc
 		 */
-		"on": after(function set_modified(type) {
-			if (RE.test(type)) {
-				// Set modified
-				this.handlers[type][MODIFIED] = new Date().getTime();
-			}
-		}),
+		"on": after(set_modified),
 
 		/**
 		 * @method
 		 * @inheritdoc
 		 */
-		"off": before(function set_modified(type) {
-			if (RE.test(type)) {
-				// Set modified
-				this.handlers[type][MODIFIED] = new Date().getTime();
-			}
-		}),
+		"off": before(set_modified),
 
 		"sig/setup": function onSetup(type, handlers) {
 			var me = this;
