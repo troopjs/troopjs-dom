@@ -1,17 +1,38 @@
 /*
- * TroopJS browser/dom/config
- * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
+ * @license MIT http://troopjs.mit-license.org/
  */
 define([
 	"module",
 	"troopjs-utils/merge",
 	"jquery"
 ], function (module, merge, $) {
-	var config = {};
+	"use strict";
 
-	config["querySelectorAll"] = $.find;
+	/**
+	 * This module is to provide configurations **dom** from it's AMD module config.
+	 *
+	 * To change the configuration, refer to RequireJS [module config API](http://requirejs.org/docs/api.html#config-moduleconfig):
+	 *
+	 * 	requirejs.config(
+	 * 	{
+	 * 		config: { "troopjs-browser/dom/config" : { "querySelectorAll" : $.find, ...  } }
+	 * 	})
+	 *
+	 * [1]: http://requirejs.org/docs/api.html#config-moduleconfig
+	 *
+	 * @class browser.dom.config
+	 * @private
+	 * @singleton
+	 */
+	return merge.call({
+		/**
+		 * @cfg {Function} querySelectorAll Function that provides `querySelectorAll`
+		 */
+		"querySelectorAll": $.find,
 
-	config["matchesSelector"] = $.find.matchesSelector;
-
-	return merge.call(config, module.config());
+		/**
+		 * @cfg {Function} matchesSelector Function that provides `matchesSelector`
+		 */
+		"matchesSelector": $.find.matchesSelector
+	}, module.config());
 });
