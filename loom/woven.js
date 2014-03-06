@@ -4,6 +4,7 @@
  */
 define([ "./config", "when", "jquery", "poly/array" ], function WovenModule(config, when, $) {
 	"use strict";
+
 	var ARRAY_MAP = Array.prototype.map;
 	var LENGTH = "length";
 	var WOVEN = "woven";
@@ -26,7 +27,7 @@ define([ "./config", "when", "jquery", "poly/array" ], function WovenModule(conf
 		// If we have arguments we have convert and filter
 		if (arguments[LENGTH] > 0) {
 			// Map arguments to a regexp
-			re = RegExp(ARRAY_MAP.call(arguments, function (widget) {
+			re = new RegExp(ARRAY_MAP.call(arguments, function (widget) {
 				return "^" + widget;
 			}).join("|"), "m");
 
