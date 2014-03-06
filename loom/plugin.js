@@ -20,6 +20,7 @@ define([
 	 *  - {@link $.fn#weave weave}, {@link $.fn#unweave unweave} and {@link $.fn#woven woven} methods.
 	 *
 	 * @class browser.loom.plugin
+	 * @extends jquery.plugin
 	 * @singleton
 	 */
 
