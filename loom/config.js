@@ -1,23 +1,24 @@
-/*
- * TroopJS browser/loom/config
- * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
+/**
+ * @license MIT http://troopjs.mit-license.org/
  */
-define([ "module", "troopjs-utils/merge" ], function LoomConfigModule(module, merge) {
+define([
+	"module",
+	"troopjs-utils/merge"
+], function LoomConfigModule(module, merge) {
 	"use strict";
 
 	/**
 	 * This module is to provide configurations **loom** from it's AMD module config.
 	 *
-	 * To change the configuration, refer to RequireJS [module config API][1]:
+	 * To change the configuration, refer to RequireJS [module config API](http://requirejs.org/docs/api.html#config-moduleconfig):
 	 *
 	 * 	requirejs.config(
 	 * 	{
 	 * 		config: { "troopjs-browser/loom/config" : { "weave" : "data-my-weave", ...  } }
 	 * 	})
 	 *
-	 * [1]: http://requirejs.org/docs/api.html#config-moduleconfig
-	 *
 	 * @class browser.loom.config
+	 * @private
 	 * @singleton
 	 */
 	return merge.call({

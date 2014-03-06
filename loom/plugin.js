@@ -1,6 +1,5 @@
-/*
- * TroopJS browser/loom/plugin
- * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
+/**
+ * @license MIT http://troopjs.mit-license.org/
  */
 define([
 	"jquery",
@@ -14,6 +13,12 @@ define([
 ], function WeaveModule($, when, config, weave, unweave, woven, getargs) {
 	"use strict";
 
+	/**
+	 * Module that extends jQuery with loom {@link $.expr expressions} and {@link $.fn function}
+	 * @class browser.loom.plugin
+	 * @singleton
+	 */
+
 	var UNDEFINED;
 	var $FN = $.fn;
 	var $EXPR = $.expr;
@@ -25,28 +30,30 @@ define([
 	var ATTR_WOVEN = config[WOVEN];
 	var RE_SEPARATOR = /[\s,]+/;
 
-	/*
+	/**
 	 * Tests if element has a data-weave attribute
 	 * @param element to test
 	 * @returns {boolean}
-	 * @private
+	 * @ignore
 	 */
 	function hasDataWeaveAttr(element) {
 		return $(element).attr(ATTR_WEAVE) !== UNDEFINED;
 	}
 
-	/*
+	/**
 	 * Tests if element has a data-woven attribute
 	 * @param element to test
 	 * @returns {boolean}
-	 * @private
+	 * @ignore
 	 */
 	function hasDataWovenAttr(element) {
 		return $(element).attr(ATTR_WOVEN) !== UNDEFINED;
 	}
 
-	/*
-	 * :weave expression
+	/**
+	 * jQuery `:weave` expression
+	 * @member $.expr
+	 * @method weave
 	 */
 	$EXPR[":"][WEAVE] = $CREATEPSEUDO
 		// If we have jQuery >= 1.8 we want to use .createPseudo
@@ -83,8 +90,10 @@ define([
 						}).join("|"), "m").test(weave.replace(RE_SEPARATOR, "\n"));
 			};
 
-	/*
-	 * :woven expression
+	/**
+	 * jQuery `:woven` expression
+	 * @member $.expr
+	 * @method woven
 	 */
 	$EXPR[":"][WOVEN] = $CREATEPSEUDO
 		// If we have jQuery >= 1.8 we want to use .createPseudo
@@ -121,29 +130,23 @@ define([
 		};
 
 	/**
-	 * @class $
-	 */
-
-	/**
-	 * Weaves elements
-	 * @member $
+	 * @member $.fn
 	 * @method weave
-	 * @returns {Promise} of weaving
+	 * @inheritdoc browser.loom.weave#constructor
 	 */
 	$FN[WEAVE] = weave;
 
 	/**
-	 * Unweaves elements
-	 * @member $
+	 * @member $.fn
 	 * @method unweave
-	 * @returns {Promise} of unweaving
+	 * @inheritdoc browser.loom.unweave#constructor
 	 */
 	$FN[UNWEAVE] = unweave;
 
 	/**
-	 * Gets woven widgets
+	 * @member $.fn
 	 * @method woven
-	 * @returns {Promise} of woven widgets
+	 * @inheritdoc browser.loom.woven#constructor
 	 */
 	$FN[WOVEN] = woven;
 });

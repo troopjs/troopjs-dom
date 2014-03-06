@@ -1,9 +1,18 @@
-/*
- * TroopJS browser/loom/woven
- * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
+/**
+ * @license MIT http://troopjs.mit-license.org/
  */
-define([ "./config", "when", "jquery", "poly/array" ], function WovenModule(config, when, $) {
+define([
+	"./config",
+	"when",
+	"jquery",
+	"poly/array"
+], function WovenModule(config, when, $) {
 	"use strict";
+
+	/**
+	 * @class browser.loom.woven
+	 * @singleton
+	 */
 
 	var ARRAY_MAP = Array.prototype.map;
 	var LENGTH = "length";
@@ -13,10 +22,8 @@ define([ "./config", "when", "jquery", "poly/array" ], function WovenModule(conf
 	/**
 	 * Retrieve all or specific widget instances living on this element, that are
 	 * created by {@link browser.loom.weave weaving}.
-	 *
-	 * @member browser.loom.woven
-	 * @method woven
-	 * @param {String...} [name] One or more name of the widget to narrow down.
+	 * @method constructor
+	 * @param {...String} [name] One or more name of the widget to narrow down.
 	 * @returns {Promise} Promise to the completion of retrieving the woven widgets array.
 	 */
 	return function woven() {

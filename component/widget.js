@@ -1,6 +1,5 @@
-/*
- * TroopJS browser/component/widget
- * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
+/**
+ * @license MIT http://troopjs.mit-license.org/
  */
 define([
 	"troopjs-core/component/gadget",
@@ -46,14 +45,13 @@ define([
 
 	/**
 	 * Creates a proxy of the inner method 'render' with the '$fn' parameter set
-	 * @private
-	 * @param $fn jQuery method
+	 * @ignore
+	 * @param {Function} $fn jQuery method
 	 * @returns {Function} proxied render
 	 */
 	function $render($fn) {
 		/**
-		 * Renders contents into element
-		 * @private
+		 * @ignore
 		 * @param {Function|String} contents Template/String to render
 		 * @param {...*} [args] Template arguments
 		 * @returns {Promise} Promise of  render
@@ -73,8 +71,8 @@ define([
 
 	/**
 	 * Sets MODIFIED on handlers
-	 * @private
-	 * @param type {String}
+	 * @ignore
+	 * @param type {String} Topic type
 	 */
 	function set_modified(type) {
 		if (RE.test(type)) {
@@ -85,9 +83,11 @@ define([
 
 	/**
 	 * Creates a new widget
-	 * @param $element {jQuery}
-	 * @param displayName {String}
-	 * @constructor
+	 * @method constructor
+	 * @param {jQuery|HTMLElement} $element The element that this widget should be attached to
+	 * @param {String} [displayName] A friendly name for this widget
+	 * @throws {Error} If no $element is provided
+	 * @throws {Error} If $element is not of supported type
 	 */
 	return Gadget.extend(function Widget($element, displayName) {
 		var me = this;
@@ -112,7 +112,11 @@ define([
 			$element = $($get.call($element, 0));
 		}
 
-		// Store $ELEMENT
+		/**
+		 * jQuery element this widget is attached to
+		 * @readonly
+		 * @property {jQuery} $element
+		 */
 		me[$ELEMENT] = $element;
 
 		if (displayName !== UNDEFINED) {
@@ -129,18 +133,6 @@ define([
 				return me.on(special[NAME], special[VALUE], special[FEATURES]);
 			});
 		},
-
-		/**
-		 * @method
-		 * @inheritdoc
-		 */
-		"on": after(set_modified),
-
-		/**
-		 * @method
-		 * @inheritdoc
-		 */
-		"off": before(set_modified),
 
 		"sig/setup": function onSetup(type, handlers) {
 			var me = this;
@@ -179,11 +171,28 @@ define([
 		},
 
 		/**
-		 * Destroy DOM handler
+		 * Triggered when $element is destroyed
+		 * @event
+		 * @template
+		 * @preventable
 		 */
 		"dom/destroy" : function onDestroy() {
 			this.unweave();
 		},
+
+		/**
+		 * @chainable
+		 * @method
+		 * @inheritdoc
+		 */
+		"on": after(set_modified),
+
+		/**
+		 * @chainable
+		 * @method
+		 * @inheritdoc
+		 */
+		"off": before(set_modified),
 
 		/**
 		 * Weaves all children of $element
@@ -209,38 +218,46 @@ define([
 		},
 
 		/**
-		 * Renders content and inserts it before $element
 		 * @method
+		 * @inheritdoc #html
+		 * @localdoc Renders content and inserts it before {@link #$element}
 		 */
 		"before" : $render($.fn.before),
 
 		/**
-		 * Renders content and inserts it after $element
 		 * @method
+		 * @inheritdoc #html
+		 * @localdoc Renders content and inserts it after {@link #$element}
 		 */
 		"after" : $render($.fn.after),
 
 		/**
-		 * Renders content and replaces $element contents
 		 * @method
+		 * @param {Function|String} contents Template/String to render
+		 * @param {...*} [args] Template arguments
+		 * @returns {Promise} Promise of  render
+		 * @localdoc Renders content and replaces {@link #$element} html contents
 		 */
 		"html" : $render($.fn.html),
 
 		/**
-		 * Renders content and replaces $element contents
 		 * @method
+		 * @inheritdoc #html
+		 * @localdoc Renders content and replaces {@link #$element} text contents
 		 */
 		"text" : $render($.fn.text),
 
 		/**
-		 * Renders content and appends it to $element
 		 * @method
+		 * @inheritdoc #html
+		 * @localdoc Renders content and appends it to {@link #$element}
 		 */
 		"append" : $render($.fn.append),
 
 		/**
-		 * Renders content and prepends it to $element
 		 * @method
+		 * @inheritdoc #html
+		 * @localdoc Renders content and prepends it to {@link #$element}
 		 */
 		"prepend" : $render($.fn.prepend)
 	});

@@ -1,9 +1,20 @@
-/*
- * TroopJS browser/application/widget
- * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
+/**
+ * @license MIT http://troopjs.mit-license.org/
  */
-define([ "module", "../component/widget", "when", "troopjs-core/registry/service", "poly/array" ], function ApplicationWidgetModule(module, Widget, when, RegistryService) {
+define([
+	"module",
+	"../component/widget",
+	"when",
+	"troopjs-core/registry/service",
+	"poly/array"
+], function ApplicationWidgetModule(module, Widget, when, RegistryService) {
 	"use strict";
+
+	/**
+	 * The application widget serves as top-most page component that bootstrap all other components registered.
+	 * @class browser.application.widget
+	 * @extends browser.component.widget
+	 */
 
 	var UNDEFINED;
 	var ARRAY_PROTO = Array.prototype;
@@ -11,9 +22,9 @@ define([ "module", "../component/widget", "when", "troopjs-core/registry/service
 	var ARRAY_PUSH = ARRAY_PROTO.push;
 	var REGISTRY = "registry";
 
-	/*
+	/**
 	 * Forwards _signal to components
-	 * @private
+	 * @ignore
 	 * @param {String} _signal Signal to forward
 	 * @param {Array} _args Signal arguments
 	 * @return {Promise} promise of next handler callback execution
@@ -45,13 +56,15 @@ define([ "module", "../component/widget", "when", "troopjs-core/registry/service
 	}
 
 	/**
-	 * The application widget serves as top-most page component
-	 * that bootstrap all other components registered.
-	 * @class browser.application.widget
-	 * @extends browser.component.widget
+	 * @method constructor
 	 */
 	return Widget.extend(function ApplicationWidget() {
-		// Create registry
+		/**
+		 * Service registry
+		 * @private
+		 * @readonly
+		 * @property {core.registry.service} registry
+		 */
 		var registry = this[REGISTRY] = RegistryService();
 
 		// TODO only register _services_

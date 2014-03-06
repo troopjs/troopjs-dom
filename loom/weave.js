@@ -1,9 +1,21 @@
-/*
- * TroopJS browser/loom/weave
- * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
+/**
+ * @license MIT http://troopjs.mit-license.org/
  */
-define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "troopjs-utils/defer", "poly/array" ], function WeaveModule(config, parentRequire, when, $, getargs, Defer) {
+define([
+	"./config",
+	"require",
+	"when",
+	"jquery",
+	"troopjs-utils/getargs",
+	"troopjs-utils/defer",
+	"poly/array"
+], function WeaveModule(config, parentRequire, when, $, getargs, Defer) {
 	"use strict";
+
+	/**
+	 * @class browser.loom.weave
+	 * @singleton
+	 */
 
 	var UNDEFINED;
 	var NULL = null;
@@ -26,20 +38,19 @@ define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "troo
 	 *  - Updates the {@link browser.loom.config#weave woven attribute} with the created widget instances names.
 	 *  - The {@link browser.loom.config#$warp $warp data property} will reference the widget instances.
 	 *
-	 * **Note:** It's not commonly to use this method directly, use instead {@link $#weave jQuery.fn.weave}.
+	 * **Note:** It's not commonly to use this method directly, use instead {@link $.fn#weave jQuery.fn.weave}.
 	 *
 	 * 	// Create element for weaving.
 	 * 	var $el = $('<div data-weave="my/widget(option)"></div>').data("option",{"foo":"bar"});
 	 * 	// Instantiate the widget defined in "my/widget" module, with one param read from the element's custom data.
 	 * 	$el.weave();
-	 * @member browser.loom.weave
-	 * @method weave
-	 * @param {*...} [arg] The params that used to start the widget.
-	 * @returns {Promise} Promise to the completion of weaving all widgets.
+	 * @method constructor
+	 * @param {*...} [start_args] Start arguments.
+	 * @returns {Promise} Promise for the completion of weaving all widgets.
 	 */
-	return function weave() {
+	return function weave(start_args) {
 		// Store start_args for later
-		var start_args = arguments;
+		start_args = arguments;
 
 		// Map elements
 		return when.all(ARRAY_MAP.call(this, function (element) {

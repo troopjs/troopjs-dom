@@ -1,9 +1,19 @@
-/*
- * TroopJS browser/loom/unweave
- * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
+/**
+ * @license MIT http://troopjs.mit-license.org/
  */
-define([ "./config", "when", "jquery", "poly/array", "troopjs-utils/defer" ], function UnweaveModule(config, when, $, Defer) {
+define([
+	"./config",
+	"when",
+	"jquery",
+	"poly/array",
+	"troopjs-utils/defer"
+], function UnweaveModule(config, when, $, Defer) {
 	"use strict";
+
+	/**
+	 * @class browser.loom.unweave
+	 * @singleton
+	 */
 
 	var UNDEFINED;
 	var NULL = null;
@@ -25,14 +35,13 @@ define([ "./config", "when", "jquery", "poly/array", "troopjs-utils/defer" ], fu
 	 * Destroy all widget instances living on this element, that are created
 	 * by {@link browser.loom.weave weaving}, it is also to clean up the attributes
 	 * and data references to the previously instantiated widgets.
-	 *
-	 * @member browser.loom.unweave
-	 * @method unweave
-	 * @returns {Promise} Promise to the completion of destroying all woven widgets.
+	 * @method constructor
+	 * @param {...*} [args] Stop arguments
+	 * @returns {Promise} Promise to the completion of unweaving all woven widgets.
 	 */
-	return function unweave() {
+	return function unweave(stop_args) {
 		// Store stop_args for later
-		var stop_args = arguments;
+		stop_args = arguments;
 
 		// Map elements
 		return when.all(ARRAY_MAP.call(this, function (element) {

@@ -1,7 +1,18 @@
+/**
+ * @license MIT http://troopjs.mit-license.org/
+ */
 define([
 	"../../dom/selector",
 	"poly/array"
 ], function SequenceModule(Selector) {
+	"use strict";
+
+	/**
+	 * @class browser.component.runner.sequence
+	 * @extends core.event.emitter.runner
+	 * @protected
+	 * @singleton
+	 */
 
 	var UNDEFINED;
 	var CONTEXT = "context";
@@ -12,11 +23,10 @@ define([
 	var SELECTOR = "selector";
 	var MODIFIED = "modified";
 
-	/*
-	 * Runner that executes DOM candidates in sequence without overlap
-	 * @param {Object} event Event object
-	 * @param {Object} handlers List of handlers
-	 * @param {Array} args Initial arguments
+	/**
+	 * @method constructor
+	 * @inheritdoc
+	 * @localdoc Runner that executes DOM candidates in sequence without overlap
 	 * @returns {*} Result from last handler
 	 */
 	return function sequence(event, handlers, args) {

@@ -1,13 +1,16 @@
-/*
- * TroopJS browser/dom/selector
- * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
- *
- * Heavily influenced by selector-set (https://github.com/josh/selector-set/) Copyright 2013 Joshua Peek
+/**
+ * @license MIT http://troopjs.mit-license.org/
  */
 define([
 	"troopjs-composer/mixin/factory",
 	"./config"
 ], function (Factory, CONFIG) {
+	"use strict";
+
+	/**
+	 * @class browser.dom.selector
+	 */
+
 	var UNDEFINED;
 	var ARRAY_SLICE = Array.prototype.slice;
 	var LENGTH = "length";
@@ -32,18 +35,18 @@ define([
 	var querySelectorAll = CONFIG["querySelectorAll"];
 	var matchesSelector = CONFIG["matchesSelector"];
 
-	/*
+	/**
 	 * Extracts key for universal indexer
-	 * @private
+	 * @ignore
 	 * @return {String[]}
 	 */
 	function getElementUniversal() {
 		return [ STAR ];
 	}
 
-	/*
+	/**
 	 * Extracts key for tag indexer
-	 * @private
+	 * @ignore
 	 * @param element
 	 * @return {String[]}
 	 */
@@ -51,9 +54,9 @@ define([
 		return [ element.nodeName.toUpperCase() ];
 	}
 
-	/*
+	/**
 	 * Extracts key for class indexer
-	 * @private
+	 * @ignore
 	 * @param element
 	 * @return {String[]}
 	 */
@@ -76,9 +79,9 @@ define([
 		return result;
 	}
 
-	/*
+	/**
 	 * Extracts key for id indexer
-	 * @private
+	 * @ignore
 	 * @param element
 	 * @return {String[]}
 	 */
@@ -88,21 +91,23 @@ define([
 		return (id = element.id) !== UNDEFINED && [ id ];
 	}
 
-	/*
+	/**
 	 * Gets the last **SIGNIFICANT** of a CSS selector, the "significant" is defined as - any leading id, class name or
 	 * tag name component of the last selector.
 	 *
 	 * Examples:
-	 * 	tail("div.bar"); 	// "div"
-	 * 	tail("#foo.bar"); 	// "#foo"
-	 * 	tail("p > div.bar"); 	// "div"
-	 * 	tail("p > a:active"); 	// "a"
-	 * 	tail(".bar");	// ".bar"
-	 * 	tail("input.foo[type='button']");	// "input"
-	 * 	tail("[type='button']");	// "*"
 	 *
-	 * @see [CSS3 selector spec](http://www.w3.org/TR/selectors/#w3cselgrammar)
+	 * 	tail("div.bar");                  // "div"
+	 * 	tail("#foo.bar");                 // "#foo"
+	 * 	tail("p > div.bar");              // "div"
+	 * 	tail("p > a:active");             // "a"
+	 * 	tail(".bar");                     // ".bar"
+	 * 	tail("input.foo[type='button']"); // "input"
+	 * 	tail("[type='button']");          // "*"
+	 *
+	 * For more examples see [CSS3 selector spec](http://www.w3.org/TR/selectors/#w3cselgrammar)
 	 * @private
+	 * @static
 	 * @param {String} selector CSS selector
 	 * @return {String} last token
 	 */
@@ -169,9 +174,9 @@ define([
 		return selector.substring(start, stop) || STAR;
 	}
 
-	/*
+	/**
 	 * Compares candidates (that have COUNT properties)
-	 * @private
+	 * @ignore
 	 * @param {Object} a
 	 * @param {Object} b
 	 * @return {Number}
@@ -180,17 +185,33 @@ define([
 		return a[COUNT] - b[COUNT];
 	}
 
+	/**
+	 * @method constructor
+	 */
 	var Selector = Factory(function Selector() {
 		var me = this;
 
+		/**
+		 * Cached indexes
+		 * @protected
+		 * @readonly
+		 * @property {Array} indexes
+		 */
 		me[INDEXES] = [];
+
+		/**
+		 * Index counter
+		 * @private
+		 * @readonly
+		 * @property {Number} count
+		 */
 		me[COUNT] = 0;
 	}, {
-		/*
+		/**
 		 * Adds candidate
+		 * @chainable
 		 * @param {String} selector CSS selector
 		 * @param {...*} [args] Additional arguments attached with candidate
-		 * @return {Object} this
 		 */
 		"add": function add(selector, args) {
 			var me = this;
@@ -256,9 +277,9 @@ define([
 			return me;
 		},
 
-		/*
+		/**
 		 * Matches candidates against element
-		 * @param element DOM Element
+		 * @param {HTMLElement} element DOM Element
 		 * @return {Array} Matching array of candidates
 		 */
 		"matches": function matches(element) {
@@ -308,9 +329,6 @@ define([
 		}
 	});
 
-	/*
-	 * @inheritdoc #tail
-	 */
 	Selector.tail = tail;
 
 	return Selector;
