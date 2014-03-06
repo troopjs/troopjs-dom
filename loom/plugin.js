@@ -14,7 +14,11 @@ define([
 	"use strict";
 
 	/**
-	 * Module that extends jQuery with loom {@link $.expr expressions} and {@link $.fn function}
+	 * Module that extends jQuery with:
+	 *
+	 *  - {@link $.expr#weave weave} and {@link $.expr#woven woven} expressions.
+	 *  - {@link $.fn#weave weave}, {@link $.fn#unweave unweave} and {@link $.fn#woven woven} methods.
+	 *
 	 * @class browser.loom.plugin
 	 * @singleton
 	 */
