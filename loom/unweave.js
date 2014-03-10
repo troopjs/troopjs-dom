@@ -33,8 +33,11 @@ define([
 
 	/**
 	 * Destroy all widget instances living on this element, that are created
-	 * by {@link browser.loom.weave weaving}, it is also to clean up the attributes
+	 * by {@link browser.loom.weave}, it is also to clean up the attributes
 	 * and data references to the previously instantiated widgets.
+	 *
+	 * It also lives as a jquery plugin as {@link $.fn#unweave}.
+	 *
 	 * @method constructor
 	 * @param {...*} [args] Stop arguments
 	 * @returns {Promise} Promise to the completion of unweaving all woven widgets.

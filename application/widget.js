@@ -11,7 +11,7 @@ define([
 	"use strict";
 
 	/**
-	 * The application widget serves as top-most page component that bootstrap all other components registered.
+	 * The application widget serves as a container for all troop components that bootstrap the page.
 	 * @class browser.application.widget
 	 * @extends browser.component.widget
 	 */
@@ -57,8 +57,10 @@ define([
 
 	/**
 	 * @method constructor
+	 * @param {core.component.service|core.component.widget} gadget List of services or widgets to
+	 * start before starting the application.
 	 */
-	return Widget.extend(function ApplicationWidget() {
+	return Widget.extend(function ApplicationWidget(gadget) {
 		/**
 		 * Service registry
 		 * @private
@@ -76,10 +78,20 @@ define([
 	}, {
 		"displayName" : "browser/application/widget",
 
+		/**
+		 * @handler
+		 * @localdoc Initialize all registered components (widgets and services) that are passed in from the {@link #method-constructor}.
+		 * @inheritdoc
+		 */
 		"sig/initialize" : function onInitialize() {
 			return forward.call(this, "initialize", arguments);
 		},
 
+		/**
+		 * @handler
+		 * @localdoc weave all widgets that are within this element.
+		 * @inheritdoc
+		 */
 		"sig/start" : function onStart() {
 			var me = this;
 			var args = arguments;
@@ -89,6 +101,11 @@ define([
 			});
 		},
 
+		/**
+		 * @handler
+		 * @localdoc stop all woven widgets that are within this element.
+		 * @inheritdoc
+		 */
 		"sig/stop" : function onStop() {
 			var me = this;
 			var args = arguments;
@@ -98,6 +115,11 @@ define([
 			});
 		},
 
+		/**
+		 * @handler
+		 * @localdoc finalize all registered components (widgets and services) that are registered from the {@link #method-constructor}.
+		 * @inheritdoc
+		 */
 		"sig/finalize" : function onFinalize() {
 			return forward.call(this, "finalize", arguments);
 		}

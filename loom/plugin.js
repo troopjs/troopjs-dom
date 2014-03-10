@@ -58,7 +58,7 @@ define([
 	/**
 	 * jQuery `:weave` expression
 	 * @member $.expr
-	 * @method weave
+	 * @property weave
 	 */
 	$EXPR[":"][WEAVE] = $CREATEPSEUDO
 		// If we have jQuery >= 1.8 we want to use .createPseudo
@@ -98,7 +98,7 @@ define([
 	/**
 	 * jQuery `:woven` expression
 	 * @member $.expr
-	 * @method woven
+	 * @property woven
 	 */
 	$EXPR[":"][WOVEN] = $CREATEPSEUDO
 		// If we have jQuery >= 1.8 we want to use .createPseudo
