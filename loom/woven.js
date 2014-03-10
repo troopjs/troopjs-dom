@@ -11,6 +11,7 @@ define([
 
 	/**
 	 * @class browser.loom.woven
+	 * @mixins browser.loom.config
 	 * @singleton
 	 */
 

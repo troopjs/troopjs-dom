@@ -57,10 +57,13 @@ define([
 
 	/**
 	 * @method constructor
-	 * @param {core.component.service|core.component.widget} gadget List of services or widgets to
+	 * @inheritdoc
+	 * @param {jQuery|HTMLElement} $element The element that this widget should be attached to
+	 * @param {String} displayName A friendly name for this widget
+	 * @param {...core.component.service|...browser.component.widget} gadget List of services or widgets to
 	 * start before starting the application.
 	 */
-	return Widget.extend(function ApplicationWidget(gadget) {
+	return Widget.extend(function ApplicationWidget($element, displayName, gadget) {
 		/**
 		 * Service registry
 		 * @private

@@ -12,6 +12,7 @@ define([
 
 	/**
 	 * @class browser.loom.unweave
+	 * @mixins browser.loom.config
 	 * @singleton
 	 */
 

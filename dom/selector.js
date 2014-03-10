@@ -4,13 +4,14 @@
 define([
 	"troopjs-composer/mixin/factory",
 	"./config"
-], function (Factory, CONFIG) {
+], function (Factory, config) {
 	"use strict";
 
 	/**
 	 * An optimized CSS selector matcher that {@link browser.component.runner.sequence} relies on for
 	 * delegating DOM event on {@link browser.component.widget}.
 	 * @class browser.dom.selector
+	 * @mixins browser.dom.config
 	 * @private
 	 */
 
@@ -35,8 +36,8 @@ define([
 	var COUNT = "count";
 	var BASEVAL = "baseVal";
 	var RE_SPACE = /\s+/;
-	var querySelectorAll = CONFIG["querySelectorAll"];
-	var matchesSelector = CONFIG["matchesSelector"];
+	var querySelectorAll = config["querySelectorAll"];
+	var matchesSelector = config["matchesSelector"];
 
 	/**
 	 * Extracts key for universal indexer

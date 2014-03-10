@@ -194,16 +194,19 @@ define([
 		},
 
 		/**
-		 * Custom DOM event triggered when {@link #$element} of this widget is removed from the DOM tree.
+		 * Destroy DOM event
+		 * @localdoc Triggered when {@link #$element} of this widget is removed from the DOM tree.
 		 * @event dom/destroy
+		 * @param {jQuery} $event jQuery event object
+		 * @param {...*} [args] Event arguments
 		 * @preventable
 		 */
 
 		/**
+		 * Handles widget destruction from a DOM perspective
 		 * @handler
 		 * @inheritdoc #event-dom/destroy
-		 * @localdoc Triggered when  is destroyed
-		 * @event
+		 * @localdoc Triggered when this widget is removed from the DOM
 		 */
 		"dom/destroy" : function onDestroy() {
 			this.unweave();

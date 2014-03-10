@@ -21,6 +21,7 @@ define([
 	 *
 	 * @class browser.loom.plugin
 	 * @extends jquery.plugin
+	 * @mixins browser.loom.config
 	 * @singleton
 	 */
 
@@ -34,6 +35,7 @@ define([
 	var ATTR_WEAVE = config[WEAVE];
 	var ATTR_WOVEN = config[WOVEN];
 	var RE_SEPARATOR = /[\s,]+/;
+
 
 	/**
 	 * Tests if element has a data-weave attribute
