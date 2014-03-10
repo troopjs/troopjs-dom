@@ -32,8 +32,12 @@ define([
 	var RE_SEPARATOR = /[\s,]+/;
 
 	/**
-	 * Instantiate all widget instances specified in the {@link browser.loom.config#weave weave attribute}
-	 * of this element, and to signal the widget for start with the arguments. The weaving will result in:
+	 * Instantiate all {@link browser.component.widget widgets}  specified in the {@link browser.loom.config#weave weave attribute}
+	 * of this element, and to signal the widget for start with the arguments.
+	 *
+	 * It also lives as a jquery plugin as {@link $.fn#weave}.
+	 *
+	 * The weaving will result in:
 	 *
 	 *  - Updates the {@link browser.loom.config#weave woven attribute} with the created widget instances names.
 	 *  - The {@link browser.loom.config#$warp $warp data property} will reference the widget instances.
@@ -45,7 +49,7 @@ define([
 	 * 	// Instantiate the widget defined in "my/widget" module, with one param read from the element's custom data.
 	 * 	$el.weave();
 	 * @method constructor
-	 * @param {*...} [start_args] Start arguments.
+	 * @param {...*} [start_args] Arguments that will be passed to each widget's {@link browser.component.widget#constructor}
 	 * @returns {Promise} Promise for the completion of weaving all widgets.
 	 */
 	return function weave(start_args) {

@@ -17,9 +17,10 @@ define([
 	"use strict";
 
 	/**
-	 * Base DOM component attached to an element, that takes care of widget instantiation.
+	 * Component that attaches to an DOM element, considerably delegates all DOM manipulations.
 	 * @class browser.component.widget
 	 * @extends core.component.gadget
+	 * @mixins browser.loom.config
 	 */
 
 	var UNDEFINED;
@@ -82,7 +83,7 @@ define([
 	}
 
 	/**
-	 * Creates a new widget
+	 * Creates a new widget that attaches to a specified (jQuery) DOM element.
 	 * @method constructor
 	 * @param {jQuery|HTMLElement} $element The element that this widget should be attached to
 	 * @param {String} [displayName] A friendly name for this widget
@@ -114,8 +115,9 @@ define([
 
 		/**
 		 * jQuery element this widget is attached to
-		 * @readonly
 		 * @property {jQuery} $element
+		 * @readonly
+		 * @protected
 		 */
 		me[$ELEMENT] = $element;
 
@@ -126,6 +128,11 @@ define([
 	}, {
 		"displayName" : "browser/component/widget",
 
+		/**
+		 * @handler
+		 * @localdoc Registers event handlers that are declared as DOM specials.
+		 * @inheritdoc
+		 */
 		"sig/initialize" : function onInitialize() {
 			var me = this;
 
@@ -134,6 +141,12 @@ define([
 			});
 		},
 
+		/**
+		 * @handler
+		 * @localdoc Registers for each type of DOM event a proxy function on the DOM element that
+		 * re-dispatches those events.
+		 * @inheritdoc
+		 */
 		"sig/setup": function onSetup(type, handlers) {
 			var me = this;
 			var matches;
@@ -156,6 +169,11 @@ define([
 			}
 		},
 
+		/**
+		 * @handler
+		 * @localdoc Remove for the DOM event handler proxies that are registered on the DOM element.
+		 * @inheritdoc
+		 */
 		"sig/teardown": function onTeardown(type, handlers) {
 			var me = this;
 			var matches;
@@ -166,15 +184,26 @@ define([
 			}
 		},
 
+		/**
+		 * @handler
+		 * @localdoc Trigger a custom DOM event "task" whenever this widget performs a task.
+		 * @inheritdoc
+		 */
 		"sig/task" : function onTask(task) {
 			this[$ELEMENT].trigger("task", [ task ]);
 		},
 
 		/**
-		 * Triggered when $element is destroyed
-		 * @event
-		 * @template
+		 * Custom DOM event triggered when {@link #$element} of this widget is removed from the DOM tree.
+		 * @event dom/destroy
 		 * @preventable
+		 */
+
+		/**
+		 * @handler
+		 * @inheritdoc #event-dom/destroy
+		 * @localdoc Triggered when  is destroyed
+		 * @event
 		 */
 		"dom/destroy" : function onDestroy() {
 			this.unweave();
@@ -195,16 +224,16 @@ define([
 		"off": before(set_modified),
 
 		/**
-		 * Weaves all children of $element
-		 * @returns {Promise} from weave
+		 * Weaves all children elements of {@link #$element} that have **data-weave** attributes.
+		 * @returns {Promise} all woven widgets on each child element as an array.
 		 */
 		"weave" : function weave() {
 			return loom_weave.apply(this[$ELEMENT].find(SELECTOR_WEAVE), arguments);
 		},
 
 		/**
-		 * Unweaves all woven children widgets including the widget itself.
-		 * @returns {Promise} Promise of completeness of unweaving all widgets.
+		 * Unweaves all children elements of {@link #$element} that have **data-woven** attributes.
+		 * @returns {Promise} all unweaved widgets on each child element as an array.
 		 */
 		"unweave" : function unweave() {
 			var woven = this[$ELEMENT].find(SELECTOR_WOVEN);

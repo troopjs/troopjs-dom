@@ -21,9 +21,11 @@ define([
 
 	/**
 	 * Retrieve all or specific widget instances living on this element, that are
-	 * created by {@link browser.loom.weave weaving}.
+	 * created by {@link browser.loom.weave}.
+	 *
+	 * It also lives as a jquery plugin as {@link $.fn#woven}.
 	 * @method constructor
-	 * @param {...String} [name] One or more name of the widget to narrow down.
+	 * @param {...String} [widget] One or more widget names to narrow down the returned ones.
 	 * @returns {Promise} Promise to the completion of retrieving the woven widgets array.
 	 */
 	return function woven() {

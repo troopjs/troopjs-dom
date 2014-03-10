@@ -8,7 +8,10 @@ define([
 	"use strict";
 
 	/**
+	 * An optimized CSS selector matcher that {@link browser.component.runner.sequence} relies on for
+	 * delegating DOM event on {@link browser.component.widget}.
 	 * @class browser.dom.selector
+	 * @private
 	 */
 
 	var UNDEFINED;

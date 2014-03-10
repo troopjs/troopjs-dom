@@ -21,7 +21,7 @@ define([
 	 * [1]: http://requirejs.org/docs/api.html#config-moduleconfig
 	 *
 	 * @class browser.dom.config
-	 * @private
+	 * @protected
 	 * @singleton
 	 */
 	return merge.call({
