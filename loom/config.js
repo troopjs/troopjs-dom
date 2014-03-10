@@ -18,6 +18,7 @@ define([
 	 * 	})
 	 *
 	 * @class browser.loom.config
+	 * @extends requirejs.config
 	 * @protected
 	 * @singleton
 	 */
