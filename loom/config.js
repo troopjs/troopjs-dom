@@ -18,7 +18,7 @@ define([
 	 * 	})
 	 *
 	 * @class browser.loom.config
-	 * @private
+	 * @protected
 	 * @singleton
 	 */
 	return merge.call({
