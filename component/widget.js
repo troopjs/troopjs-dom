@@ -20,7 +20,6 @@ define([
 	 * Component that attaches to an DOM element, considerably delegates all DOM manipulations.
 	 * @class browser.component.widget
 	 * @extends core.component.gadget
-	 * @mixins browser.loom.config
 	 */
 
 	var UNDEFINED;
@@ -216,6 +215,7 @@ define([
 		 * @chainable
 		 * @method
 		 * @inheritdoc
+		 * @localdoc MODIFIED will be set **before** handler is added
 		 */
 		"on": after(set_modified),
 
@@ -223,6 +223,7 @@ define([
 		 * @chainable
 		 * @method
 		 * @inheritdoc
+		 * @localdoc MODIFIED will be set **after** handler is removed
 		 */
 		"off": before(set_modified),
 
@@ -250,46 +251,46 @@ define([
 		},
 
 		/**
+		 * Renders content and inserts it before {@link #$element}
 		 * @method
 		 * @inheritdoc #html
-		 * @localdoc Renders content and inserts it before {@link #$element}
 		 */
 		"before" : $render($.fn.before),
 
 		/**
+		 * Renders content and inserts it after {@link #$element}
 		 * @method
 		 * @inheritdoc #html
-		 * @localdoc Renders content and inserts it after {@link #$element}
 		 */
 		"after" : $render($.fn.after),
 
 		/**
+		 * Renders content and replaces {@link #$element} html contents
 		 * @method
 		 * @param {Function|String} contents Template/String to render
 		 * @param {...*} [args] Template arguments
 		 * @returns {Promise} Promise of  render
-		 * @localdoc Renders content and replaces {@link #$element} html contents
 		 */
 		"html" : $render($.fn.html),
 
 		/**
+		 * Renders content and replaces {@link #$element} text contents
 		 * @method
 		 * @inheritdoc #html
-		 * @localdoc Renders content and replaces {@link #$element} text contents
 		 */
 		"text" : $render($.fn.text),
 
 		/**
+		 * Renders content and appends it to {@link #$element}
 		 * @method
 		 * @inheritdoc #html
-		 * @localdoc Renders content and appends it to {@link #$element}
 		 */
 		"append" : $render($.fn.append),
 
 		/**
+		 * Renders content and prepends it to {@link #$element}
 		 * @method
 		 * @inheritdoc #html
-		 * @localdoc Renders content and prepends it to {@link #$element}
 		 */
 		"prepend" : $render($.fn.prepend)
 	});
