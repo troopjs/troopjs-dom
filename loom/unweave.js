@@ -37,10 +37,12 @@ define([
 	 * by {@link browser.loom.weave}, it is also to clean up the attributes
 	 * and data references to the previously instantiated widgets.
 	 *
+	 * @localdoc
+	 *
 	 * It also lives as a jquery plugin as {@link $.fn#unweave}.
 	 *
 	 * @method constructor
-	 * @param {...*} [args] Stop arguments
+	 * @param {...*} [stop_args] Arguments that will be passed to each widget's {@link browser.component.widget#stop stop} method
 	 * @returns {Promise} Promise to the completion of unweaving all woven widgets.
 	 */
 	return function unweave(stop_args) {

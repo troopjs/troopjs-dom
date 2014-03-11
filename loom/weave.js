@@ -36,12 +36,14 @@ define([
 	 * Instantiate all {@link browser.component.widget widgets}  specified in the {@link browser.loom.config#weave weave attribute}
 	 * of this element, and to signal the widget for start with the arguments.
 	 *
-	 * It also lives as a jquery plugin as {@link $.fn#weave}.
-	 *
 	 * The weaving will result in:
 	 *
 	 *  - Updates the {@link browser.loom.config#weave woven attribute} with the created widget instances names.
 	 *  - The {@link browser.loom.config#$warp $warp data property} will reference the widget instances.
+	 *
+	 *@localdoc
+	 *
+	 * It also lives as a jquery plugin as {@link $.fn#weave}.
 	 *
 	 * **Note:** It's not commonly to use this method directly, use instead {@link $.fn#weave jQuery.fn.weave}.
 	 *
@@ -49,8 +51,9 @@ define([
 	 * 	var $el = $('<div data-weave="my/widget(option)"></div>').data("option",{"foo":"bar"});
 	 * 	// Instantiate the widget defined in "my/widget" module, with one param read from the element's custom data.
 	 * 	$el.weave();
+	 *
 	 * @method constructor
-	 * @param {...*} [start_args] Arguments that will be passed to each widget's {@link browser.component.widget#constructor}
+	 * @param {...*} [start_args] Arguments that will be passed to each widget's {@link browser.component.widget#start start} method
 	 * @returns {Promise} Promise for the completion of weaving all widgets.
 	 */
 	return function weave(start_args) {

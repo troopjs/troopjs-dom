@@ -228,16 +228,14 @@ define([
 		"off": before(set_modified),
 
 		/**
-		 * Weaves all children elements of {@link #$element} that have **data-weave** attributes.
-		 * @returns {Promise} all woven widgets on each child element as an array.
+		 * @inheritdoc browser.loom.weave#constructor
 		 */
 		"weave" : function weave() {
 			return loom_weave.apply(this[$ELEMENT].find(SELECTOR_WEAVE), arguments);
 		},
 
 		/**
-		 * Unweaves all children elements of {@link #$element} that have **data-woven** attributes.
-		 * @returns {Promise} all unweaved widgets on each child element as an array.
+		 * @inheritdoc browser.loom.unweave#constructor
 		 */
 		"unweave" : function unweave() {
 			var woven = this[$ELEMENT].find(SELECTOR_WOVEN);
