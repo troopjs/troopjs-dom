@@ -43,9 +43,9 @@ define([
 	 *
 	 *@localdoc
 	 *
-	 * It also lives as a jquery plugin as {@link $.fn#weave}.
+	 * It also lives as a jquery plugin as {@link $#method-weave}.
 	 *
-	 * **Note:** It's not commonly to use this method directly, use instead {@link $.fn#weave jQuery.fn.weave}.
+	 * **Note:** It's not commonly to use this method directly, use instead {@link $#method-weave jQuery.fn.weave}.
 	 *
 	 * 	// Create element for weaving.
 	 * 	var $el = $('<div data-weave="my/widget(option)"></div>').data("option",{"foo":"bar"});

@@ -13,18 +13,6 @@ define([
 ], function WeaveModule($, when, config, weave, unweave, woven, getargs) {
 	"use strict";
 
-	/**
-	 * Module that extends jQuery with:
-	 *
-	 *  - {@link $.expr#weave weave} and {@link $.expr#woven woven} expressions.
-	 *  - {@link $.fn#weave weave}, {@link $.fn#unweave unweave} and {@link $.fn#woven woven} methods.
-	 *
-	 * @class browser.loom.plugin
-	 * @extends jquery.plugin
-	 * @mixins browser.loom.config
-	 * @singleton
-	 */
-
 	var UNDEFINED;
 	var $FN = $.fn;
 	var $EXPR = $.expr;
@@ -59,7 +47,7 @@ define([
 
 	/**
 	 * jQuery `:weave` expression
-	 * @member $.expr
+	 * @member $
 	 * @property weave
 	 */
 	$EXPR[":"][WEAVE] = $CREATEPSEUDO
@@ -99,7 +87,7 @@ define([
 
 	/**
 	 * jQuery `:woven` expression
-	 * @member $.expr
+	 * @member $
 	 * @property woven
 	 */
 	$EXPR[":"][WOVEN] = $CREATEPSEUDO
@@ -137,21 +125,21 @@ define([
 		};
 
 	/**
-	 * @member $.fn
+	 * @member $
 	 * @method weave
 	 * @inheritdoc browser.loom.weave#constructor
 	 */
 	$FN[WEAVE] = weave;
 
 	/**
-	 * @member $.fn
+	 * @member $
 	 * @method unweave
 	 * @inheritdoc browser.loom.unweave#constructor
 	 */
 	$FN[UNWEAVE] = unweave;
 
 	/**
-	 * @member $.fn
+	 * @member $
 	 * @method woven
 	 * @inheritdoc browser.loom.woven#constructor
 	 */

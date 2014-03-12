@@ -39,7 +39,7 @@ define([
 	 *
 	 * @localdoc
 	 *
-	 * It also lives as a jquery plugin as {@link $.fn#unweave}.
+	 * It also lives as a jquery plugin as {@link $#method-unweave}.
 	 *
 	 * @method constructor
 	 * @param {...*} [stop_args] Arguments that will be passed to each widget's {@link browser.component.widget#stop stop} method
