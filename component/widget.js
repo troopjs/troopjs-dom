@@ -3,8 +3,6 @@
  */
 define([
 	"troopjs-core/component/gadget",
-	"troopjs-composer/decorator/before",
-	"troopjs-composer/decorator/after",
 	"./runner/sequence",
 	"jquery",
 	"when",
@@ -13,7 +11,7 @@ define([
 	"../loom/weave",
 	"../loom/unweave",
 	"troopjs-jquery/destroy"
-], function WidgetModule(Gadget, before, after, sequence, $, when, merge, LOOM_CONF, loom_weave, loom_unweave) {
+], function WidgetModule(Gadget, sequence, $, when, merge, LOOM_CONF, loom_weave, loom_unweave) {
 	"use strict";
 
 	/**
@@ -72,12 +70,13 @@ define([
 	/**
 	 * Sets MODIFIED on handlers
 	 * @ignore
-	 * @param type {String} Topic type
+	 * @param {Object} handlers
+	 * @param {String} type
 	 */
-	function set_modified(type) {
+	function set_modified(handlers, type) {
 		if (RE.test(type)) {
 			// Set modified
-			this.handlers[type][MODIFIED] = new Date().getTime();
+			handlers[MODIFIED] = new Date().getTime();
 		}
 	}
 
@@ -170,6 +169,20 @@ define([
 
 		/**
 		 * @handler
+		 * @localdoc Sets MODIFIED on handlers for matching types
+		 * @inheritdoc
+		 */
+		"sig/add": set_modified,
+
+		/**
+		 * @handler
+		 * @localdoc Sets MODIFIED on handlers for matching types
+		 * @inheritdoc
+		 */
+		"sig/remove": set_modified,
+
+		/**
+		 * @handler
 		 * @localdoc Remove for the DOM event handler proxies that are registered on the DOM element.
 		 * @inheritdoc
 		 */
@@ -212,22 +225,6 @@ define([
 				loom_unweave.call(this[$ELEMENT]);
 			}
 		},
-
-		/**
-		 * @chainable
-		 * @method
-		 * @inheritdoc
-		 * @localdoc MODIFIED will be set **before** handler is added
-		 */
-		"on": after(set_modified),
-
-		/**
-		 * @chainable
-		 * @method
-		 * @inheritdoc
-		 * @localdoc MODIFIED will be set **after** handler is removed
-		 */
-		"off": before(set_modified),
 
 		/**
 		 * @inheritdoc browser.loom.weave#constructor
