@@ -38,7 +38,7 @@ define([
 	var VALUE = "value";
 	var TYPE = "type";
 	var RUNNER = "runner";
-	var $WEFT = LOOM_CONF["$weft"];
+	var FINALIZE = "finalize";
 	var SELECTOR_WEAVE = "[" + LOOM_CONF["weave"] + "]";
 	var SELECTOR_WOVEN = "[" + LOOM_CONF["woven"] + "]";
 	var RE = new RegExp("^" + DOM + "/(.+)");
@@ -146,7 +146,7 @@ define([
 		 * re-dispatches those events.
 		 * @inheritdoc
 		 */
-		"sig/setup": function onSetup(type, handlers) {
+		"sig/setup": function onSetup(handlers, type) {
 			var me = this;
 			var matches;
 
@@ -173,7 +173,7 @@ define([
 		 * @localdoc Remove for the DOM event handler proxies that are registered on the DOM element.
 		 * @inheritdoc
 		 */
-		"sig/teardown": function onTeardown(type, handlers) {
+		"sig/teardown": function onTeardown(handlers, type) {
 			var me = this;
 			var matches;
 
@@ -208,7 +208,9 @@ define([
 		 * @localdoc Triggered when this widget is removed from the DOM
 		 */
 		"dom/destroy" : function onDestroy() {
-			this.unweave();
+			if (this.phase !== FINALIZE) {
+				loom_unweave.call(this[$ELEMENT]);
+			}
 		},
 
 		/**
@@ -238,14 +240,7 @@ define([
 		 * @inheritdoc browser.loom.unweave#constructor
 		 */
 		"unweave" : function unweave() {
-			var woven = this[$ELEMENT].find(SELECTOR_WOVEN);
-
-			// Unweave myself only if I am woven.
-			if(this[$WEFT]) {
-				woven = woven.addBack();
-			}
-
-			return loom_unweave.apply(woven, arguments);
+			return loom_unweave.apply(this[$ELEMENT].find(SELECTOR_WOVEN), arguments);
 		},
 
 		/**
