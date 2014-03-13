@@ -146,7 +146,7 @@ define([
 		 * re-dispatches those events.
 		 * @inheritdoc
 		 */
-		"sig/setup": function onSetup(type, handlers) {
+		"sig/setup": function onSetup(handlers, type) {
 			var me = this;
 			var matches;
 
@@ -173,7 +173,7 @@ define([
 		 * @localdoc Remove for the DOM event handler proxies that are registered on the DOM element.
 		 * @inheritdoc
 		 */
-		"sig/teardown": function onTeardown(type, handlers) {
+		"sig/teardown": function onTeardown(handlers, type) {
 			var me = this;
 			var matches;
 
