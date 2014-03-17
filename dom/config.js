@@ -23,7 +23,7 @@ define([
 	 * @class browser.dom.config
 	 * @extends requirejs.config
 	 * @protected
-	 * @singleton
+	 * @static
 	 */
 	return merge.call({
 		/**
