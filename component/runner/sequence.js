@@ -11,7 +11,7 @@ define([
 	 * @class browser.component.runner.sequence
 	 * @extends core.event.emitter.runner
 	 * @protected
-	 * @singleton
+	 * @static
 	 */
 
 	var UNDEFINED;
@@ -25,6 +25,7 @@ define([
 
 	/**
 	 * @method constructor
+	 * @static
 	 * @inheritdoc
 	 * @localdoc Runner that executes DOM candidates in sequence without overlap
 	 * @returns {*} Result from last handler

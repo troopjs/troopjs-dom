@@ -14,8 +14,14 @@ define([
 
 	/**
 	 * @class browser.loom.weave
+	 * @extends Function
 	 * @mixins browser.loom.config
-	 * @singleton
+	 * @static
+	 */
+
+	/**
+	 * @method constructor
+	 * @hide
 	 */
 
 	var UNDEFINED;
@@ -53,6 +59,7 @@ define([
 	 * 	$el.weave();
 	 *
 	 * @method constructor
+	 * @static
 	 * @param {...*} [start_args] Arguments that will be passed to each widget's {@link browser.component.widget#start start} method
 	 * @returns {Promise} Promise for the completion of weaving all widgets.
 	 */

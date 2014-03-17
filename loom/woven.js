@@ -11,8 +11,9 @@ define([
 
 	/**
 	 * @class browser.loom.woven
+	 * @extends Function
 	 * @mixins browser.loom.config
-	 * @singleton
+	 * @static
 	 */
 
 	var ARRAY_MAP = Array.prototype.map;
@@ -21,11 +22,17 @@ define([
 	var $WARP = config["$warp"];
 
 	/**
+	 * @method constructor
+	 * @hide
+	 */
+
+	/**
 	 * Retrieve all or specific widget instances living on this element, that are
 	 * created by {@link browser.loom.weave}.
 	 *
 	 * It also lives as a jquery plugin as {@link $#method-woven}.
 	 * @method constructor
+	 * @static
 	 * @param {...String} [widget] One or more widget names to narrow down the returned ones.
 	 * @returns {Promise} Promise to the completion of retrieving the woven widgets array.
 	 */
