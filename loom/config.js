@@ -8,17 +8,10 @@ define([
 	"use strict";
 
 	/**
-	 * This module is to provide configurations **loom** from it's AMD module config.
-	 *
-	 * To change the configuration, refer to RequireJS [module config API](http://requirejs.org/docs/api.html#config-moduleconfig):
-	 *
-	 * 	requirejs.config(
-	 * 	{
-	 * 		config: { "troopjs-browser/loom/config" : { "weave" : "data-my-weave", ...  } }
-	 * 	})
-	 *
 	 * @class browser.loom.config
 	 * @extends requirejs.config
+	 * @inheritdoc
+	 * @localdoc This module is to provide configurations **loom** from it's AMD module config.
 	 * @protected
 	 * @static
 	 */
