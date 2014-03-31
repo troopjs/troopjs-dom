@@ -14,23 +14,23 @@ define([
 	 */
 
 	var ARRAY_SLICE = Array.prototype.slice;
-	var CHILDREN = "children";
+	var COMPONENTS = "components";
 
 	/**
 	 * @method constructor
 	 * @inheritdoc
 	 * @param {jQuery|HTMLElement} $element The element that this widget should be attached to
 	 * @param {String} displayName A friendly name for this widget
-	 * @param {...core.component.gadget} gadget List of gadgets to start before starting the application.
+	 * @param {...core.component.base} component List of components to start before starting the application.
 	 */
-	return Widget.extend(function ApplicationWidget($element, displayName, gadget) {
+	return Widget.extend(function ApplicationWidget($element, displayName, component) {
 		/**
-		 * Application children
+		 * Application components
 		 * @private
 		 * @readonly
-		 * @property {core.component.gadget[]} children
+		 * @property {core.component.base[]} components
 		 */
-		this[CHILDREN] = ARRAY_SLICE.call(arguments, 2);
+		this[COMPONENTS] = ARRAY_SLICE.call(arguments, 2);
 	}, {
 		"displayName" : "browser/application/widget",
 
@@ -42,8 +42,8 @@ define([
 		"sig/initialize" : function onInitialize() {
 			var args = arguments;
 
-			return when.map(this[CHILDREN], function (child) {
-				return child.signal("initialize", args);
+			return when.map(this[COMPONENTS], function (component) {
+				return component.signal("initialize", args);
 			});
 		},
 
@@ -57,8 +57,8 @@ define([
 			var args = arguments;
 
 			return when
-				.map(me[CHILDREN], function (child) {
-					return child.signal("start", args);
+				.map(me[COMPONENTS], function (component) {
+					return component.signal("start", args);
 				}).then(function started() {
 					return me.weave.apply(me, args);
 				});
@@ -74,7 +74,7 @@ define([
 			var args = arguments;
 
 			return me.unweave.apply(me, args).then(function stopped() {
-				return when.map(me[CHILDREN], function (child) {
+				return when.map(me[COMPONENTS], function (child) {
 					return child.signal("stop", args);
 				});
 			});
@@ -88,8 +88,8 @@ define([
 		"sig/finalize" : function onFinalize() {
 			var args = arguments;
 
-			return when.map(this[CHILDREN], function (child) {
-				return child.signal("finalize", args);
+			return when.map(this[COMPONENTS], function (component) {
+				return component.signal("finalize", args);
 			});
 		}
 	});
