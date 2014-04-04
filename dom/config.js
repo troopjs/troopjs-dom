@@ -10,11 +10,12 @@ define([
 
 	/**
 	 * @class browser.dom.config
-	 * @extends requirejs.config
-	 * @inheritdoc
+	 * @mixin requirejs.config
+	 * @inheritdoc requirejs.config
 	 * @localdoc This module is to provide configurations **dom** from it's AMD module config.
 	 * @protected
 	 * @static
+	 * @alias config.browser.dom.config
 	 */
 	return merge.call({
 		/**

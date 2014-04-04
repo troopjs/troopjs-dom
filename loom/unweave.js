@@ -12,8 +12,8 @@ define([
 
 	/**
 	 * @class browser.loom.unweave
-	 * @extends Function
-	 * @mixins browser.loom.config
+	 * @mixin Function
+	 * @mixin browser.loom.config
 	 * @static
 	 */
 
@@ -34,11 +34,6 @@ define([
 	var RE_SEPARATOR = /[\s,]+/;
 
 	/**
-	 * @method constructor
-	 * @hide
-	 */
-
-	/**
 	 * Destroy all widget instances living on this element, that are created
 	 * by {@link browser.loom.weave}, it is also to clean up the attributes
 	 * and data references to the previously instantiated widgets.
@@ -48,7 +43,6 @@ define([
 	 * It also lives as a jquery plugin as {@link $#method-unweave}.
 	 *
 	 * @method constructor
-	 * @static
 	 * @param {...*} [stop_args] Arguments that will be passed to each widget's {@link browser.component.widget#stop stop} method
 	 * @returns {Promise} Promise to the completion of unweaving all woven widgets.
 	 */

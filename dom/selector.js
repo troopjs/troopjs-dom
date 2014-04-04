@@ -12,7 +12,7 @@ define([
 	 * delegating DOM event on {@link browser.component.widget}.
 	 * @class browser.dom.selector
 	 * @extends composer.mixin
-	 * @mixins browser.dom.config
+	 * @mixin browser.dom.config
 	 * @private
 	 */
 

@@ -9,12 +9,14 @@ define([
 
 	/**
 	 * @class browser.loom.config
-	 * @extends requirejs.config
-	 * @inheritdoc
+	 * @mixin requirejs.config
+	 * @inheritdoc requirejs.config
 	 * @localdoc This module is to provide configurations **loom** from it's AMD module config.
 	 * @protected
 	 * @static
+	 * @alias config.browser.loom.config
 	 */
+
 	return merge.call({
 		/**
 		 * @cfg {String} $warp Property of the element's data where the **warp** resides.

@@ -13,6 +13,17 @@ define([
 ], function WeaveModule($, when, config, weave, unweave, woven, getargs) {
 	"use strict";
 
+	/**
+	 * Extends {@link jQuery} with:
+	 *
+	 *  - {@link $#property-weave} and {@link $#property-woven} properties
+	 *  - {@link $#method-weave}, {@link $#method-unweave} and {@link $#method-woven} methods
+	 *
+	 * @class browser.loom.plugin
+	 * @extends External
+	 * @alias plugin.jquery
+	 */
+
 	var UNDEFINED;
 	var $FN = $.fn;
 	var $EXPR = $.expr;
@@ -23,7 +34,6 @@ define([
 	var ATTR_WEAVE = config[WEAVE];
 	var ATTR_WOVEN = config[WOVEN];
 	var RE_SEPARATOR = /[\s,]+/;
-
 
 	/**
 	 * Tests if element has a data-weave attribute

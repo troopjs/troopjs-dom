@@ -14,14 +14,9 @@ define([
 
 	/**
 	 * @class browser.loom.weave
-	 * @extends Function
-	 * @mixins browser.loom.config
+	 * @mixin Function
+	 * @mixin browser.loom.config
 	 * @static
-	 */
-
-	/**
-	 * @method constructor
-	 * @hide
 	 */
 
 	var UNDEFINED;
@@ -47,7 +42,7 @@ define([
 	 *  - Updates the {@link browser.loom.config#weave woven attribute} with the created widget instances names.
 	 *  - The {@link browser.loom.config#$warp $warp data property} will reference the widget instances.
 	 *
-	 *@localdoc
+	 * @localdoc
 	 *
 	 * It also lives as a jquery plugin as {@link $#method-weave}.
 	 *
@@ -59,7 +54,6 @@ define([
 	 * 	$el.weave();
 	 *
 	 * @method constructor
-	 * @static
 	 * @param {...*} [start_args] Arguments that will be passed to each widget's {@link browser.component.widget#start start} method
 	 * @returns {Promise} Promise for the completion of weaving all widgets.
 	 */

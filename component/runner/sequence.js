@@ -9,9 +9,10 @@ define([
 
 	/**
 	 * @class browser.component.runner.sequence
-	 * @extends core.event.emitter.runner
+	 * @mixin core.event.emitter.runner
 	 * @protected
 	 * @static
+	 * @alias runner.browser.component.runner.sequence
 	 */
 
 	var UNDEFINED;
@@ -25,7 +26,6 @@ define([
 
 	/**
 	 * @method constructor
-	 * @static
 	 * @inheritdoc
 	 * @localdoc Runner that executes DOM candidates in sequence without overlap
 	 * @returns {*} Result from last handler
