@@ -6,7 +6,7 @@ define([
 	"when",
 	"jquery",
 	"poly/array",
-	"troopjs-utils/defer"
+	"troopjs-util/defer"
 ], function UnweaveModule(config, when, $, Defer) {
 	"use strict";
 

@@ -3,7 +3,7 @@
  */
 define([
 	"module",
-	"troopjs-utils/merge",
+	"troopjs-util/merge",
 	"jquery"
 ], function (module, merge, $) {
 	"use strict";

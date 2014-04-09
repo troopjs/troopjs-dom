@@ -9,7 +9,7 @@
 		"troopjs-compose": "~3",
 		"troopjs-core": "~3",
 		"troopjs-jquery": "~3",
-		"troopjs-utils": "~2",
+		"troopjs-util": "~3",
 		"jquery": ">=1.7.0 <2.1.0"
 	}
 }

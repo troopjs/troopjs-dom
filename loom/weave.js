@@ -6,8 +6,8 @@ define([
 	"require",
 	"when",
 	"jquery",
-	"troopjs-utils/getargs",
-	"troopjs-utils/defer",
+	"troopjs-util/getargs",
+	"troopjs-util/defer",
 	"poly/array"
 ], function WeaveModule(config, parentRequire, when, $, getargs, Defer) {
 	"use strict";

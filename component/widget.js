@@ -6,7 +6,7 @@ define([
 	"./runner/sequence",
 	"jquery",
 	"when",
-	"troopjs-utils/merge",
+	"troopjs-util/merge",
 	"../loom/config",
 	"../loom/weave",
 	"../loom/unweave",

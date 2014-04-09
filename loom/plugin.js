@@ -8,7 +8,7 @@ define([
 	"./weave",
 	"./unweave",
 	"./woven",
-	"troopjs-utils/getargs",
+	"troopjs-util/getargs",
 	"poly/array"
 ], function WeaveModule($, when, config, weave, unweave, woven, getargs) {
 	"use strict";
