@@ -12,8 +12,8 @@ define([
 
 	/**
 	 * @class browser.loom.unweave
-	 * @mixin Function
 	 * @mixin browser.loom.config
+	 * @mixin Function
 	 * @static
 	 */
 

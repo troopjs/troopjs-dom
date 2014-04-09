@@ -18,6 +18,7 @@ define([
 	 * Component that attaches to an DOM element, considerably delegates all DOM manipulations.
 	 * @class browser.component.widget
 	 * @extends core.component.gadget
+	 * @alias widget.component
 	 */
 
 	var UNDEFINED;

@@ -9,13 +9,10 @@ define([
 	"use strict";
 
 	/**
+	 * Provides configuration for the dom package
 	 * @class browser.dom.config
-	 * @mixin requirejs.config
-	 * @inheritdoc requirejs.config
-	 * @localdoc This module is to provide configurations **dom** from it's AMD module config.
 	 * @protected
-	 * @static
-	 * @alias config.browser.dom.config
+	 * @alias feature.config
 	 */
 	return merge.call({
 		/**

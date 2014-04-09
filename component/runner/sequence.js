@@ -9,10 +9,10 @@ define([
 
 	/**
 	 * @class browser.component.runner.sequence
-	 * @mixin core.event.emitter.runner
+	 * @implement core.event.emitter.runner
 	 * @protected
 	 * @static
-	 * @alias runner.browser.component.runner.sequence
+	 * @alias feature.runner
 	 */
 
 	var UNDEFINED;
@@ -24,12 +24,6 @@ define([
 	var SELECTOR = "selector";
 	var MODIFIED = "modified";
 
-	/**
-	 * @method constructor
-	 * @inheritdoc
-	 * @localdoc Runner that executes DOM candidates in sequence without overlap
-	 * @returns {*} Result from last handler
-	 */
 	return function sequence(event, handlers, args) {
 		var modified = handlers[MODIFIED];
 		var $event = args[0];
@@ -74,4 +68,10 @@ define([
 				return candidate[CALLBACK].apply(candidate[CONTEXT], args);
 			}, UNDEFINED);
 	}
+	/**
+	 * @method constructor
+	 * @inheritdoc
+	 * @localdoc Runner that executes DOM candidates in sequence without overlap
+	 * @returns {*} Result from last handler
+	 */
 });

@@ -14,6 +14,7 @@ define([
 	 * The application widget serves as a container for all troop components that bootstrap the page.
 	 * @class browser.application.widget
 	 * @extends browser.component.widget
+	 * @alias widget.application
 	 */
 
 	var UNDEFINED;

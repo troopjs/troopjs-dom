@@ -8,13 +8,10 @@ define([
 	"use strict";
 
 	/**
+	 * Provides configuration for the loom package
 	 * @class browser.loom.config
-	 * @mixin requirejs.config
-	 * @inheritdoc requirejs.config
-	 * @localdoc This module is to provide configurations **loom** from it's AMD module config.
 	 * @protected
-	 * @static
-	 * @alias config.browser.loom.config
+	 * @alias feature.config
 	 */
 
 	return merge.call({
