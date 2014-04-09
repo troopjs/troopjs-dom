@@ -2,7 +2,7 @@
  * @license MIT http://troopjs.mit-license.org/
  */
 define([
-	"troopjs-composer/mixin/factory",
+	"troopjs-compose/mixin/factory",
 	"./config"
 ], function (Factory, config) {
 	"use strict";
@@ -11,7 +11,7 @@ define([
 	 * An optimized CSS selector matcher that {@link browser.component.runner.sequence} relies on for
 	 * delegating DOM event on {@link browser.component.widget}.
 	 * @class browser.dom.selector
-	 * @implement composer.mixin
+	 * @implement compose.mixin
 	 * @mixin browser.dom.config
 	 * @private
 	 */
