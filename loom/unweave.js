@@ -1,9 +1,21 @@
 /**
- * TroopJS browser/loom/unweave
- * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
+ * @license MIT http://troopjs.mit-license.org/
  */
-define([ "./config", "when", "jquery", "poly/array" ], function UnweaveModule(config, when, $) {
+define([
+	"./config",
+	"when",
+	"jquery",
+	"poly/array",
+	"troopjs-util/defer"
+], function UnweaveModule(config, when, $, Defer) {
 	"use strict";
+
+	/**
+	 * @class browser.loom.unweave
+	 * @mixin browser.loom.config
+	 * @mixin Function
+	 * @static
+	 */
 
 	var UNDEFINED;
 	var NULL = null;
@@ -22,12 +34,21 @@ define([ "./config", "when", "jquery", "poly/array" ], function UnweaveModule(co
 	var RE_SEPARATOR = /[\s,]+/;
 
 	/**
-	 * Unweaves elements
-	 * @returns {Promise} of unweaving
+	 * Destroy all widget instances living on this element, that are created
+	 * by {@link browser.loom.weave}, it is also to clean up the attributes
+	 * and data references to the previously instantiated widgets.
+	 *
+	 * @localdoc
+	 *
+	 * It also lives as a jquery plugin as {@link $#method-unweave}.
+	 *
+	 * @method constructor
+	 * @param {...*} [stop_args] Arguments that will be passed to each widget's {@link browser.component.widget#stop stop} method
+	 * @returns {Promise} Promise to the completion of unweaving all woven widgets.
 	 */
-	return function unweave() {
+	return function unweave(stop_args) {
 		// Store stop_args for later
-		var stop_args = arguments;
+		stop_args = arguments;
 
 		// Map elements
 		return when.all(ARRAY_MAP.call(this, function (element) {
@@ -37,30 +58,35 @@ define([ "./config", "when", "jquery", "poly/array" ], function UnweaveModule(co
 			var $unweave = [];
 			var unweave_attr = $element.attr(ATTR_UNWEAVE);
 			var unweave_re = [];
-			var re = /[\s,]*([\w_\-\/\.]+)(?:@(\d+))?/g;
+			var re = /[\s,]*([\w_\/\.\-]+)(?:@(\d+))?/g;
 			var matches;
 			var $weft;
 			var iMax;
 			var i;
 			var j;
 
-			/**
-			 * Updated attributes
-			 * @param {object} widget Widget
+			/*
+			 * Updated attributes according to what have been unweaved.
+			 * @param {object} widgets List of stopped widgets.
 			 * @private
 			 */
-			var update_attr = function (widget) {
-				var $promise = widget[$WEFT];
-				var woven = $promise[WOVEN];
-				var weave = $promise[WEAVE];
+			var update_attr = function (widgets) {
+				var woven = {};
+				var weave = [];
+				widgets.forEach(function (widget) {
+					var $promise = widget[$WEFT];
+					woven[$promise[WOVEN]] = 1;
+					weave.push($promise[WEAVE]);
+				});
 
 				$element
+					// Remove those widgets from data-woven.
 					.attr(ATTR_WOVEN, function (index, attr) {
 						var result = [];
 
 						if (attr !== UNDEFINED) {
 							ARRAY_PUSH.apply(result, attr.split(RE_SEPARATOR).filter(function (part) {
-								return part !== woven;
+								return !( part in woven );
 							}));
 						}
 
@@ -68,14 +94,9 @@ define([ "./config", "when", "jquery", "poly/array" ], function UnweaveModule(co
 							? null
 							: result.join(" ");
 					})
+					// Added back those widget names to data-weave.
 					.attr(ATTR_WEAVE, function (index, attr) {
-						var result = [ weave ];
-
-						if (attr !== UNDEFINED) {
-							ARRAY_PUSH.apply(result, attr.split(RE_SEPARATOR));
-						}
-
-						return result.join(" ");
+							return (attr !== UNDEFINED ? attr.split(RE_SEPARATOR) : []).concat(weave).join(" ");
 					});
 			};
 
@@ -120,15 +141,24 @@ define([ "./config", "when", "jquery", "poly/array" ], function UnweaveModule(co
 
 			// Return promise of mapped $unweave
 			return when.map($unweave, function (widget) {
-				// Store promise of stop yielding widget
-				var promise = widget.stop.apply(widget, stop_args).yield(widget);
+				var deferred;
+				var stopPromise;
+
+				// TODO: Detecting TroopJS 1.x widget from *version* property.
+				if (widget.trigger) {
+					deferred = Defer();
+					widget.stop(deferred);
+					stopPromise = deferred.promise;
+				}
+				else {
+					stopPromise = widget.stop.apply(widget, stop_args);
+				}
 
 				// Add deferred update of attr
-				when(promise, update_attr);
-
-				// Return promise
-				return promise;
-			});
+				return stopPromise.yield(widget);
+			})
+			// Updating the weave/woven attributes with stopped widgets.
+			.tap(update_attr);
 		}));
 	};
 });

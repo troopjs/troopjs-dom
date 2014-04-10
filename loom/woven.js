@@ -1,17 +1,34 @@
 /**
- * TroopJS browser/loom/woven
- * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
+ * @license MIT http://troopjs.mit-license.org/
  */
-define([ "./config", "when", "jquery", "poly/array" ], function WovenModule(config, when, $) {
+define([
+	"./config",
+	"when",
+	"jquery",
+	"poly/array"
+], function WovenModule(config, when, $) {
 	"use strict";
+
+	/**
+	 * @class browser.loom.woven
+	 * @mixin browser.loom.config
+	 * @mixin Function
+	 * @static
+	 */
+
 	var ARRAY_MAP = Array.prototype.map;
 	var LENGTH = "length";
 	var WOVEN = "woven";
 	var $WARP = config["$warp"];
 
 	/**
-	 * Gets woven widgets
-	 * @returns {Promise} of woven widgets
+	 * Retrieve all or specific widget instances living on this element, that are
+	 * created by {@link browser.loom.weave}.
+	 *
+	 * It also lives as a jquery plugin as {@link $#method-woven}.
+	 * @method constructor
+	 * @param {...String} [widget] One or more widget names to narrow down the returned ones.
+	 * @returns {Promise} Promise to the completion of retrieving the woven widgets array.
 	 */
 	return function woven() {
 		var $woven = [];
@@ -21,7 +38,7 @@ define([ "./config", "when", "jquery", "poly/array" ], function WovenModule(conf
 		// If we have arguments we have convert and filter
 		if (arguments[LENGTH] > 0) {
 			// Map arguments to a regexp
-			re = RegExp(ARRAY_MAP.call(arguments, function (widget) {
+			re = new RegExp(ARRAY_MAP.call(arguments, function (widget) {
 				return "^" + widget;
 			}).join("|"), "m");
 

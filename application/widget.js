@@ -1,81 +1,97 @@
 /**
- * TroopJS browser/application/widget
- * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
+ * @license MIT http://troopjs.mit-license.org/
  */
-define([ "module", "../component/widget", "when", "troopjs-core/registry/service", "poly/array" ], function ApplicationWidgetModule(module, Widget, when, RegistryService) {
+define([
+	"../component/widget",
+	"when"
+], function ApplicationWidgetModule(Widget, when) {
 	"use strict";
 
-	var ARRAY_PROTO = Array.prototype;
-	var ARRAY_SLICE = ARRAY_PROTO.slice;
-	var ARRAY_PUSH = ARRAY_PROTO.push;
-	var REGISTRY = "registry";
+	/**
+	 * The application widget serves as a container for all troop components that bootstrap the page.
+	 * @class browser.application.widget
+	 * @extends browser.component.widget
+	 * @alias widget.application
+	 */
+
+	var ARRAY_SLICE = Array.prototype.slice;
+	var COMPONENTS = "components";
 
 	/**
-	 * Forwards _signal to components
-	 * @private
-	 * @param {String} _signal Signal to forward
-	 * @param {Array} _args Signal arguments
-	 * @returns {Function}
+	 * @method constructor
+	 * @inheritdoc
+	 * @param {jQuery|HTMLElement} $element The element that this widget should be attached to
+	 * @param {String} displayName A friendly name for this widget
+	 * @param {...core.component.base} component List of components to start before starting the application.
 	 */
-	function forward(_signal, _args) {
-		/*jshint validthis:true*/
-		var me = this;
-		var signal = me.signal;
-		var args = [ _signal ];
-		var components = me[REGISTRY].get();
-		var index = 0;
-
-		ARRAY_PUSH.apply(args, _args);
-
-		var next = function () {
-			var component;
-
-			return (component = components[index++])
-				? when(signal.apply(component, args), next)
-				: when.resolve(_args);
-		};
-
-		return next();
-	}
-
-	return Widget.extend(function ApplicationWidget() {
-		// Create registry
-		var registry = this[REGISTRY] = RegistryService();
-
-		// Slice and iterate arguments
-		ARRAY_SLICE.call(arguments, 2).forEach(function (component) {
-			// Register component
-			registry.add(component);
-		});
+	return Widget.extend(function ApplicationWidget($element, displayName, component) {
+		/**
+		 * Application components
+		 * @private
+		 * @readonly
+		 * @property {core.component.base[]} components
+		 */
+		this[COMPONENTS] = ARRAY_SLICE.call(arguments, 2);
 	}, {
 		"displayName" : "browser/application/widget",
 
+		/**
+		 * @handler
+		 * @localdoc Initialize all registered components (widgets and services) that are passed in from the {@link #method-constructor}.
+		 * @inheritdoc
+		 */
 		"sig/initialize" : function onInitialize() {
-			return forward.call(this, "initialize", arguments);
+			var args = arguments;
+
+			return when.map(this[COMPONENTS], function (component) {
+				return component.signal("initialize", args);
+			});
 		},
 
+		/**
+		 * @handler
+		 * @localdoc weave all widgets that are within this element.
+		 * @inheritdoc
+		 */
 		"sig/start" : function onStart() {
 			var me = this;
-			var weave = me.weave;
 			var args = arguments;
 
-			return forward.call(me, "start", args).then(function started() {
-				return weave.apply(me, args);
-			});
+			return when
+				.map(me[COMPONENTS], function (component) {
+					return component.signal("start", args);
+				}).then(function started() {
+					return me.weave.apply(me, args);
+				});
 		},
 
-		"sig/stop" : function onStop() {
+		/**
+		 * @handler
+		 * @localdoc stop all woven widgets that are within this element.
+		 * @inheritdoc
+		 */
+		"sig/stop": function onStop() {
 			var me = this;
-			var unweave = me.unweave;
 			var args = arguments;
 
-			return unweave.apply(me, args).then(function stopped() {
-				return forward.call(me, "stop", args);
+			return me.unweave.apply(me, args).then(function stopped() {
+				return when.map(me[COMPONENTS], function (child) {
+					return child.signal("stop", args);
+				});
 			});
 		},
 
+		/**
+		 * @handler
+		 * @localdoc finalize all registered components (widgets and services) that are registered from the {@link #method-constructor}.
+		 * @inheritdoc
+		 */
 		"sig/finalize" : function onFinalize() {
-			return forward.call(this, "finalize", arguments);
+			var args = arguments;
+
+			return when.map(this[COMPONENTS], function (component) {
+				return component.signal("finalize", args);
+			});
 		}
 	});
 });
