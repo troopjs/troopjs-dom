@@ -1,15 +1,15 @@
 {
-	"name": "troopjs-browser",
-	"version": "4.1.0",
-	"ignore": [
-		"**/.*",
-		"node_modules"
-	],
-	"dependencies": {
-		"troopjs-compose": "~3",
-		"troopjs-core": "~3",
-		"troopjs-jquery": "~3",
-		"troopjs-util": "~3",
-		"jquery": ">=1.7.0 <2.1.0"
-	}
+  "name": "troopjs-browser",
+  "version": "4.1.1",
+  "ignore": [
+    "**/.*",
+    "node_modules"
+  ],
+  "dependencies": {
+    "troopjs-compose": "~3",
+    "troopjs-core": "~3",
+    "troopjs-jquery": "~3",
+    "troopjs-util": "~3",
+    "jquery": ">=1.7.0 <2.1.0"
+  }
 }
