@@ -46,14 +46,14 @@ define([
 	 * Creates a proxy of the inner method 'render' with the '$fn' parameter set
 	 * @ignore
 	 * @param {Function} $fn jQuery method
-	 * @returns {Function} proxied render
+	 * @return {Function} proxied render
 	 */
 	function $render($fn) {
 		/**
 		 * @ignore
 		 * @param {Function|String} contents Template/String to render
 		 * @param {...*} [args] Template arguments
-		 * @returns {Promise} Promise of  render
+		 * @return {Promise} Promise of  render
 		 */
 		function render(contents, args) {
 			/*jshint validthis:true*/
@@ -260,7 +260,7 @@ define([
 		 * @method
 		 * @param {Function|String} contents Template/String to render
 		 * @param {...*} [args] Template arguments
-		 * @returns {Promise} Promise of  render
+		 * @return {Promise} Promise of  render
 		 */
 		"html" : $render($.fn.html),
 

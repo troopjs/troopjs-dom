@@ -72,6 +72,6 @@ define([
 	 * @method constructor
 	 * @inheritdoc
 	 * @localdoc Runner that executes DOM candidates in sequence without overlap
-	 * @returns {*} Result from last handler
+	 * @return {*} Result from last handler
 	 */
 });

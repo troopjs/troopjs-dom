@@ -44,7 +44,7 @@ define([
 	 *
 	 * @method constructor
 	 * @param {...*} [stop_args] Arguments that will be passed to each widget's {@link browser.component.widget#stop stop} method
-	 * @returns {Promise} Promise to the completion of unweaving all woven widgets.
+	 * @return {Promise} Promise to the completion of unweaving all woven widgets.
 	 */
 	return function unweave(stop_args) {
 		// Store stop_args for later

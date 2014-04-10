@@ -28,7 +28,7 @@ define([
 	 * It also lives as a jquery plugin as {@link $#method-woven}.
 	 * @method constructor
 	 * @param {...String} [widget] One or more widget names to narrow down the returned ones.
-	 * @returns {Promise} Promise to the completion of retrieving the woven widgets array.
+	 * @return {Promise} Promise to the completion of retrieving the woven widgets array.
 	 */
 	return function woven() {
 		var $woven = [];

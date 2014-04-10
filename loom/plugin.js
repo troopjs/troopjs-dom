@@ -37,7 +37,7 @@ define([
 	/**
 	 * Tests if element has a data-weave attribute
 	 * @param element to test
-	 * @returns {boolean}
+	 * @return {boolean}
 	 * @ignore
 	 */
 	function hasDataWeaveAttr(element) {
@@ -47,7 +47,7 @@ define([
 	/**
 	 * Tests if element has a data-woven attribute
 	 * @param element to test
-	 * @returns {boolean}
+	 * @return {boolean}
 	 * @ignore
 	 */
 	function hasDataWovenAttr(element) {

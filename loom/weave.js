@@ -55,7 +55,7 @@ define([
 	 *
 	 * @method constructor
 	 * @param {...*} [start_args] Arguments that will be passed to each widget's {@link browser.component.widget#start start} method
-	 * @returns {Promise} Promise for the completion of weaving all widgets.
+	 * @return {Promise} Promise for the completion of weaving all widgets.
 	 */
 	return function weave(start_args) {
 		// Store start_args for later
