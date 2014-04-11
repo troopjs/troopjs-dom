@@ -55,8 +55,11 @@ define([
 	}
 
 	/**
+	 * @class $
+	 */
+
+	/**
 	 * jQuery `:weave` expression
-	 * @member $
 	 * @property weave
 	 */
 	$EXPR[":"][WEAVE] = $CREATEPSEUDO
@@ -96,7 +99,6 @@ define([
 
 	/**
 	 * jQuery `:woven` expression
-	 * @member $
 	 * @property woven
 	 */
 	$EXPR[":"][WOVEN] = $CREATEPSEUDO
@@ -134,21 +136,18 @@ define([
 		};
 
 	/**
-	 * @member $
 	 * @method weave
 	 * @inheritdoc browser.loom.weave#constructor
 	 */
 	$FN[WEAVE] = weave;
 
 	/**
-	 * @member $
 	 * @method unweave
 	 * @inheritdoc browser.loom.unweave#constructor
 	 */
 	$FN[UNWEAVE] = unweave;
 
 	/**
-	 * @member $
 	 * @method woven
 	 * @inheritdoc browser.loom.woven#constructor
 	 */
