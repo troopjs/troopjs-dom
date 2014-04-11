@@ -51,18 +51,29 @@ define([
 	function $render($fn) {
 		/**
 		 * @ignore
-		 * @param {Function|String} contents Template/String to render
+		 * @param {Function|String|Promise} contents Contents to render or a Promise for contents
 		 * @param {...*} [args] Template arguments
-		 * @return {Promise} Promise of  render
+		 * @return {Promise} Promise of render
 		 */
 		function render(contents, args) {
 			/*jshint validthis:true*/
 			var me = this;
 
-			// Call render with contents (or result of contents if it's a function)
-			return loom_weave.call($fn.call(me[$ELEMENT],
-				typeof contents === TYPEOF_FUNCTION ? contents.apply(me, ARRAY_SLICE.call(arguments, 1)) : contents
-			).find(SELECTOR_WEAVE));
+			return when
+				// Wait for contents and args to resolve...
+				.all(ARRAY_SLICE.call(arguments))
+				.then(function (_args) {
+					// First argument is the resolved value of contents
+					var _contents = _args.shift();
+
+					// If _contents is a function, apply it with _args, otherwise just pass it along to the callback
+					return when(typeof _contents === TYPEOF_FUNCTION ? _contents.apply(me, _args) : contents, function (result) {
+						// Call $fn in the context of me[$ELEMENT] with result as the only argument
+						// Find something to weave
+						// Pass it to loom_weave and return the result
+						return loom_weave.call($fn.call(me[$ELEMENT], result).find(SELECTOR_WEAVE));
+					});
+				});
 		}
 
 		return render;
