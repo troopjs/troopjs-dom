@@ -51,13 +51,17 @@ define([
 	function $render($fn) {
 		/**
 		 * @ignore
-		 * @param {Function|String|Promise} contents Contents to render or a Promise for contents
+		 * @param {Function|String|Promise} [contents] Contents to render or a Promise for contents
 		 * @param {...*} [args] Template arguments
-		 * @return {Promise} Promise of render
+		 * @return {String|Promise} The returned content string or promise of rendering.
 		 */
 		function render(contents, args) {
 			/*jshint validthis:true*/
 			var me = this;
+
+			// Retrieve HTML/Text.
+			if (!arguments.length)
+				return $fn.call(me[$ELEMENT]);
 
 			return when
 				// Wait for contents and args to resolve...
