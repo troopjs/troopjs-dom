@@ -157,7 +157,7 @@ define([
 					args = {};
 					args[TYPE] = type;
 					args[RUNNER] = sequence;
-					args = [ args];
+					args = [ args ];
 
 					// Push original arguments on args
 					ARRAY_PUSH.apply(args, arguments);
