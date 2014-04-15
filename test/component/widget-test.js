@@ -10,9 +10,10 @@ buster.testCase("troopjs-browser/component/widget", function (run) {
 		"troopjs-browser/loom/weave",
 		"troopjs-browser/loom/unweave",
 		"text!troopjs-browser/test/component/widget.html",
-		"jquery"
+		"jquery",
+		"when"
 	],
-		function (Widget, weave, unweave, html, $) {
+		function (Widget, weave, unweave, html, $, when) {
 
 			run({
 				"setUp": function () {
@@ -182,6 +183,36 @@ buster.testCase("troopjs-browser/component/widget", function (run) {
 						refute.equals(handlers.modified, modified, 'assert modified is updated');
 
 						return foo.stop();
+					});
+				},
+
+				"render proxy - html": function() {
+					var me = this;
+
+					return weave.call(me.$el.filter(".foo")).spread(function(widgets) {
+						var widget = widgets[0];
+						function assertContent(expected) {
+							assert.same(expected, widget.html());
+						}
+						return widget.html("foo").then(function() {
+							assertContent("foo");
+						}).then(function() {
+							return widget.html(when("foo")).then(function() {
+								assertContent("foo");
+							});
+						}).then(function() {
+							return widget.html(function(val) {
+								return when(val);
+							}, "foo").then(function() {
+								assertContent("foo");
+							});
+						}).then(function() {
+							return widget.html(when(function(val) {
+								return when(val);
+							}), "foo").then(function() {
+								assertContent("foo");
+							});
+						});
 					});
 				},
 
