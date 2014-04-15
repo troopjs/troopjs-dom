@@ -189,28 +189,28 @@ buster.testCase("troopjs-browser/component/widget", function (run) {
 				"render proxy - html": function() {
 					var me = this;
 
-					return weave.call(me.$el.filter('.foo')).spread(function(widgets) {
+					return weave.call(me.$el.filter(".foo")).spread(function(widgets) {
 						var widget = widgets[0];
 						function assertContent(expected) {
 							assert.same(expected, widget.html());
 						}
-						return widget.html('foo').then(function() {
-							assertContent('foo');
+						return widget.html("foo").then(function() {
+							assertContent("foo");
 						}).then(function() {
-							return widget.html(when('foo')).then(function() {
-								assertContent('foo');
+							return widget.html(when("foo")).then(function() {
+								assertContent("foo");
 							});
 						}).then(function() {
 							return widget.html(function(val) {
 								return when(val);
-							}, 'foo').then(function() {
-								assertContent('foo');
+							}, "foo").then(function() {
+								assertContent("foo");
 							});
 						}).then(function() {
 							return widget.html(when(function(val) {
 								return when(val);
-							}), 'foo').then(function() {
-								assertContent('foo');
+							}), "foo").then(function() {
+								assertContent("foo");
 							});
 						});
 					});

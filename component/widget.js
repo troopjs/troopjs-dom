@@ -60,8 +60,9 @@ define([
 			var me = this;
 
 			// Retrieve HTML/Text.
-			if (!arguments.length)
+			if (!arguments.length) {
 				return $fn.call(me[$ELEMENT]);
+			}
 
 			return when
 				// Wait for contents and args to resolve...
