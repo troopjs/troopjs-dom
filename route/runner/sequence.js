@@ -33,23 +33,18 @@ define([ "poly/array" ], function SequenceModule() {
 	 * @inheritdoc
 	 * @localdoc Runner that executes ROUTE candidates in sequence without overlap
 	 * @return {*} Result from last handler
+	 * @throws {Error} If `event.type` is an unknown type
 	 */
 	return function sequence(event, handlers, args) {
 		var path;
-		var route;
+		var type = event[TYPE];
+		var route = path = args.shift(); // Shift path and route of args
+		var data = args[0]; // Data is provided as the second arg, but we're already shifted
 		var candidate;
-		var tokens;
-		var re;
-		var data;
+		var candidates = [];
 
-		// Shift path and route of args
-		path = route = args.shift();
-
-		// If this is a set we need to pre-process the path
-		if (event[TYPE] === "route/set") {
-			// Data should be provided as the second arg, but we're already shifted
-			data = args[0];
-
+		// If this is a route/set we need to pre-process the path
+		if (type === "route/set") {
 			// Populate path with data
 			path = path
 				// Replace tokens
@@ -61,14 +56,31 @@ define([ "poly/array" ], function SequenceModule() {
 				// Remove remaining grouping
 				.replace(RE_GROUP, "");
 		}
+		// If this is _not_ a route/change we should throw an error
+		else if (type !== "route/change") {
+			throw new Error("Unable to run type '" + type + "'");
+		}
 
-		// Iterate handlers
+		// Copy handlers -> candidates
 		for (candidate = handlers[HEAD]; candidate !== UNDEFINED; candidate = candidate[NEXT]) {
-			tokens = [];
+			candidates.push(candidate);
+		}
 
-			re = candidate[DATA]
-				// Translate pattern to regexp syntax
-				? new RegExp(candidate[DATA]
+		// Run candidates and return
+		return candidates.reduce(function (result, candidate) {
+			var tokens;
+			var matches;
+			var re;
+
+			// Only run if the reduced result is not `false`
+			if (result !== false) {
+				// Reset tokens
+				tokens = [];
+
+				// Get/create regexp
+				re = candidate[DATA]
+					// Translate pattern to regexp syntax
+					? new RegExp(candidate[DATA]
 					// Translate grouping to non capturing regexp groups
 					.replace(RE_GROUP_START, "(?:")
 					.replace(RE_GROUP_END, ")?")
@@ -79,19 +91,22 @@ define([ "poly/array" ], function SequenceModule() {
 						// Return replacement
 						return "(\\w+)";
 					}))
-				// No DATA. Just match anything
-				: RE_ANY;
+					// No DATA. Just match anything
+					: RE_ANY;
 
-			// Match path
-			if ((data = re.exec(path)) !== NULL) {
-				// Capture tokens in data
-				tokens.forEach(function (token, index) {
-					data[token] = data[index + 1];
-				});
+				// Match path
+				if ((matches = re.exec(path)) !== NULL) {
+					// Capture tokens in data
+					tokens.forEach(function (token, index) {
+						matches[token] = matches[index + 1];
+					});
 
-				// Apply CALLBACK
-				candidate[CALLBACK].apply(candidate[CONTEXT], [ route, data ].concat(args));
+					// Apply CALLBACK and store in result
+					result = candidate[CALLBACK].apply(candidate[CONTEXT], [ route, matches ].concat(args));
+				}
 			}
-		}
+
+			return result;
+		}, UNDEFINED);
 	}
 });
