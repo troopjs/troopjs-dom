@@ -22,7 +22,7 @@ define([
 	 * @inheritdoc
 	 * @param {jQuery|HTMLElement} $element The element that this widget should be attached to
 	 * @param {String} displayName A friendly name for this widget
-	 * @param {...core.component.base} component List of components to start before starting the application.
+	 * @param {...core.component.base} [component] List of components to start before starting the application.
 	 */
 	return Widget.extend(function ApplicationWidget($element, displayName, component) {
 		/**
