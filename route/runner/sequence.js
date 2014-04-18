@@ -21,6 +21,7 @@ define([ "poly/array" ], function SequenceModule() {
 	var HEAD = "head";
 	var NEXT = "next";
 	var TYPE = "type";
+	var TOKENS = "tokens";
 
 	var RE_GROUP = /[\(\)]/g;
 	var RE_GROUP_START = /\(/g;
@@ -75,21 +76,27 @@ define([ "poly/array" ], function SequenceModule() {
 
 			// Only run if the reduced result is not `false`
 			if (result !== false) {
-				// Reset tokens
-				tokens = [];
-
 				switch (OBJECT_TOSTRING.call(candidate[DATA])) {
 					case "[object RegExp]":
-						// Already compiled
+						// Use cached regexp
 						re = candidate[DATA];
+
+						// Use cached tokens
+						tokens = candidate[TOKENS];
 						break;
 
 					case "[object Undefined]":
 						// Match anything
 						re = RE_ANY;
+
+						// Empty tokens
+						tokens = [];
 						break;
 
 					default:
+						// Reset tokens
+						tokens = candidate[TOKENS] = [];
+
 						// Translate and cache pattern to regexp
 						re = candidate[DATA] = new RegExp(candidate[DATA]
 							// Translate grouping to non capturing regexp groups
