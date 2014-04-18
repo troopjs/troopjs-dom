@@ -14,6 +14,7 @@ define([ "poly/array" ], function SequenceModule() {
 
 	var UNDEFINED;
 	var NULL = null;
+	var OBJECT_TOSTRING = Object.prototype.toString;
 	var CONTEXT = "context";
 	var CALLBACK = "callback";
 	var DATA = "data";
@@ -77,22 +78,31 @@ define([ "poly/array" ], function SequenceModule() {
 				// Reset tokens
 				tokens = [];
 
-				// Get/create regexp
-				re = candidate[DATA]
-					// Translate pattern to regexp syntax
-					? new RegExp(candidate[DATA]
-					// Translate grouping to non capturing regexp groups
-					.replace(RE_GROUP_START, "(?:")
-					.replace(RE_GROUP_END, ")?")
-					// Capture tokens
-					.replace(RE_TOKEN, function ($0, token) {
-						// Add token
-						tokens.push(token);
-						// Return replacement
-						return "(\\w+)";
-					}))
-					// No DATA. Just match anything
-					: RE_ANY;
+				switch (OBJECT_TOSTRING.call(candidate[DATA])) {
+					case "[object RegExp]":
+						// Already compiled
+						re = candidate[DATA];
+						break;
+
+					case "[object Undefined]":
+						// Match anything
+						re = RE_ANY;
+						break;
+
+					default:
+						// Translate and cache pattern to regexp
+						re = candidate[DATA] = new RegExp(candidate[DATA]
+							// Translate grouping to non capturing regexp groups
+							.replace(RE_GROUP_START, "(?:")
+							.replace(RE_GROUP_END, ")?")
+							// Capture tokens
+							.replace(RE_TOKEN, function ($0, token) {
+								// Add token
+								tokens.push(token);
+								// Return replacement
+								return "(\\w+)";
+							}));
+				}
 
 				// Match path
 				if ((matches = re.exec(path)) !== NULL) {
