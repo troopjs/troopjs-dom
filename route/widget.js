@@ -15,6 +15,7 @@ define([
 	 */
 
 	var ARRAY_PROTO = Array.prototype;
+	var ARRAY_PUSH = ARRAY_PROTO.push;
 	var ROUTE = "route";
 	var NAME = "name";
 	var TYPE = "type";
@@ -97,9 +98,12 @@ define([
 		 */
 		"hub:memory/hash/change": function onHashChange(hash) {
 			var me = this;
+			var args = [ "change" ];
+
+			ARRAY_PUSH.apply(args, arguments);
 
 			return me.task(function (resolve) {
-				resolve(runRoute.call(me, "change", hash))
+				resolve(runRoute.apply(me, args));
 			}, ROUTE + "/change");
 		},
 
@@ -111,7 +115,7 @@ define([
 		 * @fires browser.hash.widget#event-hub/hash/set
 		 */
 		"route/set": function onRouteSet(route, data) {
-			return this.publish("hash/set", data.input);
+			return this.publish("hash/set", data["input"]);
 		},
 
 		/**
@@ -122,9 +126,12 @@ define([
 		 */
 		"route": function route(route, data) {
 			var me = this;
+			var args = [ "set" ];
+
+			ARRAY_PUSH.apply(args, arguments);
 
 			return me.task(function (resolve) {
-				resolve(runRoute.call(me, "set", route, data))
+				resolve(runRoute.apply(me, args));
 			}, ROUTE + "/set");
 		}
 	});
