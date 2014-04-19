@@ -2,9 +2,10 @@
  * @license MIT http://troopjs.mit-license.org/
  */
 define([
-	"../../dom/selector",
+	"../../css/selector",
+	"jquery",
 	"poly/array"
-], function SequenceModule(Selector) {
+], function SequenceModule(Selector, $) {
 	"use strict";
 
 	/**
@@ -23,6 +24,7 @@ define([
 	var NEXT = "next";
 	var SELECTOR = "selector";
 	var MODIFIED = "modified";
+	var MATCHES_SELECTOR = $.find.matchesSelector;
 
 	/**
 	 * @method constructor
@@ -53,7 +55,7 @@ define([
 
 		return selector
 			// Filter to only selectors that match target
-			.matches($event.target)
+			.matches(MATCHES_SELECTOR, $event.target)
 			// Reduce so we can catch the end value
 			.reduce(function (result, selector) {
 				// If immediate propagation is stopped we should just return last result

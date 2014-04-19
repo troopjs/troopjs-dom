@@ -1,18 +1,14 @@
 /**
  * @license MIT http://troopjs.mit-license.org/
  */
-define([
-	"troopjs-compose/mixin/factory",
-	"./config"
-], function (Factory, config) {
+define([ "troopjs-compose/mixin/factory" ], function (Factory) {
 	"use strict";
 
 	/**
 	 * An optimized CSS selector matcher that {@link browser.component.runner.sequence} relies on for
 	 * delegating DOM event on {@link browser.component.widget}.
-	 * @class browser.dom.selector
+	 * @class browser.css.selector
 	 * @implement compose.mixin
-	 * @mixin browser.dom.config
 	 * @private
 	 */
 
@@ -37,8 +33,6 @@ define([
 	var COUNT = "count";
 	var BASEVAL = "baseVal";
 	var RE_SPACE = /\s+/;
-	var querySelectorAll = config["querySelectorAll"];
-	var matchesSelector = config["matchesSelector"];
 
 	/**
 	 * Extracts key for universal indexer
@@ -284,10 +278,11 @@ define([
 
 		/**
 		 * Matches candidates against element
+		 * @param {Function} matchesSelector `matchesSelector` function
 		 * @param {HTMLElement} element DOM Element
 		 * @return {Array} Matching array of candidates
 		 */
-		"matches": function matches(element) {
+		"matches": function matches(matchesSelector, element) {
 			var me = this;
 			var indexer;
 			var indexed;
