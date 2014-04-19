@@ -10,7 +10,7 @@ define([
 	/**
 	 * @class browser.component.runner.sequence
 	 * @implement core.event.emitter.runner
-	 * @protected
+	 * @private
 	 * @static
 	 * @alias feature.runner
 	 */
