@@ -9,7 +9,7 @@ define([
 	"use strict";
 
 	/**
-	 * @class browser.component.runner.sequence
+	 * @class dom.component.runner.sequence
 	 * @implement core.event.emitter.runner
 	 * @private
 	 * @static

@@ -16,7 +16,7 @@ define([
 
 	/**
 	 * Component that attaches to an DOM element, considerably delegates all DOM manipulations.
-	 * @class browser.component.widget
+	 * @class dom.component.widget
 	 * @extend core.component.gadget
 	 * @alias widget.component
 	 */
@@ -141,7 +141,7 @@ define([
 		}
 
 	}, {
-		"displayName" : "browser/component/widget",
+		"displayName" : "dom/component/widget",
 
 		/**
 		 * @handler
@@ -244,14 +244,14 @@ define([
 		},
 
 		/**
-		 * @inheritdoc browser.loom.weave#constructor
+		 * @inheritdoc dom.loom.weave#constructor
 		 */
 		"weave" : function weave() {
 			return loom_weave.apply(this[$ELEMENT].find(SELECTOR_WEAVE), arguments);
 		},
 
 		/**
-		 * @inheritdoc browser.loom.unweave#constructor
+		 * @inheritdoc dom.loom.unweave#constructor
 		 */
 		"unweave" : function unweave() {
 			return loom_unweave.apply(this[$ELEMENT].find(SELECTOR_WOVEN), arguments);

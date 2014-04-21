@@ -9,8 +9,8 @@ define([
 
 	/**
 	 * Widget that attaches to the window object in order to handle `window.location.hash` changes.
-	 * @class browser.hash.widget
-	 * @extend browser.component.widget
+	 * @class dom.hash.widget
+	 * @extend dom.component.widget
 	 * @alias widget.hash
 	 */
 
@@ -20,7 +20,7 @@ define([
 
 	/**
 	 * Hash change event (global)
-	 * @localdoc Triggered when a {@link #$element} with {@link browser.hash.widget} attached to it changes its hash
+	 * @localdoc Triggered when a {@link #$element} with {@link dom.hash.widget} attached to it changes its hash
 	 * @event hub/hash/change
 	 * @param {String} hash The new hash
 	 */
@@ -36,10 +36,10 @@ define([
 
 	/**
 	 * Hash set event (global)
-	 * @localdoc Triggered when a component wants to change the hash of an {@link #$element}'s with {@link browser.hash.widget} attached to it
+	 * @localdoc Triggered when a component wants to change the hash of an {@link #$element}'s with {@link dom.hash.widget} attached to it
 	 * @event hub/hash/set
 	 * @param {String} hash The new hash
-	 * @param {Boolean} [silent=false] Change the hash silently without triggering {@link browser.hash.widget#event-hub/hash/change} event.
+	 * @param {Boolean} [silent=false] Change the hash silently without triggering {@link dom.hash.widget#event-hub/hash/change} event.
 	 */
 
 	/**
@@ -49,7 +49,7 @@ define([
 	 * @preventable
 	 * @param {Object} $event {@link jQuery} event
 	 * @param {String} hash The new hash
-	 * @param {Boolean} [silent=false] Change the hash silently without triggering {@link browser.hash.widget#event-dom/hashchange} event.
+	 * @param {Boolean} [silent=false] Change the hash silently without triggering {@link dom.hash.widget#event-dom/hashchange} event.
 	 */
 
 	/**
@@ -61,7 +61,7 @@ define([
 	 */
 
 	return Widget.extend({
-		"displayName" : "browser/hash/widget",
+		"displayName" : "dom/hash/widget",
 
 		/**
 		 * @inheritdoc
@@ -108,7 +108,7 @@ define([
 		/**
 		 * Hash set handler (global)
 		 * @inheritdoc #event-hub/hash/set
-		 * @localdoc Implicitly translates {@link browser.hash.widget#event-hub/hash/set} to {@link #event-dom/hashset} by setting the {@link #$element} hash
+		 * @localdoc Implicitly translates {@link dom.hash.widget#event-hub/hash/set} to {@link #event-dom/hashset} by setting the {@link #$element} hash
 		 * @handler hub/hash/set
 		 * @return {Promise}
 		 */

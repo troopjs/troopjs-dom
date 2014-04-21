@@ -1,11 +1,11 @@
 /*globals buster:false*/
-buster.testCase("troopjs-browser/css/selector", function (run) {
+buster.testCase("troopjs-dom/css/selector", function (run) {
 	"use strict";
 
 	var assert = buster.referee.assert;
 	var refute = buster.referee.refute;
 
-	require([ "troopjs-browser/css/selector", "jquery" ], function (Selector, $) {
+	require([ "troopjs-dom/css/selector", "jquery" ], function (Selector, $) {
 		var tail = Selector.tail;
 
 		var TAG = "tag";
