@@ -10,8 +10,8 @@ define([
 	"use strict";
 
 	/**
-	 * @class browser.loom.woven
-	 * @mixin browser.loom.config
+	 * @class dom.loom.woven
+	 * @mixin dom.loom.config
 	 * @mixin Function
 	 * @static
 	 */
@@ -23,7 +23,7 @@ define([
 
 	/**
 	 * Retrieve all or specific widget instances living on this element, that are
-	 * created by {@link browser.loom.weave}.
+	 * created by {@link dom.loom.weave}.
 	 *
 	 * It also lives as a jquery plugin as {@link $#method-woven}.
 	 * @method constructor

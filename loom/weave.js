@@ -13,8 +13,8 @@ define([
 	"use strict";
 
 	/**
-	 * @class browser.loom.weave
-	 * @mixin browser.loom.config
+	 * @class dom.loom.weave
+	 * @mixin dom.loom.config
 	 * @mixin Function
 	 * @static
 	 */
@@ -34,13 +34,13 @@ define([
 	var RE_SEPARATOR = /[\s,]+/;
 
 	/**
-	 * Instantiate all {@link browser.component.widget widgets}  specified in the {@link browser.loom.config#weave weave attribute}
+	 * Instantiate all {@link dom.component.widget widgets}  specified in the {@link dom.loom.config#weave weave attribute}
 	 * of this element, and to signal the widget for start with the arguments.
 	 *
 	 * The weaving will result in:
 	 *
-	 *  - Updates the {@link browser.loom.config#weave woven attribute} with the created widget instances names.
-	 *  - The {@link browser.loom.config#$warp $warp data property} will reference the widget instances.
+	 *  - Updates the {@link dom.loom.config#weave woven attribute} with the created widget instances names.
+	 *  - The {@link dom.loom.config#$warp $warp data property} will reference the widget instances.
 	 *
 	 * @localdoc
 	 *
@@ -54,7 +54,7 @@ define([
 	 * 	$el.weave();
 	 *
 	 * @method constructor
-	 * @param {...*} [start_args] Arguments that will be passed to each widget's {@link browser.component.widget#start start} method
+	 * @param {...*} [start_args] Arguments that will be passed to each widget's {@link dom.component.widget#start start} method
 	 * @return {Promise} Promise for the completion of weaving all widgets.
 	 */
 	return function weave(start_args) {

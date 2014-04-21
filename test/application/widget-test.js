@@ -1,12 +1,12 @@
 /*globals buster:false*/
-buster.testCase("troopjs-browser/application/widget", function (run) {
+buster.testCase("troopjs-dom/application/widget", function (run) {
 	"use strict";
 
 	var assert = buster.referee.assert;
 
 	require( [
-		"troopjs-browser/application/widget",
-		"text!troopjs-browser/test/application/page.html",
+		"troopjs-dom/application/widget",
+		"text!troopjs-dom/test/application/page.html",
 		"jquery"
 	],
 		function (Application, html, $) {
@@ -14,9 +14,9 @@ buster.testCase("troopjs-browser/application/widget", function (run) {
 		function assertWidgets (widgets1, widgets2) {
 			assert.equals(widgets1.length, 2);
 			assert.equals(widgets2.length, 1);
-			assert.equals(widgets1[0].displayName, "troopjs-browser/test/component/foo");
-			assert.equals(widgets1[1].displayName, "troopjs-browser/test/component/bar");
-			assert.equals(widgets2[0].displayName, "troopjs-browser/test/component/baz");
+			assert.equals(widgets1[0].displayName, "troopjs-dom/test/component/foo");
+			assert.equals(widgets1[1].displayName, "troopjs-dom/test/component/bar");
+			assert.equals(widgets2[0].displayName, "troopjs-dom/test/component/baz");
 		}
 
 		run({

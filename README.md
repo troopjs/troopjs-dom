@@ -1,4 +1,4 @@
-troopjs-browser
+troopjs-dom
 ===============
 
 Browser related for TroopJS

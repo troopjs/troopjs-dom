@@ -5,9 +5,9 @@ define([ "troopjs-compose/mixin/factory" ], function (Factory) {
 	"use strict";
 
 	/**
-	 * An optimized CSS selector matcher that {@link browser.component.runner.sequence} relies on for
-	 * delegating DOM event on {@link browser.component.widget}.
-	 * @class browser.css.selector
+	 * An optimized CSS selector matcher that {@link dom.component.runner.sequence} relies on for
+	 * delegating DOM event on {@link dom.component.widget}.
+	 * @class dom.css.selector
 	 * @implement compose.mixin
 	 * @private
 	 */

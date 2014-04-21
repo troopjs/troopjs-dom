@@ -19,7 +19,7 @@ define([
 	 *  - {@link $#property-weave} and {@link $#property-woven} properties
 	 *  - {@link $#method-weave}, {@link $#method-unweave} and {@link $#method-woven} methods
 	 *
-	 * @class browser.loom.plugin
+	 * @class dom.loom.plugin
 	 * @alias plugin.jquery
 	 */
 
@@ -137,19 +137,19 @@ define([
 
 	/**
 	 * @method weave
-	 * @inheritdoc browser.loom.weave#constructor
+	 * @inheritdoc dom.loom.weave#constructor
 	 */
 	$FN[WEAVE] = weave;
 
 	/**
 	 * @method unweave
-	 * @inheritdoc browser.loom.unweave#constructor
+	 * @inheritdoc dom.loom.unweave#constructor
 	 */
 	$FN[UNWEAVE] = unweave;
 
 	/**
 	 * @method woven
-	 * @inheritdoc browser.loom.woven#constructor
+	 * @inheritdoc dom.loom.woven#constructor
 	 */
 	$FN[WOVEN] = woven;
 });
