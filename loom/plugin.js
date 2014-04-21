@@ -19,7 +19,7 @@ define([
 	 *  - {@link $#property-weave} and {@link $#property-woven} properties
 	 *  - {@link $#method-weave}, {@link $#method-unweave} and {@link $#method-woven} methods
 	 *
-	 * @class browser.loom.plugin
+	 * @class dom.loom.plugin
 	 * @alias plugin.jquery
 	 */
 
@@ -37,7 +37,7 @@ define([
 	/**
 	 * Tests if element has a data-weave attribute
 	 * @param element to test
-	 * @returns {boolean}
+	 * @return {boolean}
 	 * @ignore
 	 */
 	function hasDataWeaveAttr(element) {
@@ -47,7 +47,7 @@ define([
 	/**
 	 * Tests if element has a data-woven attribute
 	 * @param element to test
-	 * @returns {boolean}
+	 * @return {boolean}
 	 * @ignore
 	 */
 	function hasDataWovenAttr(element) {
@@ -55,8 +55,11 @@ define([
 	}
 
 	/**
+	 * @class $
+	 */
+
+	/**
 	 * jQuery `:weave` expression
-	 * @member $
 	 * @property weave
 	 */
 	$EXPR[":"][WEAVE] = $CREATEPSEUDO
@@ -96,7 +99,6 @@ define([
 
 	/**
 	 * jQuery `:woven` expression
-	 * @member $
 	 * @property woven
 	 */
 	$EXPR[":"][WOVEN] = $CREATEPSEUDO
@@ -134,23 +136,20 @@ define([
 		};
 
 	/**
-	 * @member $
 	 * @method weave
-	 * @inheritdoc browser.loom.weave#constructor
+	 * @inheritdoc dom.loom.weave#constructor
 	 */
 	$FN[WEAVE] = weave;
 
 	/**
-	 * @member $
 	 * @method unweave
-	 * @inheritdoc browser.loom.unweave#constructor
+	 * @inheritdoc dom.loom.unweave#constructor
 	 */
 	$FN[UNWEAVE] = unweave;
 
 	/**
-	 * @member $
 	 * @method woven
-	 * @inheritdoc browser.loom.woven#constructor
+	 * @inheritdoc dom.loom.woven#constructor
 	 */
 	$FN[WOVEN] = woven;
 });

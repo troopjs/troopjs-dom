@@ -11,8 +11,8 @@ define([
 	"use strict";
 
 	/**
-	 * @class browser.loom.unweave
-	 * @mixin browser.loom.config
+	 * @class dom.loom.unweave
+	 * @mixin dom.loom.config
 	 * @mixin Function
 	 * @static
 	 */
@@ -35,7 +35,7 @@ define([
 
 	/**
 	 * Destroy all widget instances living on this element, that are created
-	 * by {@link browser.loom.weave}, it is also to clean up the attributes
+	 * by {@link dom.loom.weave}, it is also to clean up the attributes
 	 * and data references to the previously instantiated widgets.
 	 *
 	 * @localdoc
@@ -43,8 +43,8 @@ define([
 	 * It also lives as a jquery plugin as {@link $#method-unweave}.
 	 *
 	 * @method constructor
-	 * @param {...*} [stop_args] Arguments that will be passed to each widget's {@link browser.component.widget#stop stop} method
-	 * @returns {Promise} Promise to the completion of unweaving all woven widgets.
+	 * @param {...*} [stop_args] Arguments that will be passed to each widget's {@link dom.component.widget#stop stop} method
+	 * @return {Promise} Promise to the completion of unweaving all woven widgets.
 	 */
 	return function unweave(stop_args) {
 		// Store stop_args for later

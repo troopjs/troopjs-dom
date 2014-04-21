@@ -1,8 +1,8 @@
 /*
- * TroopJS browser/application/widget
+ * TroopJS dom/application/widget
  * @license MIT http://troopjs.mit-license.org/ © Mikael Karon mailto:mikael@karon.se
  */
-define([ "troopjs-browser/component/widget"], function FooWidgetModule(Widget) {
+define([ "troopjs-dom/component/widget"], function FooWidgetModule(Widget) {
 	"use strict";
 
 	var assert = buster.referee.assert;

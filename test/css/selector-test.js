@@ -1,11 +1,11 @@
 /*globals buster:false*/
-buster.testCase("troopjs-browser/dom/selector", function (run) {
+buster.testCase("troopjs-dom/css/selector", function (run) {
 	"use strict";
 
 	var assert = buster.referee.assert;
 	var refute = buster.referee.refute;
 
-	require([ "troopjs-browser/dom/selector", "jquery" ], function (Selector, $) {
+	require([ "troopjs-dom/css/selector", "jquery" ], function (Selector, $) {
 		var tail = Selector.tail;
 
 		var TAG = "tag";
@@ -14,6 +14,7 @@ buster.testCase("troopjs-browser/dom/selector", function (run) {
 		var UNIVERSAL = "universal";
 		var INDEXES = "indexes";
 		var INDEXED = "indexed";
+		var MATCHES_SELECTOR = $.find.matchesSelector;
 
 		run({
 			"tail": {
@@ -104,7 +105,7 @@ buster.testCase("troopjs-browser/dom/selector", function (run) {
 						.add("#id")
 						.add(".class")
 						.add("*")
-						.matches(element), [ [ "tag" ], [ "#id" ], [ ".class" ], [ "*" ] ]);
+						.matches(MATCHES_SELECTOR, element), [ [ "tag" ], [ "#id" ], [ ".class" ], [ "*" ] ]);
 				},
 
 				"excludes unmatched rules": function () {
@@ -119,7 +120,7 @@ buster.testCase("troopjs-browser/dom/selector", function (run) {
 						.add(".class")
 						.add(".otherClass")
 						.add("*")
-						.matches(element), [ [ "tag" ], [ "#id" ], [ ".class" ], [ "*" ] ]);
+						.matches(MATCHES_SELECTOR, element), [ [ "tag" ], [ "#id" ], [ ".class" ], [ "*" ] ]);
 				}
 			}
 		});

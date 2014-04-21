@@ -16,8 +16,8 @@ define([
 
 	/**
 	 * Component that attaches to an DOM element, considerably delegates all DOM manipulations.
-	 * @class browser.component.widget
-	 * @extends core.component.gadget
+	 * @class dom.component.widget
+	 * @extend core.component.gadget
 	 * @alias widget.component
 	 */
 
@@ -46,23 +46,39 @@ define([
 	 * Creates a proxy of the inner method 'render' with the '$fn' parameter set
 	 * @ignore
 	 * @param {Function} $fn jQuery method
-	 * @returns {Function} proxied render
+	 * @return {Function} proxied render
 	 */
 	function $render($fn) {
 		/**
 		 * @ignore
-		 * @param {Function|String} contents Template/String to render
+		 * @param {Function|String|Promise} [contents] Contents to render or a Promise for contents
 		 * @param {...*} [args] Template arguments
-		 * @returns {Promise} Promise of  render
+		 * @return {String|Promise} The returned content string or promise of rendering.
 		 */
 		function render(contents, args) {
 			/*jshint validthis:true*/
 			var me = this;
 
-			// Call render with contents (or result of contents if it's a function)
-			return loom_weave.call($fn.call(me[$ELEMENT],
-				typeof contents === TYPEOF_FUNCTION ? contents.apply(me, ARRAY_SLICE.call(arguments, 1)) : contents
-			).find(SELECTOR_WEAVE));
+			// Retrieve HTML/Text.
+			if (!arguments.length) {
+				return $fn.call(me[$ELEMENT]);
+			}
+
+			return when
+				// Wait for contents and args to resolve...
+				.all(ARRAY_SLICE.call(arguments))
+				.then(function (_args) {
+					// First argument is the resolved value of contents
+					var _contents = _args.shift();
+
+					// If _contents is a function, apply it with _args, otherwise just pass it along to the callback
+					return when(typeof _contents === TYPEOF_FUNCTION ? _contents.apply(me, _args) : contents, function (result) {
+						// Call $fn in the context of me[$ELEMENT] with result as the only argument
+						// Find something to weave
+						// Pass it to loom_weave and return the result
+						return loom_weave.call($fn.call(me[$ELEMENT], result).find(SELECTOR_WEAVE));
+					});
+				});
 		}
 
 		return render;
@@ -125,7 +141,7 @@ define([
 		}
 
 	}, {
-		"displayName" : "browser/component/widget",
+		"displayName" : "dom/component/widget",
 
 		/**
 		 * @handler
@@ -157,7 +173,7 @@ define([
 					args = {};
 					args[TYPE] = type;
 					args[RUNNER] = sequence;
-					args = [ args];
+					args = [ args ];
 
 					// Push original arguments on args
 					ARRAY_PUSH.apply(args, arguments);
@@ -228,14 +244,14 @@ define([
 		},
 
 		/**
-		 * @inheritdoc browser.loom.weave#constructor
+		 * @inheritdoc dom.loom.weave#constructor
 		 */
 		"weave" : function weave() {
 			return loom_weave.apply(this[$ELEMENT].find(SELECTOR_WEAVE), arguments);
 		},
 
 		/**
-		 * @inheritdoc browser.loom.unweave#constructor
+		 * @inheritdoc dom.loom.unweave#constructor
 		 */
 		"unweave" : function unweave() {
 			return loom_unweave.apply(this[$ELEMENT].find(SELECTOR_WOVEN), arguments);
@@ -260,7 +276,7 @@ define([
 		 * @method
 		 * @param {Function|String} contents Template/String to render
 		 * @param {...*} [args] Template arguments
-		 * @returns {Promise} Promise of  render
+		 * @return {Promise} Promise of  render
 		 */
 		"html" : $render($.fn.html),
 

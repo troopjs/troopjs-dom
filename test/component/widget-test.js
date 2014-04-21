@@ -1,18 +1,19 @@
 /*globals buster:false*/
-buster.testCase("troopjs-browser/component/widget", function (run) {
+buster.testCase("troopjs-dom/component/widget", function (run) {
 	"use strict";
 
 	var assert = buster.referee.assert;
 	var refute = buster.referee.refute;
 
 	require([
-		"troopjs-browser/component/widget",
-		"troopjs-browser/loom/weave",
-		"troopjs-browser/loom/unweave",
-		"text!troopjs-browser/test/component/widget.html",
-		"jquery"
+		"troopjs-dom/component/widget",
+		"troopjs-dom/loom/weave",
+		"troopjs-dom/loom/unweave",
+		"text!troopjs-dom/test/component/widget.html",
+		"jquery",
+		"when"
 	],
-		function (Widget, weave, unweave, html, $) {
+		function (Widget, weave, unweave, html, $, when) {
 
 			run({
 				"setUp": function () {
@@ -28,13 +29,13 @@ buster.testCase("troopjs-browser/component/widget", function (run) {
 
 							// data-weave attribute is cleared.
 							refute.defined($el.attr("data-weave"));
-							assert.equals(widget.displayName, "troopjs-browser/test/component/foo");
+							assert.equals(widget.displayName, "troopjs-dom/test/component/foo");
 							assert.equals($el.attr("data-woven"), widget.toString());
 							assert.equals(widget.phase, "started");
 
 							return unweave.call($el).then(function () {
 								refute.defined($el.attr("data-woven"));
-								assert.equals($el.attr("data-weave"), "troopjs-browser/test/component/foo");
+								assert.equals($el.attr("data-weave"), "troopjs-dom/test/component/foo");
 							});
 						});
 					}
@@ -63,7 +64,7 @@ buster.testCase("troopjs-browser/component/widget", function (run) {
 
 							return unweave.call($el).then(function () {
 								refute.defined($el.attr("data-woven"));
-								assert.equals($el.attr("data-weave"), "troopjs-browser/test/component/foo troopjs-browser/test/component/bar(123, 'abc')");
+								assert.equals($el.attr("data-weave"), "troopjs-dom/test/component/foo troopjs-dom/test/component/bar(123, 'abc')");
 							});
 						});
 					}
@@ -77,12 +78,12 @@ buster.testCase("troopjs-browser/component/widget", function (run) {
 							return unweave.call($el).spread(function (widgets) {
 								assert.equals(widgets.length, 1);
 								var foo = widgets[0];
-								assert.equals(foo.displayName, "troopjs-browser/test/component/foo");
+								assert.equals(foo.displayName, "troopjs-dom/test/component/foo");
 								// "bar" still in data-woven attribute.
 								assert.equals($el.attr("data-woven"), bar.toString());
 								// data-unweave attribute should be cleared afterward.
 								refute.defined($el.attr("data-unweave"));
-								assert.equals($el.attr("data-weave"), "troopjs-browser/test/component/foo");
+								assert.equals($el.attr("data-weave"), "troopjs-dom/test/component/foo");
 							});
 						});
 					}
@@ -93,19 +94,19 @@ buster.testCase("troopjs-browser/component/widget", function (run) {
 						var $el = this.$el.filter(".foobar2");
 						return weave.call($el).spread(function (widgets) {
 							var foo = widgets[0];
-							$el.attr("data-weave", "troopjs-browser/test/component/bar(123, 'abc')");
+							$el.attr("data-weave", "troopjs-dom/test/component/bar(123, 'abc')");
 							return weave.call($el, 456, "def").spread(function (widgets) {
 
 									assert.equals(widgets.length, 1);
 									var bar = widgets[0];
-									assert.equals(bar.displayName, "troopjs-browser/test/component/bar");
+									assert.equals(bar.displayName, "troopjs-dom/test/component/bar");
 
 									// data-unweave attribute should be cleared afterward.
 									refute.defined($el.attr("data-weave"));
 									// "bar" appears in data-woven attribute.
 									assert.equals($el.attr("data-woven"), [foo.toString(), bar.toString()].join(" "));
 
-									$el.attr("data-unweave", "troopjs-browser/test/component/bar");
+									$el.attr("data-unweave", "troopjs-dom/test/component/bar");
 
 									return unweave.call($el).spread(function (unweaved) {
 										assert.equals(unweaved.length, 1);
@@ -182,6 +183,36 @@ buster.testCase("troopjs-browser/component/widget", function (run) {
 						refute.equals(handlers.modified, modified, 'assert modified is updated');
 
 						return foo.stop();
+					});
+				},
+
+				"render proxy - html": function() {
+					var me = this;
+
+					return weave.call(me.$el.filter(".foo")).spread(function(widgets) {
+						var widget = widgets[0];
+						function assertContent(expected) {
+							assert.same(expected, widget.html());
+						}
+						return widget.html("foo").then(function() {
+							assertContent("foo");
+						}).then(function() {
+							return widget.html(when("foo")).then(function() {
+								assertContent("foo");
+							});
+						}).then(function() {
+							return widget.html(function(val) {
+								return when(val);
+							}, "foo").then(function() {
+								assertContent("foo");
+							});
+						}).then(function() {
+							return widget.html(when(function(val) {
+								return when(val);
+							}), "foo").then(function() {
+								assertContent("foo");
+							});
+						});
 					});
 				},
 

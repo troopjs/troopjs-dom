@@ -9,7 +9,7 @@ define([
 
 	/**
 	 * Provides configuration for the loom package
-	 * @class browser.loom.config
+	 * @class dom.loom.config
 	 * @protected
 	 * @alias feature.config
 	 */

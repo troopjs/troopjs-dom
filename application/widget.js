@@ -9,8 +9,8 @@ define([
 
 	/**
 	 * The application widget serves as a container for all troop components that bootstrap the page.
-	 * @class browser.application.widget
-	 * @extends browser.component.widget
+	 * @class dom.application.widget
+	 * @extend dom.component.widget
 	 * @alias widget.application
 	 */
 
@@ -33,7 +33,7 @@ define([
 		 */
 		this[COMPONENTS] = ARRAY_SLICE.call(arguments, 2);
 	}, {
-		"displayName" : "browser/application/widget",
+		"displayName" : "dom/application/widget",
 
 		/**
 		 * @handler

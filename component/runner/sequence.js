@@ -2,15 +2,16 @@
  * @license MIT http://troopjs.mit-license.org/
  */
 define([
-	"../../dom/selector",
+	"../../css/selector",
+	"jquery",
 	"poly/array"
-], function SequenceModule(Selector) {
+], function SequenceModule(Selector, $) {
 	"use strict";
 
 	/**
-	 * @class browser.component.runner.sequence
+	 * @class dom.component.runner.sequence
 	 * @implement core.event.emitter.runner
-	 * @protected
+	 * @private
 	 * @static
 	 * @alias feature.runner
 	 */
@@ -23,7 +24,14 @@ define([
 	var NEXT = "next";
 	var SELECTOR = "selector";
 	var MODIFIED = "modified";
+	var MATCHES_SELECTOR = $.find.matchesSelector;
 
+	/**
+	 * @method constructor
+	 * @inheritdoc
+	 * @localdoc Runner that executes DOM candidates in sequence without overlap
+	 * @return {*} Result from last handler
+	 */
 	return function sequence(event, handlers, args) {
 		var modified = handlers[MODIFIED];
 		var $event = args[0];
@@ -47,7 +55,7 @@ define([
 
 		return selector
 			// Filter to only selectors that match target
-			.matches($event.target)
+			.matches(MATCHES_SELECTOR, $event.target)
 			// Reduce so we can catch the end value
 			.reduce(function (result, selector) {
 				// If immediate propagation is stopped we should just return last result
@@ -68,10 +76,4 @@ define([
 				return candidate[CALLBACK].apply(candidate[CONTEXT], args);
 			}, UNDEFINED);
 	}
-	/**
-	 * @method constructor
-	 * @inheritdoc
-	 * @localdoc Runner that executes DOM candidates in sequence without overlap
-	 * @returns {*} Result from last handler
-	 */
 });
