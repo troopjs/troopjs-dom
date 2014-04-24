@@ -4,6 +4,7 @@
 define([
 	"troopjs-core/component/gadget",
 	"./runner/sequence",
+	"troopjs-compose/mixin/config",
 	"jquery",
 	"when",
 	"troopjs-util/merge",
@@ -11,7 +12,7 @@ define([
 	"../loom/weave",
 	"../loom/unweave",
 	"troopjs-jquery/destroy"
-], function WidgetModule(Gadget, sequence, $, when, merge, LOOM_CONF, loom_weave, loom_unweave) {
+], function WidgetModule(Gadget, sequence, COMPOSE_CONF, $, when, merge, LOOM_CONF, loom_weave, loom_unweave) {
 	"use strict";
 
 	/**
@@ -32,7 +33,7 @@ define([
 	var MODIFIED = "modified";
 	var PROXY = "proxy";
 	var DOM = "dom";
-	var FEATURES = "features";
+	var ARGS = "args";
 	var NAME = "name";
 	var VALUE = "value";
 	var TYPE = "type";
@@ -97,6 +98,12 @@ define([
 		}
 	}
 
+	// Add pragmas for DOM specials
+	COMPOSE_CONF.pragmas.push({
+		"pattern": /^dom(?:\:([^\/]+))?\/(.+)/,
+		"replace": DOM + "/$2(\"$1\")"
+	});
+
 	/**
 	 * Creates a new widget that attaches to a specified (jQuery) DOM element.
 	 * @method constructor
@@ -152,7 +159,7 @@ define([
 			var me = this;
 
 			return when.map(me.constructor.specials[DOM] || ARRAY_PROTO, function (special) {
-				return me.on(special[NAME], special[VALUE], special[FEATURES]);
+				return me.on(special[NAME], special[VALUE], special[ARGS][0]);
 			});
 		},
 
