@@ -87,7 +87,7 @@ define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "poly
 			}
 
 			// Return promise of mapped $weave
-			return when.map($weave, function (widget_args) {
+			return when.all($weave.map(function (widget_args) {
 				// Create deferred
 				var deferred = when.defer();
 				var resolver = deferred.resolver;
@@ -126,7 +126,7 @@ define([ "./config", "require", "when", "jquery", "troopjs-utils/getargs", "poly
 
 				// Return promise
 				return promise;
-			});
+			}));
 		}));
 	};
 });
