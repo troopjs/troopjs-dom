@@ -127,7 +127,7 @@ define([
 			}
 
 			// Return promise of mapped $weave
-			return when.map($weave, function (widget_args) {
+			return when.all($weave.map(function (widget_args) {
 				// Create deferred
 				var deferred = when.defer();
 				var resolver = deferred.resolver;
@@ -137,7 +137,7 @@ define([
 				// Copy WEAVE
 				promise[WEAVE] = widget_args[WEAVE];
 
-				// Add promise to $warp
+				// Add promise to $warp, make sure this is called synchronously.
 				ARRAY_PUSH.call($warp, promise);
 
 				parentRequire([ module ], function (Widget) {
@@ -173,7 +173,7 @@ define([
 
 				// Return promise
 				return promise;
-			})
+			}))
 			// Updating the element attributes with started widgets.
 			.tap(update_attr);
 		}));
