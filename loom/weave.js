@@ -27,11 +27,21 @@ define([
 	var ARRAY_SHIFT = ARRAY_PROTO.shift;
 	var WEAVE = "weave";
 	var WOVEN = "woven";
+	var LENGTH = "length";
 	var $WARP = config["$warp"];
 	var $WEFT = config["$weft"];
 	var ATTR_WEAVE = config[WEAVE];
 	var ATTR_WOVEN = config[WOVEN];
 	var RE_SEPARATOR = /[\s,]+/;
+
+	// collect the list of fulfilled promise values from a list of descriptors.
+	function fulfilled(descriptors) {
+		return descriptors.filter(function(d) {
+			return d.state === "fulfilled";
+		}).map(function(d) {
+			return d.value;
+		});
+	}
 
 	/**
 	 * Instantiate all {@link dom.component.widget widgets}  specified in the {@link dom.loom.config#weave weave attribute}
@@ -66,7 +76,7 @@ define([
 			var $element = $(element);
 			var $data = $element.data();
 			var $warp = $data[$WARP] || ($data[$WARP] = []);
-			var $weave = [];
+			var to_weave = [];
 			var weave_attr = $element.attr(ATTR_WEAVE) || "";
 			var weave_args;
 			var re = /[\s,]*(((?:\w+!)?([\w\d_\/\.\-]+)(?:#[^(\s]+)?)(?:\(([^\)]+)\))?)/g;
@@ -79,17 +89,30 @@ define([
 			 */
 			var update_attr = function (widgets) {
 				var woven = [];
+				var weaved = [];
+
 				widgets.forEach(function (widget) {
+					weaved.push(widget[$WEFT][WEAVE]);
 					woven.push(widget[$WEFT][WOVEN]);
 				});
 
-				$element.attr(ATTR_WOVEN, function (index, attr) {
-					return (attr !== UNDEFINED ? attr.split(RE_SEPARATOR) : []).concat(woven).join(" ");
-				});
+				$element
+					// Add those widgets to data-woven.
+					.attr(ATTR_WOVEN, function (index, attr) {
+						attr = (attr !== UNDEFINED ? attr.split(RE_SEPARATOR) : []).concat(woven).join(" ");
+						return attr || null;
+					})
+					// Remove only those actually woven widgets from "data-weave".
+					.attr(ATTR_WEAVE, function(index, attr) {
+						var result = [];
+						if (attr !== UNDEFINED) {
+							result = to_weave.filter(function(args) {
+								return weaved.indexOf(args[WEAVE]) < 0;
+							}).map(function(args) { return args[WEAVE]; });
+						}
+						return result[LENGTH] === 0 ? null : result.join(" ");
+					});
 			};
-
-			// Make sure to remove ATTR_WEAVE (so we don't try processing this again)
-			$element.removeAttr(ATTR_WEAVE);
 
 			var args;
 
@@ -123,11 +146,11 @@ define([
 				}
 
 				// Push on $weave
-				ARRAY_PUSH.call($weave, weave_args);
+				ARRAY_PUSH.call(to_weave, weave_args);
 			}
 
-			// Return promise of mapped $weave
-			return when.all($weave.map(function (widget_args) {
+			// process with all successful weaving.
+			return when.settle(to_weave.map(function (widget_args) {
 				// Create deferred
 				var deferred = when.defer();
 				var resolver = deferred.resolver;
@@ -143,6 +166,11 @@ define([
 				parentRequire([ module ], function (Widget) {
 					var widget;
 					var startPromise;
+
+					// detect if weaving has been canceled somehow.
+					if ($warp.indexOf(promise) === -1) {
+						resolver.reject("cancel");
+					}
 
 					try {
 						// Create widget instance
@@ -173,7 +201,7 @@ define([
 
 				// Return promise
 				return promise;
-			}))
+			})).then(fulfilled)
 			// Updating the element attributes with started widgets.
 			.tap(update_attr);
 		}));

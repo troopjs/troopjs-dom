@@ -40,11 +40,11 @@ buster.testCase("troopjs-dom/component/widget", function (run) {
 						});
 					},
 					"weave/unweave - unweave immediately follow weave": function() {
-						var $el = this.$el.filter(".foo");
+						var $el = this.$el.filter(".temp");
 						weave.call($el);
 						return unweave.call($el).then(function() {
 							refute.defined($el.attr("data-woven"));
-							assert.equals($el.attr("data-weave"), "troopjs-dom/test/component/foo");
+							assert.equals($el.attr("data-weave"), "troopjs-dom/test/component/tmp");
 						});
 					}
 				},
