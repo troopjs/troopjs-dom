@@ -21,6 +21,15 @@ define([ "./config", "when", "jquery", "poly/array" ], function UnweaveModule(co
 	var ATTR_UNWEAVE = config[UNWEAVE];
 	var RE_SEPARATOR = /[\s,]+/;
 
+	// collect the list of fulfilled promise values from a list of descriptors.
+	function fulfilled(descriptors) {
+		return descriptors.filter(function (d) {
+			return d.state === "fulfilled";
+		}).map(function (d) {
+			return d.value;
+		});
+	}
+
 	/**
 	 * Unweaves elements
 	 * @returns {Promise} of unweaving
@@ -49,18 +58,24 @@ define([ "./config", "when", "jquery", "poly/array" ], function UnweaveModule(co
 			 * @param {object} widget Widget
 			 * @private
 			 */
-			var update_attr = function (widget) {
-				var $promise = widget[$WEFT];
-				var woven = $promise[WOVEN];
-				var weave = $promise[WEAVE];
+			var update_attr = function (widgets) {
+				var woven = {};
+				var weave = [];
+
+				widgets.forEach(function (widget) {
+					var $promise = widget[$WEFT];
+					woven[$promise[WOVEN]] = 1;
+					weave.push($promise[WEAVE]);
+				});
 
 				$element
+					// Remove those widgets from data-woven.
 					.attr(ATTR_WOVEN, function (index, attr) {
 						var result = [];
 
 						if (attr !== UNDEFINED) {
 							ARRAY_PUSH.apply(result, attr.split(RE_SEPARATOR).filter(function (part) {
-								return part !== woven;
+								return !( part in woven );
 							}));
 						}
 
@@ -69,13 +84,8 @@ define([ "./config", "when", "jquery", "poly/array" ], function UnweaveModule(co
 							: result.join(" ");
 					})
 					.attr(ATTR_WEAVE, function (index, attr) {
-						var result = [ weave ];
-
-						if (attr !== UNDEFINED) {
-							ARRAY_PUSH.apply(result, attr.split(RE_SEPARATOR));
-						}
-
-						return result.join(" ");
+						var result = (attr !== UNDEFINED ? attr.split(RE_SEPARATOR) : []).concat(weave);
+						return result[LENGTH] === 0 ? null : result.join(" ");
 					});
 			};
 
@@ -118,17 +128,15 @@ define([ "./config", "when", "jquery", "poly/array" ], function UnweaveModule(co
 				$warp[LENGTH] = j;
 			}
 
-			// Return promise of mapped $unweave
-			return when.map($unweave, function (widget) {
-				// Store promise of stop yielding widget
-				var promise = widget.stop.apply(widget, stop_args).yield(widget);
-
-				// Add deferred update of attr
-				when(promise, update_attr);
-
-				// Return promise
-				return promise;
-			});
+			// process with all successful  weaving.
+			return when.settle($unweave).then(fulfilled).then(function unweaveWidgets(widgets) {
+				return when.map(widgets, function(widget) {
+					// Store promise of stop yielding widget
+					return widget.stop.apply(widget, stop_args).yield(widget);
+				});
+			})
+			// Updating the weave/woven attributes with stopped widgets.
+			.tap(update_attr);
 		}));
 	};
 });
