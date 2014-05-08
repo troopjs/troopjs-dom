@@ -6,7 +6,7 @@
     "node_modules"
   ],
   "dependencies": {
-    "troopjs-compose": "~4",
+    "troopjs-compose": "~3",
     "troopjs-core": "~3",
     "troopjs-jquery": "~3",
     "troopjs-util": "~3",
