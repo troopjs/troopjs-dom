@@ -20,6 +20,7 @@ define([
 	 *  - {@link $#method-weave}, {@link $#method-unweave} and {@link $#method-woven} methods
 	 *
 	 * @class dom.loom.plugin
+	 * @static
 	 * @alias plugin.jquery
 	 */
 

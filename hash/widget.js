@@ -86,7 +86,7 @@ define([
 			// Did anything change?
 			if (hash !== me[HASH]) {
 				// Store and publish new hash
-				me.publish("hash/change", me[HASH] = hash);
+				me.publish("route/change", me[HASH] = hash);
 			}
 			else {
 				// Prevent further hashchange handlers from receiving this
@@ -99,28 +99,24 @@ define([
 		 * @inheritdoc #event-dom/hashset
 		 * @localdoc Handles setting hash of the attached {@link #$element}
 		 * @handler
-		 * @fires hub/hash/set
 		 */
 		"dom/hashset": function ($event, hash, silent) {
-			this.publish("hash/set", hash, silent);
+			this.publish("route/set", hash, silent);
 		},
 
 		/**
-		 * Hash set handler (global)
-		 * @inheritdoc #event-hub/hash/set
-		 * @localdoc Implicitly translates {@link dom.hash.widget#event-hub/hash/set} to {@link #event-dom/hashset} by setting the {@link #$element} hash
-		 * @handler hub/hash/set
+		 * Route set handler (global), implicitly translates {@link dom.hash.widget#event-hub/route/update} to
+		 * {@link #event-dom/hashset} by setting the {@link #$element} hash
+		 * @handler hub/route/set
 		 * @return {Promise}
 		 */
-		"hub:memory/hash/set": function (hash, silent) {
+		"hub/route/set": function (uri, silent) {
 			var me = this;
-
 			// If we are silent we update the local me[HASH] to prevent change detection
 			if (silent === true) {
-				me[HASH] = hash;
+				me[HASH] = uri;
 			}
-
-			me[$ELEMENT].get(0).location.hash = hash;
+			me[$ELEMENT].get(0).location.hash = uri;
 		}
 	});
 });
