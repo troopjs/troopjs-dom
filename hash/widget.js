@@ -53,6 +53,13 @@ define([
 	 */
 
 	/**
+	 * Fires whenever the browser route has changed
+	 * @event hub/route/change
+	 * @preventable
+	 * @param {String} hash The new hash
+	 */
+
+	/**
 	 * Hash change handler (global)
 	 * @inheritdoc #event-hub/hash/change
 	 * @handler hub/hash/change
@@ -73,11 +80,11 @@ define([
 
 		/**
 		 * Hash change handler (local)
+		 * @handler
 		 * @inheritdoc #event-dom/hashchange
 		 * @localdoc Handles changing hash of the attached {@link #$element}
 		 * @param {Object} $event {@link jQuery} event
-		 * @handler
-		 * @fires hub/hash/change
+		 * @fires hub/route/change
 		 */
 		"dom/hashchange": function ($event) {
 			var me = this;
@@ -105,8 +112,7 @@ define([
 		},
 
 		/**
-		 * Route set handler (global), implicitly translates {@link dom.hash.widget#event-hub/route/update} to
-		 * {@link #event-dom/hashset} by setting the {@link #$element} hash
+		 * Route set handler (global), implicitly translates to {@link #event-dom/hashset} by setting the {@link #$element} hash
 		 * @handler hub/route/set
 		 * @return {Promise}
 		 */
