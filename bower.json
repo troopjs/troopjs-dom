@@ -1,6 +1,6 @@
 {
   "name": "troopjs-dom",
-  "version": "5.1.2",
+  "version": "5.1.3",
   "ignore": [
     "**/.*",
     "node_modules"

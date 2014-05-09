@@ -5,13 +5,15 @@
 define([ "troopjs-dom/component/widget", "when"], function FooWidgetModule(Widget, when) {
 	"use strict";
 
+	var assert = buster.referee.assert;
+
 	/**
 	 * A simple widget for test.
 	 */
 	return Widget.extend({
-		"displayName" : "test/component/widget/foo",
 		"sig/start": function() {
-			return when(1).delay(500);
+			// start signal shall not be called.
+			assert(false);
 		}
 	});
 });
