@@ -33,6 +33,15 @@ define([
 	var ATTR_UNWEAVE = config[UNWEAVE];
 	var RE_SEPARATOR = /[\s,]+/;
 
+	// collect the list of fulfilled promise values from a list of descriptors.
+	function fulfilled(descriptors) {
+		return descriptors.filter(function(d) {
+			return d.state === "fulfilled";
+		}).map(function(d) {
+			return d.value;
+		});
+	}
+
 	/**
 	 * Destroy all widget instances living on this element, that are created
 	 * by {@link dom.loom.weave}, it is also to clean up the attributes
@@ -96,7 +105,8 @@ define([
 					})
 					// Added back those widget names to data-weave.
 					.attr(ATTR_WEAVE, function (index, attr) {
-							return (attr !== UNDEFINED ? attr.split(RE_SEPARATOR) : []).concat(weave).join(" ");
+						var result = (attr !== UNDEFINED ? attr.split(RE_SEPARATOR) : []).concat(weave);
+						return result[LENGTH] === 0 ? null : result.join(" ");
 					});
 			};
 
@@ -139,23 +149,24 @@ define([
 				$warp[LENGTH] = j;
 			}
 
-			// Return promise of mapped $unweave
-			return when.map($unweave, function (widget) {
-				var deferred;
-				var stopPromise;
+			// process with all successful  weaving.
+			return when.settle($unweave).then(fulfilled).then(function unweaveWidgets(widgets) {
+				return when.map(widgets, function(widget) {
+					var deferred;
+					var stopPromise;
 
-				// TODO: Detecting TroopJS 1.x widget from *version* property.
-				if (widget.trigger) {
-					deferred = Defer();
-					widget.stop(deferred);
-					stopPromise = deferred.promise;
-				}
-				else {
-					stopPromise = widget.stop.apply(widget, stop_args);
-				}
-
-				// Add deferred update of attr
-				return stopPromise.yield(widget);
+					// TODO: Detecting TroopJS 1.x widget from *version* property.
+					if (widget.trigger) {
+						deferred = Defer();
+						widget.stop(deferred);
+						stopPromise = deferred.promise;
+					}
+					else {
+						stopPromise = widget.stop.apply(widget, stop_args);
+					}
+					// Add deferred update of attr
+					return stopPromise.yield(widget);
+				});
 			})
 			// Updating the weave/woven attributes with stopped widgets.
 			.tap(update_attr);
