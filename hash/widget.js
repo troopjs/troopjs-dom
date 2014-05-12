@@ -116,13 +116,15 @@ define([
 		 * @handler hub/route/set
 		 * @return {Promise}
 		 */
-		"hub/route/set": function (uri, silent) {
+		"hub/route/set": function (path, data, silent) {
 			var me = this;
+
 			// If we are silent we update the local me[HASH] to prevent change detection
 			if (silent === true) {
-				me[HASH] = uri;
+				me[HASH] = path;
 			}
-			me[$ELEMENT].get(0).location.hash = uri;
+
+			me[$ELEMENT].get(0).location.hash = path;
 		}
 	});
 });
