@@ -23,6 +23,7 @@ buster.testCase("troopjs-dom/application/widget", function (run) {
 			"setUp": function () {
 				this.$el = $(html).appendTo("body");
 				this.app = Application($('html'));
+				this.timeout = 1000;
 			},
 			"weaving": function () {
 				var app = this.app;
