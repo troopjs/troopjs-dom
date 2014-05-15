@@ -108,7 +108,7 @@ define([
 		 * @handler
 		 */
 		"dom/hashset": function ($event, hash, silent) {
-			this.publish("route/set", hash, silent);
+			this.publish("route/set", hash, null, silent);
 		},
 
 		/**
