@@ -175,9 +175,8 @@ define([
 
 			if ((matches = RE.exec(type)) !== NULL) {
 				// $element.on handlers[PROXY]
-				me[$ELEMENT].on(matches[1], NULL, me, handlers[PROXY] = function dom_proxy($event, args) {
-					// Redefine args
-					args = {};
+				me[$ELEMENT].on(matches[1], NULL, me, handlers[PROXY] = function dom_proxy($event) {
+					var args = {};
 					args[TYPE] = type;
 					args[RUNNER] = sequence;
 					args = [ args ];
