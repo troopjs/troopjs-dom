@@ -49,6 +49,18 @@ buster.testCase("troopjs-dom/component/widget", function (run) {
 					}
 				},
 
+				"single widget, fail to start": {
+					"weave with error thrown on start": function () {
+						var $el = this.$el.filter(".error");
+						var rejected;
+						return weave.call($el).otherwise(function(reason) {
+							rejected = reason;
+						}).tap(function() {
+							assert(rejected.message, "start failure", "weave should be rejected for error");
+						});
+					}
+				},
+
 				"two widgets, one with parameters": {
 					"weaving": function () {
 						var $el = this.$el.filter(".foobar");

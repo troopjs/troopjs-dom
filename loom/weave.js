@@ -33,10 +33,15 @@ define([
 	var ATTR_WEAVE = config[WEAVE];
 	var ATTR_WOVEN = config[WOVEN];
 	var RE_SEPARATOR = /[\s,]+/;
+	var CANCELED = "cancel";
 
 	// collect the list of fulfilled promise values from a list of descriptors.
 	function fulfilled(descriptors) {
 		return descriptors.filter(function(d) {
+			// Re-throw the rejection if it's not canceled.
+			if (d.state === "rejected" && d.reason !== CANCELED) {
+				throw d.reason;
+			}
 			return d.state === "fulfilled";
 		}).map(function(d) {
 			return d.value;
@@ -169,7 +174,7 @@ define([
 
 					// detect if weaving has been canceled somehow.
 					if ($warp.indexOf(promise) === -1) {
-						resolver.reject("cancel");
+						resolver.reject(CANCELED);
 					}
 
 					try {
