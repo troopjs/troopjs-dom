@@ -168,41 +168,43 @@ define([
 				// Add promise to $warp, make sure this is called synchronously.
 				ARRAY_PUSH.call($warp, promise);
 
-				parentRequire([ module ], function (Widget) {
-					var widget;
-					var startPromise;
+				setTimeout(function() {
+					parentRequire([ module ], function(Widget) {
+						var widget;
+						var startPromise;
 
-					// detect if weaving has been canceled somehow.
-					if ($warp.indexOf(promise) === -1) {
-						resolver.reject(CANCELED);
-					}
-
-					try {
-						// Create widget instance
-						widget = Widget.apply(Widget, widget_args);
-
-						// Add $WEFT to widget
-						widget[$WEFT] = promise;
-
-						// Add WOVEN to promise
-						promise[WOVEN] = widget.toString();
-
-						// TODO: Detecting TroopJS 1.x widget from *version* property.
-						if (widget.trigger) {
-							deferred = Defer();
-							widget.start(deferred);
-							startPromise = deferred.promise;
-						}
-						else {
-							startPromise = widget.start.apply(widget, start_args);
+						// detect if weaving has been canceled somehow.
+						if ($warp.indexOf(promise) === -1) {
+							resolver.reject(CANCELED);
 						}
 
-						resolver.resolve(startPromise.yield(widget));
-					}
-					catch (e) {
-						resolver.reject(e);
-					}
-				}, resolver.reject);
+						try {
+							// Create widget instance
+							widget = Widget.apply(Widget, widget_args);
+
+							// Add $WEFT to widget
+							widget[$WEFT] = promise;
+
+							// Add WOVEN to promise
+							promise[WOVEN] = widget.toString();
+
+							// TODO: Detecting TroopJS 1.x widget from *version* property.
+							if (widget.trigger) {
+								deferred = Defer();
+								widget.start(deferred);
+								startPromise = deferred.promise;
+							}
+							else {
+								startPromise = widget.start.apply(widget, start_args);
+							}
+
+							resolver.resolve(startPromise.yield(widget));
+						}
+						catch (e) {
+							resolver.reject(e);
+						}
+					}, resolver.reject);
+				}, 0);
 
 				// Return promise
 				return promise;
