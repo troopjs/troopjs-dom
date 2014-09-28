@@ -5,9 +5,8 @@ define([
 	"./config",
 	"when",
 	"jquery",
-	"poly/array",
-	"troopjs-util/defer"
-], function UnweaveModule(config, when, $, Defer) {
+	"poly/array"
+], function (config, when, $) {
 	"use strict";
 
 	/**
@@ -16,36 +15,15 @@ define([
 	 * @mixin Function
 	 * @static
 	 */
-
 	var UNDEFINED;
 	var NULL = null;
 	var ARRAY_PROTO = Array.prototype;
 	var ARRAY_MAP = ARRAY_PROTO.map;
-	var ARRAY_PUSH = ARRAY_PROTO.push;
-	var WEAVE = "weave";
-	var UNWEAVE = "unweave";
-	var WOVEN = "woven";
 	var LENGTH = "length";
-	var $WARP = config["$warp"];
 	var $WEFT = config["$weft"];
-	var ATTR_WEAVE = config[WEAVE];
-	var ATTR_WOVEN = config[WOVEN];
-	var ATTR_UNWEAVE = config[UNWEAVE];
+	var ATTR_WOVEN = config["woven"];
+	var ATTR_UNWEAVE = config["unweave"];
 	var RE_SEPARATOR = /[\s,]+/;
-	var CANCELED = "cancel";
-
-	// collect the list of fulfilled promise values from a list of descriptors.
-	function fulfilled(descriptors) {
-		return descriptors.filter(function(d) {
-			// Re-throw the rejection if it's not canceled.
-			if (d.state === "rejected" && d.reason !== CANCELED) {
-				throw d.reason;
-			}
-			return d.state === "fulfilled";
-		}).map(function(d) {
-			return d.value;
-		});
-	}
 
 	/**
 	 * Destroy all widget instances living on this element, that are created
@@ -60,121 +38,134 @@ define([
 	 * @param {...*} [stop_args] Arguments that will be passed to each widget's {@link dom.component.widget#stop stop} method
 	 * @return {Promise} Promise to the completion of unweaving all woven widgets.
 	 */
-	return function unweave(stop_args) {
-		// Store stop_args for later
-		stop_args = arguments;
-
-		// Map elements
-		return when.all(ARRAY_MAP.call(this, function (element) {
-			var $element = $(element);
+	return function unweave() {
+		/**
+		 * Unweaves `$element`
+		 * @param {jQuery} $element
+		 * @param {String} unweave_attr
+		 * @return {Promise}
+		 * @private
+		 */
+		var $unweave = function (unweave_attr) {
+			// Let `$element` be `this`
+			var $element = this;
+			// Get all data from `$element`
 			var $data = $element.data();
-			var $warp = $data[$WARP] || ($data[$WARP] = []);
-			var $unweave = [];
-			var unweave_attr = $element.attr(ATTR_UNWEAVE);
-			var unweave_re = [];
-			var re = /[\s,]*([\w_\/\.\-]+)(?:@(\d+))?/g;
+			// Let `$weft` be `$data[$WEFT]` or `$data[$WEFT] = []`
+			var $weft = $data.hasOwnProperty($WEFT)
+				? $data[$WEFT]
+				: $data[$WEFT] = [];
+			// Scope `unweave_re` locally since we use the `g` flag
+			var unweave_re = /[\s,]*([\w\d_\/\.\-]+)(?:@(\d+))?/g;
+			var unweave_res = [];
+			var unweave_res_length = 0;
 			var matches;
-			var $weft;
-			var iMax;
-			var i;
-			var j;
 
-			/*
-			 * Updated attributes according to what have been unweaved.
-			 * @param {object} widgets List of stopped widgets.
-			 * @private
-			 */
-			var update_attr = function (widgets) {
-				var woven = {};
-				var weave = [];
-				widgets.forEach(function (widget) {
-					var $promise = widget[$WEFT];
-					woven[$promise[WOVEN]] = 1;
-					weave.push($promise[WEAVE]);
-				});
-
-				$element
-					// Remove those widgets from data-woven.
-					.attr(ATTR_WOVEN, function (index, attr) {
-						var result = [];
-
-						if (attr !== UNDEFINED) {
-							ARRAY_PUSH.apply(result, attr.split(RE_SEPARATOR).filter(function (part) {
-								return !( part in woven );
-							}));
-						}
-
-						return result[LENGTH] === 0
-							? null
-							: result.join(" ");
-					})
-					// Added back those widget names to data-weave.
-					.attr(ATTR_WEAVE, function (index, attr) {
-						var result = (attr !== UNDEFINED ? attr.split(RE_SEPARATOR) : []).concat(weave);
-						return result[LENGTH] === 0 ? null : result.join(" ");
-					});
-			};
-
-			// Make sure to remove ATTR_UNWEAVE (so we don't try processing this again)
-			$element.removeAttr(ATTR_UNWEAVE);
-
-			// Check if we should remove all widgets
-			if (unweave_attr === UNDEFINED) {
-				// Copy from $warp to $unweave
-				ARRAY_PUSH.apply($unweave, $warp);
-
-				// Truncate $warp
-				$warp[LENGTH] = 0;
-			} else {
-				// Iterate unweave_attr (while re matches)
-				// matches[1] : widget name - "widget/name"
-				// matches[2] : widget instance id - "123"
-				while ((matches = re.exec(unweave_attr)) !== NULL) {
-					ARRAY_PUSH.call(unweave_re, "^" + matches[1] + "@" + (matches[2] || "\\d+") + "$");
-				}
-
-				// Redefine unweave_re as a regexp
-				unweave_re = new RegExp(unweave_re.join("|"));
-
-				// Move matching promises from $warp to $unweave
-				for (i = j = 0, iMax = $warp[LENGTH]; i < iMax; i++) {
-					$weft = $warp[i];
-
-					if (!unweave_re.test($weft[WOVEN])) {
-						// Move to new index
-						$warp[j++] = $weft;
-					}
-					else {
-						// Push on $weave
-						ARRAY_PUSH.call($unweave, $weft);
-					}
-				}
-
-				// Truncate $warp
-				$warp[LENGTH] = j;
+			// Iterate unweave_attr (while unweave_re matches)
+			// matches[1] : widget name - "widget/name"
+			// matches[2] : widget instance id - "123"
+			while ((matches = unweave_re.exec(unweave_attr)) !== NULL) {
+				unweave_res[unweave_res_length++] = "^" + matches[1] + "@" + (matches[2] || "\\d+") + "$";
 			}
 
-			// process with all successful  weaving.
-			return when.settle($unweave).then(fulfilled).then(function unweaveWidgets(widgets) {
-				return when.map(widgets, function(widget) {
-					var deferred;
-					var stopPromise;
+			// Redefine `unweave_re` as a combined regexp
+			unweave_re = new RegExp(unweave_res.join("|"));
 
-					// TODO: Detecting TroopJS 1.x widget from *version* property.
+			// Start async promise chain
+			return when
+				// Filter $weft
+				.filter($weft, function (widget, index) {
+					// Bail fast if we don't want to unweave
+					if (!unweave_re.test(widget.toString())) {
+						return false;
+					}
+
+					// Let `deferred` be `when.defer()`
+					var deferred = when.defer();
+					// Extract `resolve`, `reject` from `deferred`
+					var resolve = deferred.resolve;
+					var reject = deferred.reject;
+					// Let `$weft[index]` be `deferred.promise`
+					// Let `promise` be `$weft[index]`
+					var promise = $weft[index] = deferred.promise;
+					var $deferred;
+
+					// TroopJS <= 1.x
 					if (widget.trigger) {
-						deferred = Defer();
-						widget.stop(deferred);
-						stopPromise = deferred.promise;
+						// Let `$deferred` be `$.Deferred()`
+						$deferred = $.Deferred();
+
+						// Get trusted promise
+						when($deferred).then(resolve, reject);
+
+						// Stop widget
+						widget.stop.call(widget, $deferred);
 					}
+					// TroopJS >= 2.x
 					else {
-						stopPromise = widget.stop.apply(widget, stop_args);
+						// Stop widget
+						widget.stop.apply(widget, stop_args).then(resolve, reject);
 					}
-					// Add deferred update of attr
-					return stopPromise.yield(widget);
-				});
+
+					return promise
+						// Make sure to remove the promise from `$weft`
+						.tap(function () {
+							delete $weft[index];
+						})
+						.yield(true);
 			})
-			// Updating the weave/woven attributes with stopped widgets.
-			.tap(update_attr);
+			.tap(function (widgets) {
+					// Bail fast if no widgets were unwoven
+					if (widgets[LENGTH] === 0) {
+						return;
+					}
+
+					// Let `unwoven` be a combined regexp of unwoven `widget.toString()`
+					var unwoven = new RegExp(
+						widgets
+							.map(function (widget) {
+								return "^" + widget.toString() + "$";
+							})
+							.join("|")
+					);
+
+					/**
+					 * Filters values using `unwoven`
+					 * @param {String} value
+					 * @return {boolean}
+					 * @ignore
+					 */
+					var filter = function (value) {
+						return !unwoven.test(value);
+					};
+
+					// Update `$element` attribute `ATTR_WOVEN`
+					$element.attr(ATTR_WOVEN, function (index, attr) {
+						// Split `attr` and filter with `filter`
+						var values = (attr === UNDEFINED ? ARRAY_PROTO : attr.split(RE_SEPARATOR)).filter(filter);
+						// If `values[LENGTH]` is not `0` ...
+						return values[LENGTH] !== 0
+							// ... return `values.join(" ")`
+							? values.join(" ")
+							// ... otherwise return `NULL` to remove the attribute
+							: NULL;
+					});
+			});
+		};
+
+		// Let `stop_args` be `arguments`
+		var stop_args = arguments;
+
+		// Wait for map (sync) and weave (async)
+		return when.all(ARRAY_MAP.call(this, function (element) {
+			// Bless `$element` with `$`
+			var $element = $(element);
+			// Get ATTR_WEAVE attribute or default to `""`
+			var unweave_attr = $element.attr(ATTR_UNWEAVE) || "";
+			// Make sure to remove ATTR_UNWEAVE asap in case someone else tries to `unweave` again
+			$element.removeAttr(ATTR_UNWEAVE);
+			// Attempt weave
+			return $unweave.call($element, unweave_attr);
 		}));
 	};
 });
