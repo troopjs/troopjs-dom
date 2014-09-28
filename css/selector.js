@@ -279,11 +279,13 @@ define([ "troopjs-compose/mixin/factory" ], function (Factory) {
 		/**
 		 * Matches candidates against element
 		 * @param {Function} matchesSelector `matchesSelector` function
-		 * @param {HTMLElement} element DOM Element
+		 * @param {DOMEvent} event the DOM event object on subject
+		 * @param {HTMLElement} scope the element in which the match should be limited to
 		 * @return {Array} Matching array of candidates
 		 */
-		"matches": function matches(matchesSelector, element) {
+		"matches": function matches(matchesSelector, event, scope) {
 			var me = this;
+			var element = event.target;
 			var indexer;
 			var indexed;
 			var indexes = me[INDEXES];
@@ -296,6 +298,7 @@ define([ "troopjs-compose/mixin/factory" ], function (Factory) {
 			var candidateCount;
 			var result = [];
 			var resultCount = 0;
+			var current;
 
 			if (!element) {
 				return result;
@@ -317,9 +320,29 @@ define([ "troopjs-compose/mixin/factory" ], function (Factory) {
 						while (candidateCount--) {
 							candidate = candidates[candidateCount];
 
-							if (matchesSelector(element, candidate[0])) {
+							// handle event bubbling on delegate handler, check if selector matches this element or one of it's ancestor
+							// within the scope, credits to `jQuery.event.handlers` implementation.
+							current = element;
+
+							// if it's already the top-level element
+							if (current === scope && matchesSelector(current, candidate[0])) {
 								result[resultCount++] = candidate;
 							}
+							// Find delegate handlers
+							// Black-hole SVG <use> instance trees (#13180)
+							// Avoid non-left-click bubbling in Firefox (#3861)
+							else if (current.nodeType && (!event.button || event.type !== "click")) {
+								for (; current !== scope; current = current.parentNode || scope) {
+									// Don't process clicks on disabled elements (#6911, #8165, #11382, #11764)
+									if (current.disabled !== true || event.type !== "click") {
+										if (matchesSelector(current, candidate[0])) {
+											result[resultCount++] = candidate;
+											break;
+										}
+									}
+								}
+							}
+
 						}
 					}
 				}

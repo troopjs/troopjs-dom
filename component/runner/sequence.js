@@ -35,6 +35,7 @@ define([
 	return function sequence(event, handlers, args) {
 		var modified = handlers[MODIFIED];
 		var $event = args[0];
+		var $scope = event[CONTEXT].$element.get(0) || document.documentElement;
 		var selector;
 		var candidate;
 
@@ -55,7 +56,7 @@ define([
 
 		return selector
 			// Filter to only selectors that match target
-			.matches(MATCHES_SELECTOR, $event.target)
+			.matches(MATCHES_SELECTOR, $event, $scope)
 			// Reduce so we can catch the end value
 			.reduce(function (result, selector) {
 				// If immediate propagation is stopped we should just return last result
