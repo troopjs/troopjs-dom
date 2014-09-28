@@ -38,6 +38,7 @@ define([
 	var VALUE = "value";
 	var TYPE = "type";
 	var RUNNER = "runner";
+	var CONTEXT = "context";
 	var FINALIZE = "finalize";
 	var SELECTOR_WEAVE = "[" + LOOM_CONF["weave"] + "]";
 	var SELECTOR_WOVEN = "[" + LOOM_CONF["woven"] + "]";
@@ -147,6 +148,9 @@ define([
 			me.displayName = displayName;
 		}
 
+        var args = Array.prototype.slice.call(arguments);
+        args[0] = $element;
+        return args;
 	}, {
 		"displayName" : "dom/component/widget",
 
@@ -179,6 +183,7 @@ define([
 					var args = {};
 					args[TYPE] = type;
 					args[RUNNER] = sequence;
+					args[CONTEXT] = me;
 					args = [ args ];
 
 					// Push original arguments on args
