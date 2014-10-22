@@ -1,6 +1,5 @@
 {
   "name": "troopjs-dom",
-  "version": "5.1.5",
   "ignore": [
     "**/.*",
     "node_modules"
@@ -8,8 +7,9 @@
   "dependencies": {
     "troopjs-compose": "~3",
     "troopjs-core": "~3",
-    "troopjs-jquery": "~3",
-    "troopjs-util": "~3",
-    "jquery": ">=1.8.1"
+    "jquery": ">=1.8.1",
+    "mu-getargs": "~0",
+    "mu-merge": "~0",
+    "mu-jquery-destroy": "~0"
   }
 }

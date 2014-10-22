@@ -6,7 +6,7 @@ define([
 	"require",
 	"when",
 	"jquery",
-	"troopjs-util/getargs",
+	"mu-getargs",
 	"poly/array"
 ], function (config, parentRequire, when, $, getargs) {
 	"use strict";
