@@ -16,10 +16,6 @@ define([
 
 	return merge.call({
 		/**
-		 * @cfg {String} $warp Property of the element's data where the **warp** resides.
-		 */
-		"$warp" : "$warp",
-		/**
 		 * @cfg {String} $weft Property of the widget where the **weft** resides.
 		 */
 		"$weft" : "$weft",

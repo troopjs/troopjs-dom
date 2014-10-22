@@ -16,10 +16,12 @@ define([
 	 * @static
 	 */
 
+	var NULL = null;
 	var ARRAY_MAP = Array.prototype.map;
 	var LENGTH = "length";
-	var WOVEN = "woven";
-	var $WARP = config["$warp"];
+	var $WEFT = config["$weft"];
+	var RE_ANY = /.*/;
+	var RE_WIDGET = /([\w\d_\/\.\-]+)(?:@(\d+))?/;
 
 	/**
 	 * Retrieve all or specific widget instances living on this element, that are
@@ -31,38 +33,29 @@ define([
 	 * @return {Promise} Promise to the completion of retrieving the woven widgets array.
 	 */
 	return function woven() {
-		var $woven = [];
-		var $wovenLength = 0;
-		var re;
+		var woven_re = arguments[LENGTH] > 0
+			? new RegExp(
+				ARRAY_MAP
+					.call(arguments, function (arg) {
+						var matches;
 
-		// If we have arguments we have convert and filter
-		if (arguments[LENGTH] > 0) {
-			// Map arguments to a regexp
-			re = new RegExp(ARRAY_MAP.call(arguments, function (widget) {
-				return "^" + widget;
-			}).join("|"), "m");
+						// matches[1] : widget name - "widget/name"
+						// matches[2] : widget instance id - "123"
+						return ((matches = RE_WIDGET.exec(arg)) !== NULL)
+							? "^" + matches[1] + "@" + (matches[2] || "\\d+") + "$"
+							: NULL;
+					})
+					.filter(function (arg) {
+						return arg !== NULL
+					})
+					.join("|")
+			)
+			: RE_ANY;
 
-			// Iterate
-			$(this).each(function (index, element) {
-				// Filter widget promises
-				var $widgets = ($.data(element, $WARP) || []).filter(function ($weft) {
-					return re.test($weft[WOVEN]);
-				});
-
-				// Add promise of widgets to $woven
-				$woven[$wovenLength++] = when.all($widgets);
+		return when.all(ARRAY_MAP.call(this, function (element) {
+			return when.filter($.data(element, $WEFT) || false, function (widget) {
+				return woven_re.test(widget);
 			});
-		}
-		// Otherwise we can use a faster approach
-		else {
-			// Iterate
-			$(this).each(function (index, element) {
-				// Add promise of widgets to $woven
-				$woven[$wovenLength++] = when.all($.data(element, $WARP));
-			});
-		}
-
-		// Return promise of $woven
-		return when.all($woven);
+		}));
 	};
 });

@@ -5,7 +5,7 @@ define([
 	"../../css/selector",
 	"jquery",
 	"poly/array"
-], function SequenceModule(Selector, $) {
+], function (Selector, $) {
 	"use strict";
 
 	/**
