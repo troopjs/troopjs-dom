@@ -9,15 +9,26 @@ buster.testCase("troopjs-dom/component/widget", function (run) {
 		"troopjs-dom/component/widget",
 		"troopjs-dom/loom/weave",
 		"troopjs-dom/loom/unweave",
-		"text!troopjs-dom/test/component/widget.html",
 		"jquery",
 		"when"
 	],
-		function (Widget, weave, unweave, html, $, when) {
+		function (Widget, weave, unweave, $, when) {
 
 			run({
 				"setUp": function () {
-					this.$el = $(html).appendTo("body");
+					this.$el = $("\
+<div class=\"foo\" data-weave=\"troopjs-dom/test/component/foo\"></div>\
+<div class=\"foobar\" data-weave=\"troopjs-dom/test/component/foo,troopjs-dom/test/component/bar(123, 'abc')\"></div>\
+<div class=\"bar\" data-weave=\"troopjs-dom/test/component/foo,troopjs-dom/test/component/bar(123, 'abc')\" data-unweave=\"troopjs-dom/test/component/foo\"></div>\
+<div class=\"foobar2\" data-weave=\"troopjs-dom/test/component/foo\"></div>\
+<div class=\"foo-dom-event\" data-weave=\"troopjs-dom/test/component/foo-dom-event\">\
+	<input id=\"btn-foo\" class=\"btn\" type=\"button\" data-type=\"x-button\" value=\"click\" />\
+	<input class=\"txt\" type=\"text\" value=\"keydown\" />\
+	<input class=\"btn\" type=\"checkbox\" checked/>\
+</div>\
+<div class=\"temp\" data-weave=\"troopjs-dom/test/component/tmp\"></div>\
+<div class=\"error\" data-weave=\"troopjs-dom/test/component/thrown\"></div>\
+");
 				},
 
 				"dom event handler - declarative": function() {
