@@ -7,11 +7,11 @@ define([
 	"troopjs-compose/mixin/config",
 	"jquery",
 	"when",
-	"troopjs-util/merge",
+	"mu-merge",
 	"../loom/config",
 	"../loom/weave",
 	"../loom/unweave",
-	"troopjs-jquery/destroy"
+	"mu-jquery-destroy"
 ], function WidgetModule(Gadget, sequence, COMPOSE_CONF, $, when, merge, LOOM_CONF, loom_weave, loom_unweave) {
 	"use strict";
 
