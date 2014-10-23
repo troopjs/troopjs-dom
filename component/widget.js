@@ -38,7 +38,6 @@ define([
 	var VALUE = "value";
 	var TYPE = "type";
 	var RUNNER = "runner";
-	var CONTEXT = "context";
 	var FINALIZE = "finalize";
 	var SELECTOR_WEAVE = "[" + LOOM_CONF["weave"] + "]";
 	var SELECTOR_WOVEN = "[" + LOOM_CONF["woven"] + "]";
@@ -116,6 +115,7 @@ define([
 	return Gadget.extend(function Widget($element, displayName) {
 		var me = this;
 		var $get;
+		var args;
 
 		// No $element
 		if ($element === UNDEFINED) {
@@ -125,7 +125,12 @@ define([
 		else if (!$element.jquery) {
 			// From a plain dom node
 			if ($element.nodeType) {
-				$element = $($element);
+				// Let `args` be `ARRAY_SLICE.call(arguments)`
+				args = ARRAY_SLICE.call(arguments);
+
+				// Let `$element` be `$($element)`
+				// Let `args[0]` be `$element`
+				args[0] = $element = $($element);
 			}
 			else {
 				throw new Error("Unsupported widget element");
@@ -133,7 +138,12 @@ define([
 		}
 		// From a different jQuery instance
 		else if (($get = $element.get) !== $GET) {
-			$element = $($get.call($element, 0));
+			// Let `args` be `ARRAY_SLICE.call(arguments)`
+			args = ARRAY_SLICE.call(arguments);
+
+			// Let `$element` be `$($get.call($element, 0))`
+			// Let `args[0]` be `$element`
+			args[0] = $element = $($get.call($element, 0));
 		}
 
 		/**
@@ -144,13 +154,13 @@ define([
 		 */
 		me[$ELEMENT] = $element;
 
+		// Update `me.displayName` if `displayName` was supplied
 		if (displayName !== UNDEFINED) {
 			me.displayName = displayName;
 		}
 
-        var args = Array.prototype.slice.call(arguments);
-        args[0] = $element;
-        return args;
+		// Return potentially modified `args`
+		return args;
 	}, {
 		"displayName" : "dom/component/widget",
 
@@ -183,7 +193,6 @@ define([
 					var args = {};
 					args[TYPE] = type;
 					args[RUNNER] = sequence;
-					args[CONTEXT] = me;
 					args = [ args ];
 
 					// Push original arguments on args
