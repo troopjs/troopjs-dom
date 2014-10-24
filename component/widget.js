@@ -123,18 +123,12 @@ define([
 		}
 		// Is _not_ a jQuery element
 		else if (!$element.jquery) {
-			// From a plain dom node
-			if ($element.nodeType) {
-				// Let `args` be `ARRAY_SLICE.call(arguments)`
-				args = ARRAY_SLICE.call(arguments);
+			// Let `args` be `ARRAY_SLICE.call(arguments)`
+			args = ARRAY_SLICE.call(arguments);
 
-				// Let `$element` be `$($element)`
-				// Let `args[0]` be `$element`
-				args[0] = $element = $($element);
-			}
-			else {
-				throw new Error("Unsupported widget element");
-			}
+			// Let `$element` be `$($element)`
+			// Let `args[0]` be `$element`
+			args[0] = $element = $($element);
 		}
 		// From a different jQuery instance
 		else if (($get = $element.get) !== $GET) {
