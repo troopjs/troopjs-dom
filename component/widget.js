@@ -118,7 +118,7 @@ define([
 		var args;
 
 		// No $element
-		if ($element === UNDEFINED) {
+		if ($element === UNDEFINED || $element === NULL) {
 			throw new Error("No $element provided");
 		}
 		// Is _not_ a jQuery element
