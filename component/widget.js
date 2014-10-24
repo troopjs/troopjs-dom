@@ -115,24 +115,29 @@ define([
 	return Gadget.extend(function Widget($element, displayName) {
 		var me = this;
 		var $get;
+		var args;
 
 		// No $element
-		if ($element === UNDEFINED) {
+		if ($element === UNDEFINED || $element === NULL) {
 			throw new Error("No $element provided");
 		}
 		// Is _not_ a jQuery element
 		else if (!$element.jquery) {
-			// From a plain dom node
-			if ($element.nodeType) {
-				$element = $($element);
-			}
-			else {
-				throw new Error("Unsupported widget element");
-			}
+			// Let `args` be `ARRAY_SLICE.call(arguments)`
+			args = ARRAY_SLICE.call(arguments);
+
+			// Let `$element` be `$($element)`
+			// Let `args[0]` be `$element`
+			args[0] = $element = $($element);
 		}
 		// From a different jQuery instance
 		else if (($get = $element.get) !== $GET) {
-			$element = $($get.call($element, 0));
+			// Let `args` be `ARRAY_SLICE.call(arguments)`
+			args = ARRAY_SLICE.call(arguments);
+
+			// Let `$element` be `$($get.call($element, 0))`
+			// Let `args[0]` be `$element`
+			args[0] = $element = $($get.call($element, 0));
 		}
 
 		/**
@@ -143,10 +148,13 @@ define([
 		 */
 		me[$ELEMENT] = $element;
 
+		// Update `me.displayName` if `displayName` was supplied
 		if (displayName !== UNDEFINED) {
 			me.displayName = displayName;
 		}
 
+		// Return potentially modified `args`
+		return args;
 	}, {
 		"displayName" : "dom/component/widget",
 
