@@ -39,7 +39,6 @@ define([
 	var TYPE = "type";
 	var RUNNER = "runner";
 	var CONTEXT = "context";
-	var FINALIZE = "finalize";
 	var SELECTOR_WEAVE = "[" + LOOM_CONF["weave"] + "]";
 	var SELECTOR_WOVEN = "[" + LOOM_CONF["woven"] + "]";
 	var RE = new RegExp("^" + DOM + "/(.+)");
@@ -254,9 +253,7 @@ define([
 		 * @localdoc Triggered when this widget is removed from the DOM
 		 */
 		"dom/destroy" : function onDestroy() {
-			if (this.phase !== FINALIZE) {
-				loom_unweave.call(this[$ELEMENT]);
-			}
+			loom_unweave.call(this[$ELEMENT]);
 		},
 
 		/**
