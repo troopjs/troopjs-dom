@@ -3,6 +3,7 @@
  */
 define([
 	"troopjs-core/component/gadget",
+	"troopjs-core/component/runner/sequence",
 	"./runner/sequence",
 	"troopjs-compose/mixin/config",
 	"jquery",
@@ -12,7 +13,7 @@ define([
 	"../loom/weave",
 	"../loom/unweave",
 	"mu-jquery-destroy"
-], function WidgetModule(Gadget, sequence, COMPOSE_CONF, $, when, merge, LOOM_CONF, loom_weave, loom_unweave) {
+], function WidgetModule(Gadget, core_sequence, dom_sequence, COMPOSE_CONF, $, when, merge, LOOM_CONF, loom_weave, loom_unweave) {
 	"use strict";
 
 	/**
@@ -28,6 +29,7 @@ define([
 	var ARRAY_SLICE = ARRAY_PROTO.slice;
 	var ARRAY_PUSH = ARRAY_PROTO.push;
 	var $GET = $.fn.get;
+	var WHEN_ATTEMPT = when.attempt;
 	var TYPEOF_FUNCTION = "function";
 	var $ELEMENT = "$element";
 	var MODIFIED = "modified";
@@ -40,6 +42,7 @@ define([
 	var RUNNER = "runner";
 	var CONTEXT = "context";
 	var FINALIZE = "finalize";
+	var SIG_RENDER = "sig/render";
 	var SELECTOR_WEAVE = "[" + LOOM_CONF["weave"] + "]";
 	var SELECTOR_WOVEN = "[" + LOOM_CONF["woven"] + "]";
 	var RE = new RegExp("^" + DOM + "/(.+)");
@@ -53,37 +56,58 @@ define([
 	function $render($fn) {
 		/**
 		 * @ignore
-		 * @param {Function|String|Promise} [contents] Contents to render or a Promise for contents
-		 * @param {...*} [args] Template arguments
-		 * @return {String|Promise} The returned content string or promise of rendering.
+		 * @inheritdoc #html
 		 */
-		function render(contents, args) {
-			/*jshint validthis:true*/
+		return function render(contentOrPromise, args) {
 			var me = this;
 
-			// Retrieve HTML/Text.
-			if (!arguments.length) {
+			// If `_args.length` is `0` just return `$fn.call(...)`
+			if (arguments.length === 0) {
 				return $fn.call(me[$ELEMENT]);
 			}
 
-			return when
-				// Wait for contents and args to resolve...
-				.all(ARRAY_SLICE.call(arguments))
-				.then(function (_args) {
-					// First argument is the resolved value of contents
-					var _contents = _args.shift();
+			// Convert arguments to an array
+			var _args = ARRAY_SLICE.call(arguments);
 
-					// If _contents is a function, apply it with _args, otherwise just pass it along to the callback
-					return when(typeof _contents === TYPEOF_FUNCTION ? _contents.apply(me, _args) : contents, function (result) {
-						// Call $fn in the context of me[$ELEMENT] with result as the only argument
-						// Find something to weave
-						// Pass it to loom_weave and return the result
-						return loom_weave.call($fn.call(me[$ELEMENT], result).find(SELECTOR_WEAVE));
+			return when(contentOrPromise, function (contents) {
+				var result;
+
+				// Initialize event
+				var event = {};
+				event[RUNNER] = core_sequence;
+				event[CONTEXT] = me;
+				event[TYPE] = SIG_RENDER;
+
+				// If `contents` is a function ...
+				if (typeof contents === TYPEOF_FUNCTION) {
+					// ... attempt and wait for resolution
+					result = WHEN_ATTEMPT.apply(me, _args).then(function (output) {
+						// Call `$fn` with `output`
+						$fn.call(me[$ELEMENT], output);
+
+						// Let `_args[0]` be `event`
+						_args[0] = event;
+
+						// Emit
+						return me.emit.apply(me, _args);
 					});
-				});
-		}
+				}
+				// ... otherwise we can emit right away
+				else {
+					// Call `$fn` with `contents`
+					$fn.call(me[$ELEMENT], contents);
 
-		return render;
+					// Let `_args[0]` be `event`
+					_args[0] = event;
+
+					// Emit
+					result = me.emit.apply(me, _args);
+				}
+
+				// Return `result`
+				return result;
+			});
+		}
 	}
 
 	/**
@@ -99,9 +123,17 @@ define([
 		}
 	}
 
+	/**
+	 * @ignore
+	 * @inheritdoc #weave
+	 */
+	function weave() {
+		return loom_weave.apply(this[$ELEMENT].find(SELECTOR_WEAVE), arguments);
+	}
+
 	// Add pragmas for DOM specials
 	COMPOSE_CONF.pragmas.push({
-		"pattern": /^dom(?:\:([^\/]+))?\/(.+)/,
+		"pattern": /^dom(?::([^\/]+))?\/(.+)/,
 		"replace": DOM + "/$2(\"$1\")"
 	});
 
@@ -187,7 +219,7 @@ define([
 				me[$ELEMENT].on(matches[1], NULL, me, handlers[PROXY] = function dom_proxy($event) {
 					var args = {};
 					args[TYPE] = type;
-					args[RUNNER] = sequence;
+					args[RUNNER] = dom_sequence;
 					args[CONTEXT] = me;
 					args = [ args ];
 
@@ -239,6 +271,24 @@ define([
 		},
 
 		/**
+		 * Render signal
+		 * @event sig/render
+		 * @localdoc Triggered after {@link #before}, {@link #after}, {@link #html}, {@link #text}, {@link #append} and {@link #prepend}
+		 * @since 3.0
+		 * @preventable
+		 * @param {...*} [args] Render arguments
+		 */
+
+		/**
+		 * Handles component render
+		 * @handler
+		 * @inheritdoc #event-sig/render
+		 * @localdoc Calls {@link #weave} to ensure newly rendered html is woven
+		 * @return {Promise}
+		 */
+		"sig/render": weave,
+
+		/**
 		 * Destroy DOM event
 		 * @localdoc Triggered when {@link #$element} of this widget is removed from the DOM tree.
 		 * @event dom/destroy
@@ -260,11 +310,10 @@ define([
 		},
 
 		/**
+		 * @method
 		 * @inheritdoc dom.loom.weave#constructor
 		 */
-		"weave" : function weave() {
-			return loom_weave.apply(this[$ELEMENT].find(SELECTOR_WEAVE), arguments);
-		},
+		"weave" : weave,
 
 		/**
 		 * @inheritdoc dom.loom.unweave#constructor
@@ -277,6 +326,7 @@ define([
 		 * Renders content and inserts it before {@link #$element}
 		 * @method
 		 * @inheritdoc #html
+		 * @fires sig/render
 		 */
 		"before" : $render($.fn.before),
 
@@ -284,15 +334,17 @@ define([
 		 * Renders content and inserts it after {@link #$element}
 		 * @method
 		 * @inheritdoc #html
+		 * @fires sig/render
 		 */
 		"after" : $render($.fn.after),
 
 		/**
 		 * Renders content and replaces {@link #$element} html contents
 		 * @method
-		 * @param {Function|String} contents Template/String to render
+		 * @param {Function|String|Promise} [contentOrPromise] Contents to render or a Promise for contents
 		 * @param {...*} [args] Template arguments
-		 * @return {Promise} Promise of  render
+		 * @fires sig/render
+		 * @return {String|Promise} The returned content string or promise of rendering.
 		 */
 		"html" : $render($.fn.html),
 
@@ -300,6 +352,7 @@ define([
 		 * Renders content and replaces {@link #$element} text contents
 		 * @method
 		 * @inheritdoc #html
+		 * @fires sig/render
 		 */
 		"text" : $render($.fn.text),
 
@@ -307,6 +360,7 @@ define([
 		 * Renders content and appends it to {@link #$element}
 		 * @method
 		 * @inheritdoc #html
+		 * @fires sig/render
 		 */
 		"append" : $render($.fn.append),
 
@@ -314,6 +368,7 @@ define([
 		 * Renders content and prepends it to {@link #$element}
 		 * @method
 		 * @inheritdoc #html
+		 * @fires sig/render
 		 */
 		"prepend" : $render($.fn.prepend)
 	});
