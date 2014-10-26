@@ -13,9 +13,10 @@ define([
 	"use strict";
 
 	/**
-	 * Component that attaches to an DOM element, delegates all DOM manipulations.
+	 * Component that manages all DOM manipulation and integration.
 	 * @class dom.component.gadget
 	 * @extend core.component.gadget
+	 * @alias dom.component
 	 */
 
 	var UNDEFINED;
@@ -126,10 +127,9 @@ define([
 
 	/**
 	 * Handles component render
-	 * @handler
+	 * @handler sig/render
 	 * @template
 	 * @inheritdoc #event-sig/render
-	 * @localdoc Calls {@link #weave} to ensure newly rendered html is woven
 	 * @return {Promise}
 	 */
 
@@ -144,7 +144,7 @@ define([
 
 	/**
 	 * Handles widget destruction from a DOM perspective
-	 * @handler
+	 * @handler dom/destroy
 	 * @template
 	 * @inheritdoc #event-dom/destroy
 	 * @localdoc Triggered when this widget is removed from the DOM
@@ -157,7 +157,7 @@ define([
 	});
 
 	/**
-	 * Creates a new gadget that attaches to a specified (jQuery) DOM element.
+	 * Creates a new component that attaches to a specified (jQuery) DOM element.
 	 * @method constructor
 	 * @param {jQuery|HTMLElement} $element The element that this gadget should be attached to
 	 * @param {String} [displayName] A friendly name for this gadget
