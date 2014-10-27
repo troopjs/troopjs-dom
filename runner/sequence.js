@@ -63,7 +63,7 @@ define([
 					return result;
 				}
 
-				// Did the previous candidate return false we should stopPropagation and preventDefault
+				// If the previous candidate return false we should stopPropagation and preventDefault
 				if (result === false) {
 					$event.stopPropagation();
 					$event.preventDefault();
