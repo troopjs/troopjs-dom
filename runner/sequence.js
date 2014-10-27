@@ -2,14 +2,14 @@
  * @license MIT http://troopjs.mit-license.org/
  */
 define([
-	"../../css/selector",
+	"../css/selector",
 	"jquery",
 	"poly/array"
 ], function (Selector, $) {
 	"use strict";
 
 	/**
-	 * @class dom.component.runner.sequence
+	 * @class dom.runner.sequence
 	 * @implement core.event.emitter.runner
 	 * @private
 	 * @static
