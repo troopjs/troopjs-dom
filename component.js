@@ -14,7 +14,7 @@ define([
 
 	/**
 	 * Component that manages all DOM manipulation and integration.
-	 * @class dom.component.gadget
+	 * @class dom.component
 	 * @extend core.component.gadget
 	 * @alias dom.component
 	 */
@@ -159,8 +159,8 @@ define([
 	/**
 	 * Creates a new component that attaches to a specified (jQuery) DOM element.
 	 * @method constructor
-	 * @param {jQuery|HTMLElement} $element The element that this gadget should be attached to
-	 * @param {String} [displayName] A friendly name for this gadget
+	 * @param {jQuery|HTMLElement} $element The element that this component should be attached to
+	 * @param {String} [displayName] A friendly name for this component
 	 * @throws {Error} If no $element is provided
 	 * @throws {Error} If $element is not of supported type
 	 */
@@ -208,7 +208,7 @@ define([
 		// Return potentially modified `args`
 		return args;
 	}, {
-		"displayName" : "dom/component/gadget",
+		"displayName" : "dom/component",
 
 		/**
 		 * @handler
