@@ -2,7 +2,7 @@
  * @license MIT http://troopjs.mit-license.org/
  */
 define([
-	"../css/selector",
+	"mu-selector-set",
 	"jquery",
 	"poly/array"
 ], function (Selector, $) {
