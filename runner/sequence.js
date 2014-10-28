@@ -5,7 +5,7 @@ define([
 	"mu-selector-set",
 	"jquery",
 	"poly/array"
-], function (Selector, $) {
+], function (SelectorSet, $) {
 	"use strict";
 
 	/**
@@ -41,7 +41,7 @@ define([
 		// Try get SELECTOR from handlers and check if MODIFIED
 		if ((selector = handlers[SELECTOR]) === UNDEFINED || selector[MODIFIED] !== modified) {
 			// Create and cache SELECTOR
-			selector = handlers[SELECTOR] = Selector();
+			selector = handlers[SELECTOR] = new SelectorSet();
 
 			// Set MODIFIED on selector
 			selector[MODIFIED] = modified;
