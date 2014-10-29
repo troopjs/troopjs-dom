@@ -13,99 +13,101 @@ buster.testCase("troopjs-dom/component", function (run) {
 				this.$el = $("<form />");
 			},
 
-			"direct event": function () {
-				var $el = this.$el;
-				var click = this.spy();
+			"DOM events": {
+				"add &amp; remove": function () {
+					var $el = this.$el;
+					var click1 = this.spy();
+					var click2 = this.spy();
+					var component = Component($el);
 
-				Component($el).on("dom/click", click);
+					component
+						.on("dom/click", click1)
+						.on("dom/click", click2);
 
-				$el.click();
-				assert.calledOnce(click);
-				$el.click();
-				assert.calledTwice(click);
-			},
+					$el.click();
+					assert.calledOnce(click1);
+					assert.calledOnce(click2);
 
-			"direct event - multiple handlers": function () {
-				var $el = this.$el;
-				var click1 = this.spy();
-				var click2 = this.spy();
+					component.off("dom/click", click1);
 
-				Component($el)
-					.on("dom/click", click1)
-					.on("dom/click", click2);
+					$el.click();
+					assert.calledOnce(click1);
+					assert.calledTwice(click2);
 
-				$el.click();
-				assert.calledOnce(click1);
-				assert.calledOnce(click2);
-				$el.click();
-				assert.calledTwice(click1);
-				assert.calledTwice(click2);
-			},
+					component.off("dom/click");
 
-			"delegated event": function () {
-				var $el = this.$el;
-				var $input = $("<input />").appendTo($el);
-				var change = this.spy();
+					$el.click();
+					assert.calledOnce(click1);
+					assert.calledTwice(click2);
+				},
 
-				Component($el).on("dom/change", change);
+				"bubble": function () {
+					var $el = this.$el;
+					var $input = $("<input />").appendTo($el);
+					var change1 = this.spy();
+					var change2 = this.spy();
 
-				$input.change();
-				assert.calledOnce(change);
-				$input.change();
-				assert.calledTwice(change);
-			},
+					Component($el).on("dom/change", change1);
+					Component($input).on("dom/change", change2);
 
-			"delegated event - bubble": function () {
-				var $el = this.$el;
-				var $input = $("<input />").appendTo($el);
-				var change1 = this.spy();
-				var change2 = this.spy();
+					$input.change();
+					assert.calledOnce(change1);
+					assert.calledOnce(change2);
+					$el.change();
+					assert.calledTwice(change1);
+					assert.calledOnce(change2);
+				},
 
-				Component($el).on("dom/change", change1);
-				Component($input).on("dom/change", change2);
+				"prevent bubble": function () {
+					var $el = this.$el;
+					var $input = $("<input />").appendTo($el);
+					var change1 = this.spy();
+					var change2 = this.spy(function () {
+						return false;
+					});
 
-				$input.change();
-				assert.calledOnce(change1);
-				assert.calledOnce(change2);
-				$el.change();
-				assert.calledTwice(change1);
-				assert.calledOnce(change2);
-			},
+					Component($el).on("dom/change", change1);
+					Component($input).on("dom/change", change2);
 
-			"delegated event - prevent bubble": function () {
-				var $el = this.$el;
-				var $input = $("<input />").appendTo($el);
-				var change1 = this.spy();
-				var change2 = this.spy(function () {
-					return false;
-				});
+					$input.change();
+					refute.called(change1);
+					assert.calledOnce(change2);
+					$el.change();
+					assert.calledOnce(change1);
+				},
 
-				Component($el).on("dom/change", change1);
-				Component($input).on("dom/change", change2);
+				"stopPropagation": function () {
+					var $el = this.$el;
+					var $input = $("<input />").appendTo($el);
+					var change1 = this.spy();
+					var change2 = this.spy(function ($event) {
+						$event.stopPropagation();
+					});
 
-				$input.change();
-				refute.called(change1);
-				assert.calledOnce(change2);
-				$el.change();
-				assert.calledOnce(change1);
-			},
+					Component($el).on("dom/change", change1);
+					Component($input).on("dom/change", change2);
 
-			"delegated event - stopPropagation": function () {
-				var $el = this.$el;
-				var $input = $("<input />").appendTo($el);
-				var change1 = this.spy();
-				var change2 = this.spy(function ($event) {
-					$event.stopPropagation();
-				});
+					$input.change();
+					refute.called(change1);
+					assert.calledOnce(change2);
+					$el.change();
+					assert.calledOnce(change1);
+				},
 
-				Component($el).on("dom/change", change1);
-				Component($input).on("dom/change", change2);
+				"stopImmediatePropagation": function () {
+					var $el = this.$el;
+					var change1 = this.spy(function ($event) {
+						$event.stopImmediatePropagation();
+					});
+					var change2 = this.spy();
 
-				$input.change();
-				refute.called(change1);
-				assert.calledOnce(change2);
-				$el.change();
-				assert.calledOnce(change1);
+					Component($el).on("dom/click", change1);
+					Component($el).on("dom/click", change2);
+
+					$el.click();
+					assert.calledOnce(change1);
+					refute.called(change2);
+				}
 			},
 
 			"tearDown": function () {
