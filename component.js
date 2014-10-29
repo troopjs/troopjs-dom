@@ -8,6 +8,7 @@ define([
 	"troopjs-compose/mixin/config",
 	"jquery",
 	"when",
+	"poly/array",
 	"mu-jquery-destroy"
 ], function (Gadget, core_sequence, dom_sequence, COMPOSE_CONF, $, when) {
 	"use strict";
@@ -39,69 +40,6 @@ define([
 	var RUNNER = "runner";
 	var CONTEXT = "context";
 	var RE = new RegExp("^" + DOM + "/(.+)");
-
-	/**
-	 * Creates a proxy of the inner method 'render' with the '$fn' parameter set
-	 * @ignore
-	 * @param {Function} $fn jQuery method
-	 * @return {Function} proxied render
-	 */
-	function $render($fn) {
-		/**
-		 * @ignore
-		 * @inheritdoc #html
-		 */
-		return function (contentOrPromise, args) {
-			var me = this;
-
-			// If `_args.length` is `0` just return `$fn.call(...)`
-			if (arguments.length === 0) {
-				return $fn.call(me[$ELEMENT]);
-			}
-
-			// Convert arguments to an array
-			var _args = ARRAY_SLICE.call(arguments);
-
-			return when(contentOrPromise, function (contents) {
-				var result;
-
-				// Initialize event
-				var event = {};
-				event[RUNNER] = core_sequence;
-				event[CONTEXT] = me;
-				event[TYPE] = "sig/render";
-
-				// If `contents` is a function ...
-				if (typeof contents === TYPEOF_FUNCTION) {
-					// ... attempt and wait for resolution
-					result = WHEN_ATTEMPT.apply(me, _args).then(function (output) {
-						// Call `$fn` with `output`
-						$fn.call(me[$ELEMENT], output);
-
-						// Let `_args[0]` be `event`
-						_args[0] = event;
-
-						// Emit
-						return me.emit.apply(me, _args);
-					});
-				}
-				// ... otherwise we can emit right away
-				else {
-					// Call `$fn` with `contents`
-					$fn.call(me[$ELEMENT], contents);
-
-					// Let `_args[0]` be `event`
-					_args[0] = event;
-
-					// Emit
-					result = me.emit.apply(me, _args);
-				}
-
-				// Return `result`
-				return result;
-			});
-		}
-	}
 
 	/**
 	 * Sets MODIFIED on handlers
@@ -148,6 +86,50 @@ define([
 	 * @template
 	 * @inheritdoc #event-dom/destroy
 	 * @localdoc Triggered when this widget is removed from the DOM
+	 */
+
+	/**
+	 * Renders content and replaces {@link #$element} html contents
+	 * @method html
+	 * @param {Function|String|Promise} [contentOrPromise] Contents to render or a Promise for contents
+	 * @param {...*} [args] Template arguments
+	 * @fires sig/render
+	 * @return {String|Promise} The returned content string or promise of rendering.
+	 */
+
+	/**
+	 * Renders content and replaces {@link #$element} text contents
+	 * @method text
+	 * @inheritdoc #html
+	 * @fires sig/render
+	 */
+
+	/**
+	 * Renders content and inserts it before {@link #$element}
+	 * @method before
+	 * @inheritdoc #html
+	 * @fires sig/render
+	 */
+
+	/**
+	 * Renders content and inserts it after {@link #$element}
+	 * @method after
+	 * @inheritdoc #html
+	 * @fires sig/render
+	 */
+
+	/**
+	 * Renders content and appends it to {@link #$element}
+	 * @method append
+	 * @inheritdoc #html
+	 * @fires sig/render
+	 */
+
+	/**
+	 * Renders content and prepends it to {@link #$element}
+	 * @method prepend
+	 * @inheritdoc #html
+	 * @fires sig/render
 	 */
 
 	// Add pragmas for DOM specials
@@ -287,56 +269,64 @@ define([
 		 */
 		"sig/task" : function (task) {
 			this[$ELEMENT].trigger("task", [ task ]);
-		},
+		}
+	}, [ "html", "text", "before", "after", "append", "prepend" ].reduce(function (spec, method) {
+		// Let `$fn` be `$FN[method]`
+		var $fn = $FN[method];
 
-		/**
-		 * Renders content and inserts it before {@link #$element}
-		 * @method
-		 * @inheritdoc #html
-		 * @fires sig/render
-		 */
-		"before" : $render($FN.before),
+		// Create `spec[method]`
+		spec[method] = function (contentOrPromise, args) {
+			var me = this;
 
-		/**
-		 * Renders content and inserts it after {@link #$element}
-		 * @method
-		 * @inheritdoc #html
-		 * @fires sig/render
-		 */
-		"after" : $render($FN.after),
+			// If `_args.length` is `0` just return `$fn.call(...)`
+			if (arguments.length === 0) {
+				return $fn.call(me[$ELEMENT]);
+			}
 
-		/**
-		 * Renders content and replaces {@link #$element} html contents
-		 * @method
-		 * @param {Function|String|Promise} [contentOrPromise] Contents to render or a Promise for contents
-		 * @param {...*} [args] Template arguments
-		 * @fires sig/render
-		 * @return {String|Promise} The returned content string or promise of rendering.
-		 */
-		"html" : $render($FN.html),
+			// Convert arguments to an array
+			var _args = ARRAY_SLICE.call(arguments);
 
-		/**
-		 * Renders content and replaces {@link #$element} text contents
-		 * @method
-		 * @inheritdoc #html
-		 * @fires sig/render
-		 */
-		"text" : $render($FN.text),
+			return when(contentOrPromise, function (contents) {
+				var result;
 
-		/**
-		 * Renders content and appends it to {@link #$element}
-		 * @method
-		 * @inheritdoc #html
-		 * @fires sig/render
-		 */
-		"append" : $render($FN.append),
+				// Initialize event
+				var event = {};
+				event[RUNNER] = core_sequence;
+				event[CONTEXT] = me;
+				event[TYPE] = "sig/render";
 
-		/**
-		 * Renders content and prepends it to {@link #$element}
-		 * @method
-		 * @inheritdoc #html
-		 * @fires sig/render
-		 */
-		"prepend" : $render($FN.prepend)
-	});
+				// If `contents` is a function ...
+				if (typeof contents === TYPEOF_FUNCTION) {
+					// ... attempt and wait for resolution
+					result = WHEN_ATTEMPT.apply(me, _args).then(function (output) {
+						// Call `$fn` with `output`
+						$fn.call(me[$ELEMENT], output);
+
+						// Let `_args[0]` be `event`
+						_args[0] = event;
+
+						// Emit
+						return me.emit.apply(me, _args);
+					});
+				}
+				// ... otherwise we can emit right away
+				else {
+					// Call `$fn` with `contents`
+					$fn.call(me[$ELEMENT], contents);
+
+					// Let `_args[0]` be `event`
+					_args[0] = event;
+
+					// Emit
+					result = me.emit.apply(me, _args);
+				}
+
+				// Return `result`
+				return result;
+			});
+		};
+
+		// Return spec for next iteration
+		return spec;
+	}, {}));
 });
