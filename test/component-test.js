@@ -13,7 +13,7 @@ buster.testCase("troopjs-dom/component", function (run) {
 				this.$el = $("<form />");
 			},
 
-			"DOM events": {
+			"dynamic DOM events": {
 				"add &amp; remove": function () {
 					var $el = this.$el;
 					var click1 = this.spy();
@@ -25,18 +25,21 @@ buster.testCase("troopjs-dom/component", function (run) {
 						.on("dom/click", click2);
 
 					$el.click();
+
 					assert.calledOnce(click1);
 					assert.calledOnce(click2);
 
 					component.off("dom/click", click1);
 
 					$el.click();
+
 					assert.calledOnce(click1);
 					assert.calledTwice(click2);
 
 					component.off("dom/click");
 
 					$el.click();
+
 					assert.calledOnce(click1);
 					assert.calledTwice(click2);
 				},
@@ -51,9 +54,12 @@ buster.testCase("troopjs-dom/component", function (run) {
 					Component($input).on("dom/change", change2);
 
 					$input.change();
+
 					assert.calledOnce(change1);
 					assert.calledOnce(change2);
+
 					$el.change();
+
 					assert.calledTwice(change1);
 					assert.calledOnce(change2);
 				},
@@ -70,9 +76,12 @@ buster.testCase("troopjs-dom/component", function (run) {
 					Component($input).on("dom/change", change2);
 
 					$input.change();
+
 					refute.called(change1);
 					assert.calledOnce(change2);
+
 					$el.change();
+
 					assert.calledOnce(change1);
 				},
 
@@ -88,25 +97,62 @@ buster.testCase("troopjs-dom/component", function (run) {
 					Component($input).on("dom/change", change2);
 
 					$input.change();
+
 					refute.called(change1);
 					assert.calledOnce(change2);
+
 					$el.change();
+
 					assert.calledOnce(change1);
 				},
 
 				"stopImmediatePropagation": function () {
 					var $el = this.$el;
-					var change1 = this.spy(function ($event) {
+					var click1 = this.spy(function ($event) {
 						$event.stopImmediatePropagation();
 					});
-					var change2 = this.spy();
+					var click2 = this.spy();
 
-					Component($el).on("dom/click", change1);
-					Component($el).on("dom/click", change2);
+					Component($el).on("dom/click", click1);
+					Component($el).on("dom/click", click2);
 
 					$el.click();
+
+					assert.calledOnce(click1);
+					refute.called(click2);
+				},
+
+				"delegation": function () {
+					var $el = this.$el;
+					var $div = $("<div></div>")
+						.addClass("div1")
+						.appendTo($el);
+					var $input1 = $("<input />")
+						.addClass("input1")
+						.appendTo($div);
+					var $input2 = $("<input />")
+						.addClass("input2")
+						.appendTo($div);
+					var change1 = this.spy();
+					var change2 = this.spy();
+					var change3 = this.spy()
+
+					Component($el)
+						.on("dom/change", change1, ".input1")
+						.on("dom/change", change2, ".input2")
+						.on("dom/change", change3, ".div1");
+
+					$input1.change();
+
 					assert.calledOnce(change1);
 					refute.called(change2);
+					assert.calledOnce(change3);
+
+					$input2.change();
+
+					assert.calledOnce(change1);
+					assert.calledOnce(change2);
+					assert.calledTwice(change3);
 				}
 			},
 
