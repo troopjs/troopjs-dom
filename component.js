@@ -134,7 +134,7 @@ define([
 
 	// Add pragmas for DOM specials
 	COMPOSE_CONF.pragmas.push({
-		"pattern": /^dom(?::([^\/]+))?\/(.+)/,
+		"pattern": /^dom(?::([^\/]+))?\/([^\(]+(?=$))/,
 		"replace": DOM + "/$2(\"$1\")"
 	});
 
