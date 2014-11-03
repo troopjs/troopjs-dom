@@ -37,6 +37,10 @@ define([
 		var $event = args[0];
 		var selector;
 		var candidate;
+		var root = $event.delegateTarget;
+		var current = $event.target;
+		var elements;
+		var isClick;
 
 		// Try get SELECTOR from handlers and check if MODIFIED
 		if ((selector = handlers[SELECTOR]) === UNDEFINED || selector[MODIFIED] !== modified) {
@@ -53,9 +57,32 @@ define([
 			}
 		}
 
+		// If the event target is the same as the delegateTarget we can just match against current ...
+		if (root === current) {
+			elements = current;
+		}
+		// ... otherwise we have to build a delegate tree of elements
+		//
+		// Black-hole SVG <use> instance trees (jQuery #13180)
+		// Avoid non-left-click bubbling in Firefox (jQuery #3861)
+		else if(current.nodeType !== UNDEFINED && ($event.button !== 0 || !(isClick = $event.type === "click"))) {
+			// Let `elements` be `[]`
+			elements = [];
+
+			do {
+				// Don't process clicks on disabled elements (jQuery #6911, #8165, #11382, #11764)
+				if (current.disabled !== true || !isClick) {
+					elements.push(current);
+				}
+			} while (current !== root && (current = current.parentNode) !== null);
+		}
+		else {
+			return UNDEFINED;
+		}
+
 		return selector
 			// Filter to only selectors that match target
-			.matches(MATCHES_SELECTOR, $event.target)
+			.matches(MATCHES_SELECTOR, elements)
 			// Reduce so we can catch the end value
 			.reduce(function (result, selector) {
 				// If immediate propagation is stopped we should just return last result
