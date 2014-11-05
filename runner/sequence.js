@@ -18,7 +18,6 @@ define([
 
 	var UNDEFINED;
 	var CONTEXT = "context";
-	var CALLBACK = "callback";
 	var DATA = "data";
 	var HEAD = "head";
 	var NEXT = "next";
@@ -100,7 +99,7 @@ define([
 				var candidate = selector[1];
 
 				// Run candidate, provide result to next run
-				return candidate[CALLBACK].apply(candidate[CONTEXT], args);
+				return candidate.apply(candidate[CONTEXT], args);
 			}, UNDEFINED);
 	}
 });
