@@ -11,6 +11,6 @@
     "mu-getargs": "~0",
     "mu-merge": "~0",
     "mu-jquery-destroy": "~0",
-    "mu-selector-set": "~0"
+    "mu-selector-set": "~1"
   }
 }

@@ -23,7 +23,9 @@ define([
 	var NEXT = "next";
 	var SELECTOR = "selector";
 	var MODIFIED = "modified";
-	var MATCHES_SELECTOR = $.find.matchesSelector;
+
+	// Use `$.find.matchesSelector` for wider browser support
+	SelectorSet.prototype.matchesSelector = $.find.matchesSelector;
 
 	/**
 	 * @method constructor
@@ -81,7 +83,7 @@ define([
 
 		return selector
 			// Filter to only selectors that match target
-			.matches(MATCHES_SELECTOR, elements)
+			.matches(elements)
 			// Reduce so we can catch the end value
 			.reduce(function (result, selector) {
 				// If immediate propagation is stopped we should just return last result
