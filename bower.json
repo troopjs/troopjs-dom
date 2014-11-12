@@ -5,12 +5,12 @@
     "node_modules"
   ],
   "dependencies": {
-    "troopjs-compose": "~3",
-    "troopjs-core": "~3",
-    "jquery": ">=1.8.1",
-    "mu-getargs": "~0",
-    "mu-merge": "~0",
-    "mu-jquery-destroy": "~0",
-    "mu-selector-set": "~1"
+    "troopjs-compose": "^3.1",
+    "troopjs-core": "^4",
+    "jquery": ">=1.8.1 <4",
+    "mu-getargs": "^0",
+    "mu-merge": "^0",
+    "mu-jquery-destroy": "^0",
+    "mu-selector-set": "^1"
   }
 }
