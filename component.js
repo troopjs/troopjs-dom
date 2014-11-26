@@ -135,7 +135,9 @@ define([
 	// Add pragmas for DOM specials
 	COMPOSE_CONF.pragmas.push({
 		"pattern": /^dom(?::([^\/]+))?\/([^\(]+(?=$))/,
-		"replace": DOM + "/$2(\"$1\")"
+		"replace": function(match, $1, $2) {
+			return DOM + "/" + $2 + ($1 === UNDEFINED ? "()" : "(\"" + $1 + "\")");
+		}
 	});
 
 	/**
