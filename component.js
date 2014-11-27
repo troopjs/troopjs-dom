@@ -6,11 +6,13 @@ define([
 	"troopjs-core/component/runner/sequence",
 	"./runner/sequence",
 	"troopjs-compose/mixin/config",
+	"troopjs-compose/decorator/before",
 	"jquery",
 	"when",
+	"mu-selector-set",
 	"poly/array",
 	"mu-jquery-destroy"
-], function (Gadget, core_sequence, dom_sequence, COMPOSE_CONF, $, when) {
+], function (Gadget, core_sequence, dom_sequence, COMPOSE_CONF, before, $, when, SelectorSet) {
 	"use strict";
 
 	/**
@@ -22,15 +24,15 @@ define([
 
 	var UNDEFINED;
 	var NULL = null;
+	var OBJECT_TOSTRING = Object.prototype.toString;
 	var ARRAY_PROTO = Array.prototype;
 	var ARRAY_SLICE = ARRAY_PROTO.slice;
 	var ARRAY_PUSH = ARRAY_PROTO.push;
 	var $FN = $.fn;
 	var $GET = $FN.get;
 	var WHEN_ATTEMPT = when.attempt;
-	var TYPEOF_FUNCTION = "function";
+	var TOSTRING_FUNCTION = "[object Function]";
 	var $ELEMENT = "$element";
-	var MODIFIED = "modified";
 	var PROXY = "proxy";
 	var DOM = "dom";
 	var ARGS = "args";
@@ -39,18 +41,32 @@ define([
 	var TYPE = "type";
 	var RUNNER = "runner";
 	var CONTEXT = "context";
+	var CALLBACK = "callback";
+	var DATA = "data";
+	var DIRECT = "direct";
+	var DELEGATED = "delegated";
+	var ON = "on";
+	var OFF = "off";
 	var RE = new RegExp("^" + DOM + "/(.+)");
 
-	/**
-	 * Sets MODIFIED on handlers
-	 * @ignore
-	 * @param {Object} handlers
-	 * @param {String} type
-	 */
-	function set_modified(handlers, type) {
-		if (RE.test(type)) {
-			// Set modified
-			handlers[MODIFIED] = new Date().getTime();
+	function on_delegated(handler, handlers) {
+		handlers[DELEGATED].add(handler[DATA], handler);
+	}
+
+	function on_direct(handler, handlers) {
+		handlers[DIRECT].push(handler);
+	}
+
+	function off_delegated(handler, handlers) {
+		handlers[DELEGATED].remove(handler[DATA], handler);
+	}
+
+	function off_direct(handler, handlers) {
+		var direct = handlers[DIRECT];
+		var index = direct.indexOf(handler);
+
+		if (index !== -1) {
+			direct.splice(index, 1);
 		}
 	}
 
@@ -218,6 +234,10 @@ define([
 			var matches;
 
 			if ((matches = RE.exec(type)) !== NULL) {
+				// Create delegated and direct event stores
+				handlers[DIRECT] = [];
+				handlers[DELEGATED] = new SelectorSet();
+
 				// $element.on handlers[PROXY]
 				me[$ELEMENT].on(matches[1], NULL, me, handlers[PROXY] = function ($event) {
 					var args = {};
@@ -234,20 +254,6 @@ define([
 				});
 			}
 		},
-
-		/**
-		 * @handler
-		 * @localdoc Sets MODIFIED on handlers for matching types
-		 * @inheritdoc
-		 */
-		"sig/add": set_modified,
-
-		/**
-		 * @handler
-		 * @localdoc Sets MODIFIED on handlers for matching types
-		 * @inheritdoc
-		 */
-		"sig/remove": set_modified,
 
 		/**
 		 * @handler
@@ -271,7 +277,37 @@ define([
 		 */
 		"sig/task" : function (task) {
 			this[$ELEMENT].trigger("task", [ task ]);
-		}
+		},
+
+		/**
+		 * @method
+		 * @localdoc Registers emitter `on` and `off` callbacks
+		 * @inheritdoc
+		 */
+		"on": before(function (type, callback, data) {
+			var _callback = callback;
+
+			// Check if this is a DOM type
+			if (RE.test(type)) {
+				// If `callback` is a function ...
+				if (OBJECT_TOSTRING.call(callback) === TOSTRING_FUNCTION) {
+					// Create `_callback` object
+					_callback = {};
+					_callback[CALLBACK] = callback;
+				}
+
+				// Set `ON` and `OFF` callbacks
+				_callback[ON] = data !== UNDEFINED
+					? on_delegated
+					: on_direct;
+				_callback[OFF] = data !== UNDEFINED
+					? off_delegated
+					: off_direct;
+			}
+
+			// Mutate return args to next method
+			return [ type, _callback, data ];
+		})
 	}, [ "html", "text", "before", "after", "append", "prepend" ].reduce(function (spec, method) {
 		// Let `$fn` be `$FN[method]`
 		var $fn = $FN[method];
@@ -298,7 +334,7 @@ define([
 				event[TYPE] = "sig/render";
 
 				// If `contents` is a function ...
-				if (typeof contents === TYPEOF_FUNCTION) {
+				if (OBJECT_TOSTRING.call(contents) === TOSTRING_FUNCTION) {
 					// ... attempt and wait for resolution
 					result = WHEN_ATTEMPT.apply(me, _args).then(function (output) {
 						// Call `$fn` with `output`
