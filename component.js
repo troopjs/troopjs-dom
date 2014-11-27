@@ -24,13 +24,14 @@ define([
 
 	var UNDEFINED;
 	var NULL = null;
+	var OBJECT_TOSTRING = Object.prototype.toString;
 	var ARRAY_PROTO = Array.prototype;
 	var ARRAY_SLICE = ARRAY_PROTO.slice;
 	var ARRAY_PUSH = ARRAY_PROTO.push;
 	var $FN = $.fn;
 	var $GET = $FN.get;
 	var WHEN_ATTEMPT = when.attempt;
-	var TYPEOF_FUNCTION = "function";
+	var TOSTRING_FUNCTION = "[object Function]";
 	var $ELEMENT = "$element";
 	var PROXY = "proxy";
 	var DOM = "dom";
@@ -40,9 +41,12 @@ define([
 	var TYPE = "type";
 	var RUNNER = "runner";
 	var CONTEXT = "context";
+	var CALLBACK = "callback";
 	var DATA = "data";
 	var DIRECT = "direct";
 	var DELEGATED = "delegated";
+	var ON = "on";
+	var OFF = "off";
 	var RE = new RegExp("^" + DOM + "/(.+)");
 
 	function on_delegated(handler, handlers) {
@@ -285,21 +289,20 @@ define([
 
 			// Check if this is a DOM type
 			if (RE.test(type)) {
-				// Make sure callback is a function
-				if (typeof callback !== TYPEOF_FUNCTION) {
-					throw new Error("typeof callback expected to be 'function'");
+				// If `callback` is a function ...
+				if (OBJECT_TOSTRING.call(callback) === TOSTRING_FUNCTION) {
+					// Create `_callback` object
+					_callback = {};
+					_callback[CALLBACK] = callback;
 				}
 
-				// Create `_callback` object
-				_callback = {
-					"callback": callback,
-					"on": data !== UNDEFINED
-						? on_delegated
-						: on_direct,
-					"off": data !== UNDEFINED
-						? off_delegated
-						: off_direct
-				};
+				// Set `ON` and `OFF` callbacks
+				_callback[ON] = data !== UNDEFINED
+					? on_delegated
+					: on_direct;
+				_callback[OFF] = data !== UNDEFINED
+					? off_delegated
+					: off_direct;
 			}
 
 			// Mutate return args to next method
@@ -331,7 +334,7 @@ define([
 				event[TYPE] = "sig/render";
 
 				// If `contents` is a function ...
-				if (typeof contents === TYPEOF_FUNCTION) {
+				if (OBJECT_TOSTRING.call(contents) === TOSTRING_FUNCTION) {
 					// ... attempt and wait for resolution
 					result = WHEN_ATTEMPT.apply(me, _args).then(function (output) {
 						// Call `$fn` with `output`
