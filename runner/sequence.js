@@ -17,7 +17,12 @@ define([
 	 */
 
 	var UNDEFINED;
+	var FALSE = false;
 	var LEFT_BUTTON = 0;
+
+	function map (match) {
+		return match[1];
+	}
 
 	// Use `$.find.matchesSelector` for wider browser support
 	SelectorSet.prototype.matchesSelector = $.find.matchesSelector;
@@ -29,14 +34,18 @@ define([
 	 * @return {*} Result from last handler
 	 */
 	return function sequence(event, handlers, args) {
-		var $reduce = function (result, handler) {
+
+		var result = UNDEFINED;
+		var direct = handlers.direct;
+		var delegated = handlers.delegated;
+		var reduce = function (result, handler) {
 			// If immediate propagation is stopped we should just return last result
 			if ($event.isImmediatePropagationStopped()) {
 				return result;
 			}
 
 			// If the previous handler return false we should stopPropagation and preventDefault
-			if (result === false) {
+			if (result === FALSE) {
 				$event.stopPropagation();
 				$event.preventDefault();
 			}
@@ -47,40 +56,44 @@ define([
 		var $event = args[0];
 		var $delegate = $event.delegateTarget;
 		var $target = $event.target;
+		var $document = $target.ownerDocument;
 		var $notClick = $event.type !== "click";
-		var $result = UNDEFINED;
-		var direct = handlers.direct;
-		var delegated = handlers.delegated;
-		// we bubble the event up the dom if:
-		// 1. this is not a black-holed element (jQuery #13180)
-		// 2. and: this is the left button or it's a not a click event (jQuery #3861)
-		var bubbleUp = $target.nodeType !== UNDEFINED && ($event.button === LEFT_BUTTON || $notClick);
 
+		// Bubble the event up the dom if
+		// ... this is not a black-holed element (jQuery #13180)
+		// ... and this is the left button or it's a not a click event (jQuery #3861)
+		var $bubble = $target.nodeType !== UNDEFINED && ($event.button === LEFT_BUTTON || $notClick);
+
+		// Loop ...
 		do {
 			// Don't process clicks on disabled elements (jQuery #6911, #8165, #11382, #11764)
 			if ($target.disabled !== true || $notClick) {
-				// run delegated handlers which match this element
-				$result = delegated // selector set of delegated selector-handler pairs
+				// Run delegated handlers which match this element
+				result = delegated
 					.matches($event.currentTarget = $target)
-					.map(function(match){
-						// we only need the handler function
-						return match[1]; // match[0] is the selector. match[1] is the handler
-					})
-					.reduce($reduce, $result);
+					.map(map)
+					.reduce(reduce, result);
 			}
-		}
-		while (
-			bubbleUp &&
-			!$event.isPropagationStopped() &&
-			$target !== $delegate && // stop bubbling up at the root element
-			($target = $target.parentNode) !== null // bubble up until nowhere to go
-		);
 
-		// run all the direct (non-delegated) handlers of the root element
-		if ($result !== false) {
-			$result = direct.reduce($reduce, $result);
+			// Bubble if ...
+			$bubble = $bubble
+				// ... we were not told to stop propagation
+				&& !$event.isPropagationStopped()
+				// ... we are not at the delegate element
+				&& $target !== $delegate
+				// ... we have a parent node
+				&& ($target = $target.parentNode) !== null
+				// ... the new target is not the document
+				&& $target !== $document;
+		}
+		// ... while we are still bubbling
+		while ($bubble);
+
+		// Run all the direct (non-delegated) handlers of the root element
+		if (result !== FALSE) {
+			result = direct.reduce(reduce, result);
 		}
 
-		return $result;
+		return result;
 	}
 });
