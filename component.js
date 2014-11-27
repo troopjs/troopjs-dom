@@ -276,6 +276,7 @@ define([
 		},
 
 		/**
+		 * @method
 		 * @localdoc Registers emitter `on` and `off` callbacks
 		 * @inheritdoc
 		 */
@@ -298,7 +299,7 @@ define([
 					"off": data !== UNDEFINED
 						? off_delegated
 						: off_direct
-				}
+				};
 			}
 
 			// Mutate return args to next method
