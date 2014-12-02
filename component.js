@@ -3,8 +3,8 @@
  */
 define([
 	"troopjs-core/component/gadget",
-	"troopjs-core/component/runner/sequence",
 	"./runner/sequence",
+	"./signal/render",
 	"troopjs-compose/mixin/config",
 	"troopjs-compose/decorator/before",
 	"jquery",
@@ -12,7 +12,7 @@ define([
 	"mu-selector-set",
 	"poly/array",
 	"mu-jquery-destroy"
-], function (Gadget, core_sequence, dom_sequence, COMPOSE_CONF, before, $, when, SelectorSet) {
+], function (Gadget, sequence, render, COMPOSE_CONF, before, $, when, SelectorSet) {
 	"use strict";
 
 	/**
@@ -242,7 +242,7 @@ define([
 				me[$ELEMENT].on(matches[1], NULL, me, handlers[PROXY] = function ($event) {
 					var args = {};
 					args[TYPE] = type;
-					args[RUNNER] = dom_sequence;
+					args[RUNNER] = sequence;
 					args[CONTEXT] = me;
 					args = [ args ];
 
@@ -313,50 +313,44 @@ define([
 		var $fn = $FN[method];
 
 		// Create `spec[method]`
-		spec[method] = function (contentOrPromise, args) {
+		spec[method] = function (contentOrPromise) {
 			var me = this;
 
-			// If `_args.length` is `0` just return `$fn.call(...)`
+			// If `arguments.length` is `0` just return `$fn.call(...)`
 			if (arguments.length === 0) {
 				return $fn.call(me[$ELEMENT]);
 			}
 
 			// Convert arguments to an array
-			var _args = ARRAY_SLICE.call(arguments);
+			var args = ARRAY_SLICE.call(arguments);
 
-			return when(contentOrPromise, function (contents) {
+			return when(contentOrPromise, function (content) {
 				var result;
 
-				// Initialize event
-				var event = {};
-				event[RUNNER] = core_sequence;
-				event[CONTEXT] = me;
-				event[TYPE] = "sig/render";
-
-				// If `contents` is a function ...
-				if (OBJECT_TOSTRING.call(contents) === TOSTRING_FUNCTION) {
+				// If `content` is a function ...
+				if (OBJECT_TOSTRING.call(content) === TOSTRING_FUNCTION) {
 					// ... attempt and wait for resolution
-					result = WHEN_ATTEMPT.apply(me, _args).then(function (output) {
-						// Call `$fn` with `output`
-						$fn.call(me[$ELEMENT], output);
+					result = WHEN_ATTEMPT.apply(me, args).then(function (_content) {
+						// Let `args[0]` be `_content`
+						// Call `$fn` with `_content`
+						$fn.call(me[$ELEMENT], args[0] = _content);
 
-						// Let `_args[0]` be `event`
-						_args[0] = event;
-
-						// Emit
-						return me.emit.apply(me, _args);
+						// Signal render
+						return render
+							.apply(me, args)
+							.yield(_content);
 					});
 				}
 				// ... otherwise we can emit right away
 				else {
-					// Call `$fn` with `contents`
-					$fn.call(me[$ELEMENT], contents);
+					// Let `args[0]` be `content`
+					// Call `$fn` with `content`
+					$fn.call(me[$ELEMENT], args[0] = content);
 
-					// Let `_args[0]` be `event`
-					_args[0] = event;
-
-					// Emit
-					result = me.emit.apply(me, _args);
+					// Signal render
+					result = render
+						.apply(me, args)
+						.yield(content);
 				}
 
 				// Return `result`
