@@ -2,16 +2,18 @@
  * @license MIT http://troopjs.mit-license.org/
  */
 define([
-	"troopjs-core/pubsub/config",
+	"troopjs-core/component/config",
 	"when"
-], function (when, config) {
+], function (config, when) {
 	var ARRAY_PUSH = Array.prototype.push;
 	var PHASE = "phase";
-	var SKIP = config.skip;
+	var SKIP = config.phase.skip;
+	var SIG_RENDER = "sig/" + config.signal.render;
 
 	/**
 	 * @class dom.signal.render
 	 * @implement core.component.signal
+	 * @mixin dom.config
 	 * @static
 	 * @alias feature.signal
 	 */
@@ -30,9 +32,9 @@ define([
 			var _args;
 
 			if (!SKIP.test(phase)) {
-				// Let `_args` be `[ "sig/render" ]`
+				// Let `_args` be `[ SIG_RENDER ]`
 				// Push `args` on `_args`
-				ARRAY_PUSH.apply(_args = [ "sig/render" ], args);
+				ARRAY_PUSH.apply(_args = [ SIG_RENDER ], args);
 
 				return me
 					.emit.apply(me, _args)
