@@ -2,7 +2,7 @@
  * @license MIT http://troopjs.mit-license.org/
  */
 define([
-	"troopjs-core/component/config",
+	"../config",
 	"when"
 ], function (config, when) {
 	var ARRAY_PUSH = Array.prototype.push;
