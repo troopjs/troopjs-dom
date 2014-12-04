@@ -7,7 +7,6 @@ define([
 ], function (config, when) {
 	var ARRAY_PUSH = Array.prototype.push;
 	var PHASE = "phase";
-	var SKIP = config.phase.skip;
 	var SIG_RENDER = "sig/" + config.signal.render;
 
 	/**
@@ -31,18 +30,13 @@ define([
 		return when(me[PHASE], function (phase) {
 			var _args;
 
-			if (!SKIP.test(phase)) {
-				// Let `_args` be `[ SIG_RENDER ]`
-				// Push `args` on `_args`
-				ARRAY_PUSH.apply(_args = [ SIG_RENDER ], args);
+			// Let `_args` be `[ SIG_RENDER ]`
+			// Push `args` on `_args`
+			ARRAY_PUSH.apply(_args = [ SIG_RENDER ], args);
 
-				return me
-					.emit.apply(me, _args)
-					.yield(phase);
-			}
-			else {
-				return phase;
-			}
+			return me
+				.emit.apply(me, _args)
+				.yield(phase);
 		});
 	}
 });
