@@ -20,6 +20,7 @@ define([
 		/**
 		 * @cfg signal
 		 * @cfg {String} signal.render=signal.render Signal emitted when component has rendered.
+		 * @protected
 		 * @inheritdoc
 		 */
 		"signal": {
