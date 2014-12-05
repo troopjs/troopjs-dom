@@ -2,7 +2,7 @@
  * @license MIT http://troopjs.mit-license.org/
  */
 define([
-	"troopjs-core/component/config",
+	"troopjs-core/config",
 	"module",
 	"mu-merge"
 ], function (config, module, merge) {
@@ -11,7 +11,7 @@ define([
 	/**
 	 * DOM component configuration
 	 * @class dom.config
-	 * @extends core.component.config
+	 * @extends core.config
 	 * @protected
 	 * @alias feature.config
 	 */
