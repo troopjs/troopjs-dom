@@ -10,7 +10,7 @@ define([
 
 	/**
 	 * @class dom.runner.sequence
-	 * @implement core.event.emitter.runner
+	 * @implement core.event.runner
 	 * @private
 	 * @static
 	 * @alias feature.runner
