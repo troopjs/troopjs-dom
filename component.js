@@ -5,14 +5,14 @@ define([
 	"troopjs-core/component/gadget",
 	"./config",
 	"./runner/sequence",
-	"./signal/render",
 	"troopjs-compose/decorator/before",
 	"jquery",
 	"when",
+	"when/function",
 	"mu-selector-set",
 	"poly/array",
 	"mu-jquery-destroy"
-], function (Gadget, config, sequence, render, before, $, when, SelectorSet) {
+], function (Gadget, config, sequence, before, $, when, fn, SelectorSet) {
 	"use strict";
 
 	/**
@@ -30,7 +30,6 @@ define([
 	var ARRAY_PUSH = ARRAY_PROTO.push;
 	var $FN = $.fn;
 	var $GET = $FN.get;
-	var WHEN_ATTEMPT = when.attempt;
 	var TOSTRING_FUNCTION = "[object Function]";
 	var $ELEMENT = "$element";
 	var PROXY = "proxy";
@@ -47,6 +46,7 @@ define([
 	var DELEGATED = "delegated";
 	var ON = "on";
 	var OFF = "off";
+	var SIG_RENDER = "sig/" + config.signal.render;
 	var RE = new RegExp("^" + DOM + "/(.+)");
 
 	function on_delegated(handler, handlers) {
@@ -324,37 +324,27 @@ define([
 			var args = ARRAY_SLICE.call(arguments);
 
 			return when(contentOrPromise, function (content) {
-				var result;
-
 				// If `content` is a function ...
-				if (OBJECT_TOSTRING.call(content) === TOSTRING_FUNCTION) {
-					// ... attempt and wait for resolution
-					result = WHEN_ATTEMPT.apply(me, args).then(function (_content) {
-						// Let `args[0]` be `_content`
-						// Call `$fn` with `_content`
-						$fn.call(me[$ELEMENT], args[0] = _content);
+				return (OBJECT_TOSTRING.call(content) === TOSTRING_FUNCTION)
+					// ... return promise of apply ...
+					? fn.apply(me, args)
+					// ... otherwise return `content`
+					: content;
+			})
+				.then(function (content) {
+					var _args;
 
-						// Signal render
-						return render
-							.apply(me, args)
-							.yield(_content);
-					});
-				}
-				// ... otherwise we can emit right away
-				else {
 					// Let `args[0]` be `content`
 					// Call `$fn` with `content`
 					$fn.call(me[$ELEMENT], args[0] = content);
 
-					// Signal render
-					result = render
-						.apply(me, args)
-						.yield(content);
-				}
+					// Let `_args` be `[ SIG_RENDER ]`
+					// Push `args` on `_args`
+					ARRAY_PUSH.apply(_args = [ SIG_RENDER ], args);
 
-				// Return `result`
-				return result;
-			});
+					// Signal render
+					return me.emit.apply(me, _args).yield(content);
+				});
 		};
 
 		// Return spec for next iteration
