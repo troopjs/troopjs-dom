@@ -331,7 +331,7 @@ define([
 					// ... otherwise return `content`
 					: content;
 			})
-				.then(function (content) {
+				.tap(function (content) {
 					var _args;
 
 					// Let `args[0]` be `content`
@@ -343,7 +343,7 @@ define([
 					ARRAY_PUSH.apply(_args = [ SIG_RENDER ], args);
 
 					// Signal render
-					return me.emit.apply(me, _args).yield(content);
+					return me.emit.apply(me, _args);
 				});
 		};
 
