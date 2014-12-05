@@ -3,16 +3,16 @@
  */
 define([
 	"troopjs-core/component/gadget",
+	"./config",
 	"./runner/sequence",
 	"./signal/render",
-	"troopjs-compose/mixin/config",
 	"troopjs-compose/decorator/before",
 	"jquery",
 	"when",
 	"mu-selector-set",
 	"poly/array",
 	"mu-jquery-destroy"
-], function (Gadget, sequence, render, COMPOSE_CONF, before, $, when, SelectorSet) {
+], function (Gadget, config, sequence, render, before, $, when, SelectorSet) {
 	"use strict";
 
 	/**
@@ -149,7 +149,7 @@ define([
 	 */
 
 	// Add pragmas for DOM specials
-	COMPOSE_CONF.pragmas.push({
+	config.pragmas.push({
 		"pattern": /^dom(?::([^\/]+))?\/([^\(]+(?=$))/,
 		"replace": function(match, $1, $2) {
 			return DOM + "/" + $2 + ($1 === UNDEFINED ? "()" : "(\"" + $1 + "\")");
