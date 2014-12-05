@@ -19,7 +19,7 @@ define([
 	 * Component that manages all DOM manipulation and integration.
 	 * @class dom.component
 	 * @extend core.component.gadget
-	 * @alias dom.component
+	 * @alias feature.component
 	 */
 
 	var UNDEFINED;
@@ -196,7 +196,6 @@ define([
 		 * jQuery element this widget is attached to
 		 * @property {jQuery} $element
 		 * @readonly
-		 * @protected
 		 */
 		me[$ELEMENT] = $element;
 
