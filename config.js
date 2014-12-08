@@ -9,6 +9,18 @@ define([
 	"use strict";
 
 	/**
+	 * @class dom.config.signal
+	 * @extends core.config.signal
+	 * @private
+	 */
+	var SIGNAL = {
+		/**
+		 * Signal emitted when component renders.
+		 */
+		"render": "sig/render"
+	};
+
+	/**
 	 * DOM component configuration
 	 * @class dom.config
 	 * @extends core.config
@@ -17,13 +29,11 @@ define([
 	 */
 
 	return merge.call({}, config, {
-		/**
-		 * @cfg signal
-		 * @cfg {String} signal.render=signal.render Signal emitted when component has rendered.
+		 /**
+		 * @cfg {dom.config.signal}
 		 * @inheritdoc
+		 * @protected
 		 */
-		"signal": {
-			"render": "render"
-		}
+		"signal": SIGNAL
 	}, module.config());
 });

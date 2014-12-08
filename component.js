@@ -19,6 +19,7 @@ define([
 	 * Component that manages all DOM manipulation and integration.
 	 * @class dom.component
 	 * @extend core.component.gadget
+	 * @mixin dom.config
 	 * @alias feature.component
 	 */
 
@@ -46,7 +47,7 @@ define([
 	var DELEGATED = "delegated";
 	var ON = "on";
 	var OFF = "off";
-	var SIG_RENDER = "sig/" + config.signal.render;
+	var SIG_RENDER = config.signal.render;
 	var RE = new RegExp("^" + DOM + "/(.+)");
 
 	function on_delegated(handler, handlers) {
@@ -75,7 +76,6 @@ define([
 	 * @event sig/render
 	 * @localdoc Triggered after {@link #before}, {@link #after}, {@link #html}, {@link #text}, {@link #append} and {@link #prepend}
 	 * @since 3.0
-	 * @preventable
 	 * @param {...*} [args] Render arguments
 	 */
 
