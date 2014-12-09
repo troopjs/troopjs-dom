@@ -31,6 +31,7 @@ define([
 	var ARRAY_PUSH = ARRAY_PROTO.push;
 	var $FN = $.fn;
 	var $GET = $FN.get;
+	var APPLY = fn.apply;
 	var TOSTRING_FUNCTION = "[object Function]";
 	var $ELEMENT = "$element";
 	var PROXY = "proxy";
@@ -320,14 +321,14 @@ define([
 				return $fn.call(me[$ELEMENT]);
 			}
 
-			// Convert arguments to an array
-			var args = ARRAY_SLICE.call(arguments);
+			// Slice `arguments` to `args`
+			var args = ARRAY_SLICE.call(arguments, 1);
 
 			return when(contentOrPromise, function (content) {
 				// If `content` is a function ...
 				return (OBJECT_TOSTRING.call(content) === TOSTRING_FUNCTION)
 					// ... return promise of apply ...
-					? fn.apply(me, args)
+					? APPLY.call(me, content, args)
 					// ... otherwise return `content`
 					: content;
 			})
@@ -336,11 +337,11 @@ define([
 
 					// Let `args[0]` be `content`
 					// Call `$fn` with `content`
-					$fn.call(me[$ELEMENT], args[0] = content);
+					$fn.call(me[$ELEMENT], content);
 
-					// Let `_args` be `[ SIG_RENDER ]`
+					// Let `_args` be `[ SIG_RENDER, content ]`
 					// Push `args` on `_args`
-					ARRAY_PUSH.apply(_args = [ SIG_RENDER ], args);
+					ARRAY_PUSH.apply(_args = [ SIG_RENDER, content ], args);
 
 					// Signal render
 					return me.emit.apply(me, _args);
