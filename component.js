@@ -149,14 +149,6 @@ define([
 	 * @fires sig/render
 	 */
 
-	// Add pragmas for DOM specials
-	config.pragmas.push({
-		"pattern": /^dom(?::([^\/]+))?\/([^\(]+(?=$))/,
-		"replace": function(match, $1, $2) {
-			return DOM + "/" + $2 + ($1 === UNDEFINED ? "()" : "(\"" + $1 + "\")");
-		}
-	});
-
 	/**
 	 * Creates a new component that attaches to a specified (jQuery) DOM element.
 	 * @method constructor
@@ -268,15 +260,6 @@ define([
 				// $element.off handlers[PROXY]
 				me[$ELEMENT].off(matches[1], NULL, handlers[PROXY]);
 			}
-		},
-
-		/**
-		 * @handler
-		 * @localdoc Trigger a custom DOM event "task" whenever this widget performs a task.
-		 * @inheritdoc
-		 */
-		"sig/task" : function (task) {
-			this[$ELEMENT].trigger("task", [ task ]);
 		},
 
 		/**
