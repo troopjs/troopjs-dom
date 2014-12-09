@@ -5,8 +5,8 @@
     "node_modules"
   ],
   "dependencies": {
-    "troopjs-compose": "^3.1",
-    "troopjs-core": "^4.4",
+    "troopjs-compose": "^4",
+    "troopjs-core": "^5",
     "jquery": ">=1.8.1 <4",
     "when": "^3.4",
     "mu-getargs": "^0",
