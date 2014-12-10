@@ -8,11 +8,10 @@ define([
 	"troopjs-compose/decorator/before",
 	"jquery",
 	"when",
-	"when/function",
 	"mu-selector-set",
 	"poly/array",
 	"mu-jquery-destroy"
-], function (Gadget, config, sequence, before, $, when, fn, SelectorSet) {
+], function (Gadget, config, sequence, before, $, when, SelectorSet) {
 	"use strict";
 
 	/**
@@ -31,7 +30,6 @@ define([
 	var ARRAY_PUSH = ARRAY_PROTO.push;
 	var $FN = $.fn;
 	var $GET = $FN.get;
-	var APPLY = fn.apply;
 	var TOSTRING_FUNCTION = "[object Function]";
 	var $ELEMENT = "$element";
 	var PROXY = "proxy";
@@ -310,8 +308,8 @@ define([
 			return when(contentOrPromise, function (content) {
 				// If `content` is a function ...
 				return (OBJECT_TOSTRING.call(content) === TOSTRING_FUNCTION)
-					// ... return promise of apply ...
-					? APPLY.call(me, content, args)
+					// ... return result of applying `content` ...
+					? content.apply(me, args)
 					// ... otherwise return `content`
 					: content;
 			})
