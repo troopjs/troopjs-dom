@@ -50,7 +50,7 @@ define([
 				$event.preventDefault();
 			}
 
-			return handler.apply(handler.context, args);
+			return handler.run(args);
 		};
 
 		var $event = args[0];
