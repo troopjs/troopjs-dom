@@ -7,10 +7,10 @@ define([
 	"./runner/sequence",
 	"troopjs-compose/decorator/before",
 	"jquery",
-	"when",
-	"mu-selector-set",
+	"when/when",
+	"mu-selector-set/main",
 	"poly/array",
-	"mu-jquery-destroy"
+	"mu-jquery-destroy/main"
 ], function (Gadget, config, sequence, before, $, when, SelectorSet) {
 	"use strict";
 
