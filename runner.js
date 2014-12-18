@@ -30,7 +30,10 @@ define([
 	/**
 	 * @method constructor
 	 * @inheritdoc core.event.runner#constructor
-	 * @localdoc Runner that executes DOM candidates in sequence without overlap
+	 * @localdoc
+	 * - Executes handlers synchronously passing each handler `args`.
+	 * - If a handler returns `false` no more handlers will be executed.
+	 * - If a handler stops propagation no more handlers will be executed.
 	 * @return {*} Result from last handler
 	 */
 	return function sequence(event, handlers, args) {
