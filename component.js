@@ -4,14 +4,14 @@
 define([
 	"troopjs-core/component/gadget",
 	"./config",
-	"./runner/sequence",
+	"./runner",
 	"troopjs-compose/decorator/before",
 	"jquery",
 	"when/when",
 	"mu-selector-set/main",
 	"poly/array",
 	"mu-jquery-destroy/main"
-], function (Gadget, config, sequence, before, $, when, SelectorSet) {
+], function (Gadget, config, runner, before, $, when, SelectorSet) {
 	"use strict";
 
 	/**
@@ -232,7 +232,7 @@ define([
 				me[$ELEMENT].on(matches[1], NULL, me, handlers[PROXY] = function ($event) {
 					var args = {};
 					args[TYPE] = type;
-					args[RUNNER] = sequence;
+					args[RUNNER] = runner;
 					args[CONTEXT] = me;
 					args = [ args ];
 
