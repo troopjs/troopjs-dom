@@ -9,8 +9,8 @@ define([
 	"use strict";
 
 	/**
-	 * @class dom.runner.sequence
-	 * @implement core.event.runner
+	 * @class dom.runner
+	 * @mixin Function
 	 * @private
 	 * @static
 	 * @alias feature.runner
@@ -29,7 +29,7 @@ define([
 
 	/**
 	 * @method constructor
-	 * @inheritdoc
+	 * @inheritdoc core.event.runner#constructor
 	 * @localdoc Runner that executes DOM candidates in sequence without overlap
 	 * @return {*} Result from last handler
 	 */
