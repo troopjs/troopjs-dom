@@ -1,0 +1,9 @@
+{
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/troopjs/troopjs-dom.git"
+	},
+	"devDependencies": {
+		"buster-amd": "~0.3"
+	}
+}
