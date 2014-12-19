@@ -13,5 +13,8 @@
     "mu-merge": "^0",
     "mu-jquery-destroy": "^0",
     "mu-selector-set": "^1.1"
+  },
+  "devDependencies": {
+    "requirejs": "^2.1"
   }
 }
