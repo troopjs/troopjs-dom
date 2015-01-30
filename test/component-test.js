@@ -155,6 +155,20 @@ define([
 			}
 		},
 
+		"render": {
+			"html": function () {
+				return Component($("<div>"))
+					.html("THIS IS HTML", 1, 2, 3)
+					.then(function (args) {
+						assert.equals(args.length, 4);
+						assert.isObject(args[0]);
+						assert.equals(args[1], 1);
+						assert.equals(args[2], 2);
+						assert.equals(args[3], 3);
+					});
+			}
+		},
+
 		"tearDown": function () {
 			this.$el.remove();
 		}
