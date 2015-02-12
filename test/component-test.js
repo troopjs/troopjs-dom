@@ -19,9 +19,8 @@ define([
 				var click2 = this.spy();
 				var component = Component($el);
 
-				component
-					.on("dom/click", click1)
-					.on("dom/click", click2);
+				component.on("dom/click", click1);
+				component.on("dom/click", click2);
 
 				$el.click();
 
@@ -136,10 +135,10 @@ define([
 				var change2 = this.spy();
 				var change3 = this.spy()
 
-				Component($el)
-					.on("dom/change", change1, ".input1")
-					.on("dom/change", change2, ".input2")
-					.on("dom/change", change3, ".div1");
+				var component = Component($el);
+				component.on("dom/change", change1, ".input1");
+				component.on("dom/change", change2, ".input2");
+				component.on("dom/change", change3, ".div1");
 
 				$input1.change();
 
