@@ -9,11 +9,11 @@ define([
 	"use strict";
 
 	/**
-	 * @class dom.runner
+	 * @class dom.executor
 	 * @mixin Function
 	 * @private
 	 * @static
-	 * @alias feature.runner
+	 * @alias feature.executor
 	 */
 
 	var UNDEFINED;
@@ -29,15 +29,15 @@ define([
 
 	/**
 	 * @method constructor
-	 * @inheritdoc core.event.runner#constructor
+	 * @inheritdoc core.emitter.executor#constructor
 	 * @localdoc
 	 * - Executes handlers synchronously passing each handler `args`.
 	 * - If a handler returns `false` no more handlers will be executed.
 	 * - If a handler stops propagation no more handlers will be executed.
+	 *
 	 * @return {*} Result from last handler
 	 */
-	return function sequence(event, handlers, args) {
-
+	return function (event, handlers, args) {
 		var result = UNDEFINED;
 		var direct = handlers.direct;
 		var delegated = handlers.delegated;
@@ -53,7 +53,7 @@ define([
 				$event.preventDefault();
 			}
 
-			return handler.run(args);
+			return handler.handle(args);
 		};
 
 		var $event = args[0];

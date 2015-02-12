@@ -4,14 +4,14 @@
 define([
 	"troopjs-core/component/gadget",
 	"./config",
-	"./runner",
+	"./executor",
 	"troopjs-compose/decorator/before",
 	"jquery",
 	"when/when",
 	"mu-selector-set/main",
 	"poly/array",
 	"mu-jquery-destroy/main"
-], function (Gadget, config, runner, before, $, when, SelectorSet) {
+], function (Gadget, config, executor, before, $, when, SelectorSet) {
 	"use strict";
 
 	/**
@@ -37,11 +37,11 @@ define([
 	var ARGS = "args";
 	var NAME = "name";
 	var VALUE = "value";
-	var TYPE = "type";
-	var RUNNER = "runner";
-	var CONTEXT = "context";
-	var CALLBACK = "callback";
-	var DATA = "data";
+	var TYPE = config.emitter.type;
+	var EXECUTOR = config.emitter.executor;
+	var SCOPE = config.emitter.scope;
+	var CALLBACK = config.emitter.callback;
+	var DATA = config.emitter.data;
 	var DIRECT = "direct";
 	var DELEGATED = "delegated";
 	var ON = "on";
@@ -232,8 +232,8 @@ define([
 				me[$ELEMENT].on(matches[1], NULL, me, handlers[PROXY] = function ($event) {
 					var args = {};
 					args[TYPE] = type;
-					args[RUNNER] = runner;
-					args[CONTEXT] = me;
+					args[EXECUTOR] = executor;
+					args[SCOPE] = me;
 					args = [ args ];
 
 					// Push original arguments on args
