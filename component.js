@@ -112,7 +112,7 @@ define([
 	/**
 	 * Render signal
 	 * @event sig/render
-	 * @localdoc Triggered after {@link #before}, {@link #after}, {@link #html}, {@link #append}, {@link #appendTo}, {@link #prepend} and {@link #prependTo}
+	 * @localdoc Triggered after {@link #before}, {@link #after}, {@link #html}, {@link #text}, {@link #append}, {@link #appendTo}, {@link #prepend} and {@link #prependTo}
 	 * @since 3.0
 	 * @param {jQuery} $target Element rendered into
 	 * @param {...*} [args] Render arguments
