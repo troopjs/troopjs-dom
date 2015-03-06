@@ -353,8 +353,8 @@ define([
 			})
 		},
 
-		// Create spec for render methods targeting `me[$ELEMENT]`
-		[ "html", "text", "before", "after", "append", "prepend" ].reduce(function (spec, method) {
+		// Create spec for render methods targeting `me[$ELEMENT]` that can be executed without args
+		[ "html", "text" ].reduce(function (spec, method) {
 			// Create `spec[method]`
 			spec[method] = function () {
 				var me = this;
@@ -366,6 +366,19 @@ define([
 					? $element[method]()
 					// ... otherwise call `$render`
 					: $render.call(me, $element, method, ARRAY_SLICE.call(arguments, 0));
+			};
+
+			// Return spec for next iteration
+			return spec;
+		}, {}),
+
+		// Create spec for render methods targeting `me[$ELEMENT]`
+		[ "before", "after", "append", "prepend" ].reduce(function (spec, method) {
+			// Create `spec[method]`
+			spec[method] = function () {
+				var me = this;
+
+				return $render.call(me, me[$ELEMENT], method, ARRAY_SLICE.call(arguments, 0));
 			};
 
 			// Return spec for next iteration
