@@ -156,14 +156,29 @@ define([
 
 		"render": {
 			"html": function () {
-				return Component($("<div>"))
-					.html("THIS IS HTML", 1, 2, 3)
-					.then(function (args) {
-						assert.equals(args.length, 4);
-						assert.isObject(args[0]);
-						assert.equals(args[1], 1);
-						assert.equals(args[2], 2);
-						assert.equals(args[3], 3);
+				var $element = $("<div>");
+
+				return Component($element)
+					.html("<span>THIS IS HTML</span>", 1, "two")
+					.spread(function ($html, one, two) {
+						assert.equals(arguments.length, 3);
+						assert.isArrayLike($html);
+						assert.equals(one, 1);
+						assert.equals(two, "two");
+						assert.equals($element.get(0).outerHTML, "<div><span>THIS IS HTML</span></div>");
+					});
+			},
+			"appendTo": function () {
+				var $element = $("<div>");
+
+				return Component($("<p>"))
+					.appendTo($element, "<span>THIS IS HTML</span>", 1, "two")
+					.spread(function ($html, one, two) {
+						assert.equals(arguments.length, 3);
+						assert.isArrayLike($html);
+						assert.equals(one, 1);
+						assert.equals(two, "two");
+						assert.equals($element.get(0).outerHTML, "<div><span>THIS IS HTML</span></div>");
 					});
 			}
 		},
