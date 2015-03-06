@@ -95,8 +95,8 @@ define([
 						$element[method]($content);
 				}
 
-				// Let `emit_args` be `[ SIG_RENDER, $element ]`
-				var emit_args = [ SIG_RENDER, $element ];
+				// Let `emit_args` be `[ SIG_RENDER ]`
+				var emit_args = [ SIG_RENDER ];
 
 				// Push `args` on `emit_args`
 				ARRAY_PUSH.apply(emit_args, args);
@@ -115,7 +115,6 @@ define([
 	 * @localdoc Triggered after {@link #before}, {@link #after}, {@link #html}, {@link #append}, {@link #appendTo}, {@link #prepend} and {@link #prependTo}
 	 * @since 3.0
 	 * @param {jQuery} $target Element rendered into
-	 * @param {jQuery} $result Result from rendering
 	 * @param {...*} [args] Render arguments
 	 */
 
