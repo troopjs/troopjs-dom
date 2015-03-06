@@ -29,7 +29,6 @@ define([
 	var ARRAY_SLICE = ARRAY_PROTO.slice;
 	var ARRAY_PUSH = ARRAY_PROTO.push;
 	var $FN = $.fn;
-	var $GET = $FN.get;
 	var TOSTRING_FUNCTION = "[object Function]";
 	var $ELEMENT = "$element";
 	var PROXY = "proxy";
@@ -174,7 +173,7 @@ define([
 			args[0] = $element = $($element);
 		}
 		// From a different jQuery instance
-		else if (($get = $element.get) !== $GET) {
+		else if (($get = $element.get) !== $.fn.get) {
 			// Let `args` be `ARRAY_SLICE.call(arguments)`
 			args = ARRAY_SLICE.call(arguments);
 
