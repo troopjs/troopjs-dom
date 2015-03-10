@@ -270,10 +270,13 @@ define([
 			 */
 			"sig/initialize" : function () {
 				var me = this;
+				var specials = me.constructor.specials;
 
-				return when.map(me.constructor.specials[DOM] || ARRAY_PROTO, function (special) {
-					return me.on(special[NAME], special[VALUE], special[ARGS][0]);
-				});
+				if (specials.hasOwnProperty(DOM)) {
+					specials.forEach(function (special) {
+						me.on(special[NAME], special[VALUE], special[ARGS][0]);
+					});
+				}
 			},
 
 			/**
