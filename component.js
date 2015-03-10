@@ -30,6 +30,7 @@ define([
 	var ARRAY_PUSH = ARRAY_PROTO.push;
 	var TOSTRING_FUNCTION = "[object Function]";
 	var $ELEMENT = "$element";
+	var LENGTH = "length";
 	var PROXY = "proxy";
 	var DOM = "dom";
 	var ARGS = "args";
@@ -216,27 +217,28 @@ define([
 	return Gadget.extend(
 		function ($element, displayName) {
 			var me = this;
+			var length = arguments[LENGTH];
+			var args = new Array(length);
 			var $get;
-			var args;
 
 			// No $element
 			if ($element === UNDEFINED || $element === NULL) {
 				throw new Error("No $element provided");
 			}
-			// Is _not_ a jQuery element
-			else if (!$element.jquery) {
-				// Let `args` be `ARRAY_SLICE.call(arguments)`
-				args = ARRAY_SLICE.call(arguments);
 
+			// Let `args` be `ARRAY_SLICE.call(arguments)` without deop
+			while (length-- > 0) {
+				args[length] = arguments[length];
+			}
+
+			// Is _not_ a jQuery element
+			if (!$element.jquery) {
 				// Let `$element` be `$($element)`
 				// Let `args[0]` be `$element`
 				args[0] = $element = $($element);
 			}
 			// From a different jQuery instance
 			else if (($get = $element.get) !== $.fn.get) {
-				// Let `args` be `ARRAY_SLICE.call(arguments)`
-				args = ARRAY_SLICE.call(arguments);
-
 				// Let `$element` be `$($get.call($element, 0))`
 				// Let `args[0]` be `$element`
 				args[0] = $element = $($get.call($element, 0));
@@ -291,14 +293,16 @@ define([
 
 					// $element.on handlers[PROXY]
 					me[$ELEMENT].on(matches[1], NULL, me, handlers[PROXY] = function ($event) {
-						var args = {};
-						args[TYPE] = type;
-						args[EXECUTOR] = executor;
-						args[SCOPE] = me;
-						args = [ args ];
+						var length = arguments[LENGTH];
+						var args = new Array(length + 1);
+						var _args = args[0] = {};
+						_args[TYPE] = type;
+						_args[EXECUTOR] = executor;
+						_args[SCOPE] = me;
 
-						// Push original arguments on args
-						ARRAY_PUSH.apply(args, arguments);
+						while (length > 0) {
+							args[length] = arguments[--length];
+						}
 
 						// Return result of emit
 						return me.emit.apply(me, args);
@@ -358,13 +362,29 @@ define([
 			spec[method] = function () {
 				var me = this;
 				var $element = me[$ELEMENT];
+				var length = arguments[LENGTH];
+				var args;
+				var result;
 
-				// If `arguments.length` is `0` ...
-				return arguments.length === 0
-					// ... call `$element[method]` ...
-					? $element[method]()
-					// ... otherwise call `$render`
-					: $render.call(me, $element, method, ARRAY_SLICE.call(arguments, 0));
+				// If there were no arguments ...
+				if (length === 0) {
+					// ... call `$element[method]` without arguments ...
+					result = $element[method]();
+				}
+				// ... otherwise ...
+				else {
+					// Create `args`
+					args = new Array(length);
+
+					// Let `args` be `ARRAY_SLICE.call(arguments)` without deop
+					while (length-- > 0) {
+						args[length] = arguments[length];
+					}
+
+					result = $render.call(me, $element, method, args);
+				}
+
+				return result;
 			};
 
 			// Return spec for next iteration
@@ -376,8 +396,15 @@ define([
 			// Create `spec[method]`
 			spec[method] = function () {
 				var me = this;
+				var length = arguments[LENGTH];
+				var args = new Array(length);
 
-				return $render.call(me, me[$ELEMENT], method, ARRAY_SLICE.call(arguments, 0));
+				// Let `args` be `ARRAY_SLICE.call(arguments)` without deop
+				while (length-- > 0) {
+					args[length] = arguments[length];
+				}
+
+				return $render.call(me, me[$ELEMENT], method, args);
 			};
 
 			// Return spec for next iteration
@@ -388,7 +415,15 @@ define([
 		[ "appendTo", "prependTo" ].reduce(function (spec, method) {
 			// Create `spec[method]`
 			spec[method] = function ($element) {
-				return $render.call(this, $element, method, ARRAY_SLICE.call(arguments, 1));
+				var length = arguments[LENGTH];
+				var args = new Array(length - 1);
+
+				// Let `args` be `ARRAY_SLICE.call(arguments, 1)` without deop
+				while (length-- > 1) {
+					args[length - 1] = arguments[length];
+				}
+
+				return $render.call(this, $element, method, args);
 			};
 
 			// Return spec for next iteration
