@@ -273,7 +273,7 @@ define([
 				var specials = me.constructor.specials;
 
 				if (specials.hasOwnProperty(DOM)) {
-					specials.forEach(function (special) {
+					specials[DOM].forEach(function (special) {
 						me.on(special[NAME], special[VALUE], special[ARGS][0]);
 					});
 				}
