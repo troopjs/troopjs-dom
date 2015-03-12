@@ -88,8 +88,8 @@ define([
 				_args[_length - 1] = args[_length];
 			}
 
-			// Return result of applying `content` on `me` with `_args`
-			return content.apply(me, _args);
+			// Return result of applying `content` on `$element` with `_args`
+			return content.apply($element, _args);
 		})
 		.then(function (content) {
 			// Let `args[0]` be `$(content)`
