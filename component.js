@@ -2,7 +2,7 @@
  * @license MIT http://troopjs.mit-license.org/
  */
 define([
-	"troopjs-core/component/gadget",
+	"troopjs-core/component/emitter",
 	"./config",
 	"./executor",
 	"troopjs-compose/decorator/before",
@@ -11,13 +11,13 @@ define([
 	"mu-selector-set/main",
 	"poly/array",
 	"mu-jquery-destroy/main"
-], function (Gadget, config, executor, before, $, when, SelectorSet) {
+], function (Component, config, executor, before, $, when, SelectorSet) {
 	"use strict";
 
 	/**
 	 * Component that manages all DOM manipulation and integration.
 	 * @class dom.component
-	 * @extend core.component.gadget
+	 * @extend core.component.emitter
 	 * @mixin dom.config
 	 * @alias feature.component
 	 */
@@ -230,7 +230,7 @@ define([
 	 * @throws {Error} If no $element is provided
 	 * @throws {Error} If $element is not of supported type
 	 */
-	return Gadget.extend(
+	return Component.extend(
 		function ($element, displayName) {
 			var me = this;
 			var length = arguments[LENGTH];
