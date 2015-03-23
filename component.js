@@ -9,7 +9,6 @@ define([
 	"jquery",
 	"when/when",
 	"mu-selector-set/main",
-	"poly/array",
 	"mu-jquery-destroy/main"
 ], function (Component, config, executor, before, $, when, SelectorSet) {
 	"use strict";

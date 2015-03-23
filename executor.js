@@ -3,8 +3,7 @@
  */
 define([
 	"mu-selector-set/main",
-	"jquery",
-	"poly/array"
+	"jquery"
 ], function (SelectorSet, $) {
 	"use strict";
 
