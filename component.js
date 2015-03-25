@@ -5,12 +5,13 @@ define([
 	"troopjs-core/component/emitter",
 	"./config",
 	"./executor",
+  "./error",
 	"troopjs-compose/decorator/before",
 	"jquery",
 	"when/when",
 	"mu-selector-set/main",
 	"mu-jquery-destroy/main"
-], function (Component, config, executor, before, $, when, SelectorSet) {
+], function (Component, config, executor, DOMError, before, $, when, SelectorSet) {
 	"use strict";
 
 	/**
@@ -226,8 +227,7 @@ define([
 	 * @method constructor
 	 * @param {jQuery|HTMLElement} $element The element that this component should be attached to
 	 * @param {String} [displayName] A friendly name for this component
-	 * @throws {Error} If no $element is provided
-	 * @throws {Error} If $element is not of supported type
+	 * @throws {dom.error} If no $element is provided
 	 */
 	return Component.extend(
 		function ($element, displayName) {
@@ -238,7 +238,7 @@ define([
 
 			// No $element
 			if ($element === UNDEFINED || $element === NULL) {
-				throw new Error("No $element provided");
+				throw new DOMError("No '$element' provided");
 			}
 
 			// Let `args` be `ARRAY_SLICE.call(arguments)` without deop
