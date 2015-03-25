@@ -1,7 +1,8 @@
 define([
 	"../component",
+	"../error",
 	"jquery"
-], function (Component, $) {
+], function (Component, DOMError, $) {
 	"use strict";
 
 	var assert = buster.referee.assert;
@@ -10,6 +11,22 @@ define([
 	buster.testCase("troopjs-dom/component", {
 		"setUp": function () {
 			this.$el = $("<form />");
+		},
+
+		"throws": {
+			"when no $element is provided": function () {
+				assert.exception(function () {
+					new Component();
+				});
+			},
+
+			"DOMError": function () {
+				assert.exception(function () {
+					new Component();
+				}, function (e) {
+					return e instanceof DOMError;
+				});
+			}
 		},
 
 		"dynamic DOM events": {
@@ -168,6 +185,7 @@ define([
 						assert.equals($element.get(0).outerHTML, "<div><span>THIS IS HTML</span></div>");
 					});
 			},
+
 			"appendTo": function () {
 				var $element = $("<div>");
 
