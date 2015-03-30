@@ -36,35 +36,11 @@ define([
   var TYPE = config.emitter.type;
   var EXECUTOR = config.emitter.executor;
   var SCOPE = config.emitter.scope;
-  var CALLBACK = config.emitter.callback;
   var DATA = config.emitter.data;
   var DIRECT = "direct";
   var DELEGATED = "delegated";
-  var ON = "on";
-  var OFF = "off";
   var SIG_RENDER = config.signal.render;
   var RE = new RegExp("^" + DOM + "/(.+)");
-
-  function onDelegated (handler, handlers) {
-    handlers[DELEGATED].add(handler[DATA], handler);
-  }
-
-  function onDirect (handler, handlers) {
-    handlers[DIRECT].push(handler);
-  }
-
-  function offDelegated (handler, handlers) {
-    handlers[DELEGATED].remove(handler[DATA], handler);
-  }
-
-  function offDirect (handler, handlers) {
-    var direct = handlers[DIRECT];
-    var index = direct.indexOf(handler);
-
-    if (index !== -1) {
-      direct.splice(index, 1);
-    }
-  }
 
   function $render ($element, method, args) {
     var me = this;
@@ -296,20 +272,20 @@ define([
 
       /**
        * @handler
-       * @localdoc Registers for each type of DOM event a proxy function on the DOM element that
-       * re-dispatches those events.
+       * @localdoc Registers DOM event proxies on {@link $element}.
        * @inheritdoc
        */
       "sig/setup": function (handlers, type) {
         var me = this;
         var matches;
 
+        // Check that this is a DOM handler
         if ((matches = RE.exec(type)) !== NULL) {
           // Create delegated and direct event stores
           handlers[DIRECT] = [];
           handlers[DELEGATED] = new SelectorSet();
 
-          // $element.on handlers[PROXY]
+          // `$element.on` `handlers[PROXY]`
           me[$ELEMENT].on(matches[1], NULL, me, handlers[PROXY] = function () {
             var length = arguments[LENGTH];
             var args = new Array(length + 1);
@@ -330,13 +306,35 @@ define([
 
       /**
        * @handler
-       * @localdoc Remove for the DOM event handler proxies that are registered on the DOM element.
+       * @localdoc Adds handler to `handlers[DELEGATED]` or `handlers[DIRECT]` depending on `handler[DATA]`.
+       * @inheritdoc
+       */
+      "sig/added": function (handlers, handler) {
+        var data;
+
+        // Check that this is a DOM handler
+        if (RE.test(handler[TYPE])) {
+          data = handler[DATA];
+
+          if (data !== UNDEFINED) {
+            handlers[DELEGATED].add(data, handler);
+          }
+          else {
+            handlers[DIRECT].push(handler);
+          }
+        }
+      },
+
+      /**
+       * @handler
+       * @localdoc Removes the DOM event proxies that are registered on {@link $element}.
        * @inheritdoc
        */
       "sig/teardown": function (handlers, type) {
         var me = this;
         var matches;
 
+        // Check that this is a DOM handler
         if ((matches = RE.exec(type)) !== NULL) {
           // $element.off handlers[PROXY]
           me[$ELEMENT].off(matches[1], NULL, handlers[PROXY]);
@@ -344,34 +342,27 @@ define([
       },
 
       /**
-       * @method
-       * @localdoc Registers emitter `on` and `off` callbacks
+       * @handler
+       * @localdoc Removes handle from `handlers[DELEGATED]` or `handlers[DIRECT]` depending on `handler[DATA]`.
        * @inheritdoc
        */
-      "on": before(function (type, callback, data) {
-        var _callback = callback;
+      "sig/removed": function (handlers, handler) {
+        var data;
 
-        // Check if this is a DOM type
-        if (RE.test(type)) {
-          // If `callback` is a function ...
-          if (OBJECT_TOSTRING.call(callback) === TOSTRING_FUNCTION) {
-            // Create `_callback` object
-            _callback = {};
-            _callback[CALLBACK] = callback;
+        // Check that this is a DOM handler
+        if (RE.test(handler[TYPE])) {
+          data = handler[DATA];
+
+          if (data !== UNDEFINED) {
+            handlers[DELEGATED].remove(data, handler);
           }
-
-          // Set `ON` and `OFF` callbacks
-          _callback[ON] = data !== UNDEFINED
-            ? onDelegated
-            : onDirect;
-          _callback[OFF] = data !== UNDEFINED
-            ? offDelegated
-            : offDirect;
+          else {
+            handlers[DIRECT] = handlers[DIRECT].filter(function (_handler) {
+              return _handler !== handler;
+            });
+          }
         }
-
-        // Mutate return args to next method
-        return [ type, _callback, data ];
-      })
+      }
     },
 
     // Create spec for render methods targeting `me[$ELEMENT]` that can be executed without args
