@@ -272,7 +272,7 @@ define([
 
       /**
        * @handler
-       * @localdoc Registers DOM event proxies on {@link $element}.
+       * @localdoc Registers DOM event proxies on {@link #$element}.
        * @inheritdoc
        */
       "sig/setup": function (handlers, type) {
@@ -307,7 +307,7 @@ define([
       /**
        * @handler
        * @localdoc Adds handler to `handlers[DELEGATED]` or `handlers[DIRECT]` depending on `handler[DATA]`.
-       * @inheritdoc
+       * @inheritdoc #event-sig/added
        */
       "sig/added": function (handlers, handler) {
         var data;
@@ -327,7 +327,7 @@ define([
 
       /**
        * @handler
-       * @localdoc Removes the DOM event proxies that are registered on {@link $element}.
+       * @localdoc Removes the DOM event proxies that are registered on {@link #$element}.
        * @inheritdoc
        */
       "sig/teardown": function (handlers, type) {
@@ -344,7 +344,7 @@ define([
       /**
        * @handler
        * @localdoc Removes handle from `handlers[DELEGATED]` or `handlers[DIRECT]` depending on `handler[DATA]`.
-       * @inheritdoc
+       * @inheritdoc #event-sig/removed
        */
       "sig/removed": function (handlers, handler) {
         var data;
