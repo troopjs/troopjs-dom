@@ -191,7 +191,6 @@ define([
    * @fires sig/render
    */
 
-
   /**
    * Renders content and prepends it to the provided $element
    * @method prependTo
@@ -265,7 +264,14 @@ define([
 
         if (specials.hasOwnProperty(DOM)) {
           specials[DOM].forEach(function (special) {
-            me.on(special[NAME], special[VALUE], special[ARGS][0]);
+            var args;
+
+            if ((args = special[ARGS]) !== UNDEFINED && args[LENGTH] > 0) {
+              me.on.apply(me, [ special[NAME], special[VALUE] ].concat(special[ARGS]));
+            }
+            else {
+              me.on(special[NAME], special[VALUE]);
+            }
           });
         }
       },
@@ -317,7 +323,7 @@ define([
           data = handler[DATA];
 
           if (data !== UNDEFINED) {
-            handlers[DELEGATED].add(data, handler);
+            handlers[DELEGATED].add(data[0], handler);
           }
           else {
             handlers[DIRECT].push(handler);
@@ -354,7 +360,7 @@ define([
           data = handler[DATA];
 
           if (data !== UNDEFINED) {
-            handlers[DELEGATED].remove(data, handler);
+            handlers[DELEGATED].remove(data[0], handler);
           }
           else {
             handlers[DIRECT] = handlers[DIRECT].filter(function (_handler) {

@@ -6,7 +6,7 @@
   ],
   "dependencies": {
     "troopjs-compose": "^4.0.2",
-    "troopjs-core": "^7",
+    "troopjs-core": "^8",
     "jquery": ">=1.8.1 <4",
     "when": "^3.4",
     "mu-error": "^0",
