@@ -68,37 +68,40 @@ define([
       return content.apply($element, _args);
     })
     .then(function (content) {
-      // Let `args[0]` be `$(content)`
-      // Let `$content` be `args[0]`
-      var $content = args[0] = $(content);
-      // Initialize `_length` and `_args`
+      // Initialize `_length`, `_args` and `__args`
       var _length = length;
-      var _args = new Array(_length + 1);
+      var _args = new Array(_length);
+      var __args = new Array(_length + 1);
 
-      // Let `_args[0]` be `SIG_RENDER`
-      _args[0] = SIG_RENDER;
+      // Let `__args[0]` be `SIG_RENDER`
+      __args[0] = SIG_RENDER;
 
       // Copy `args` to `_args`
-      while (_length-- > 0) {
-        _args[_length + 1] = args[_length];
+      // Copy `args` to `__args` with offset
+      while (_length--) {
+        _args[_length] = __args[_length + 1] = args[_length];
       }
 
-      // Determine direction of manipulation\
+      // Determine manipulation method and result
       switch (method) {
         case "appendTo":
         case "prependTo":
-          $content[method]($element);
+          _args[0] = __args[1] = $(content)[method]($element);
+          break;
+
+        case "text":
+          _args[0] = __args[1] = $element[method](content).contents();
           break;
 
         default:
-          $element[method]($content);
+          _args[0] = __args[1] = $element[method](content).children();
       }
 
-      // Emit `_args`
-      // Yield `args`
+      // Emit `__args`
+      // Yield `_args`
       return me.emit
-        .apply(me, _args)
-        .yield(args);
+        .apply(me, __args)
+        .yield(_args);
     });
   }
 

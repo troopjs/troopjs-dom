@@ -173,6 +173,21 @@ define([
     },
 
     "render": {
+      "text": function () {
+        var $element = $("<div>");
+
+        return Component($element)
+          .text("THIS IS TEXT", 1, "two")
+          .spread(function ($text, one, two) {
+            assert.equals(arguments.length, 3);
+            assert.isArrayLike($text);
+            assert.equals(one, 1);
+            assert.equals(two, "two");
+            assert.equals($text.get(0).textContent, "THIS IS TEXT");
+            assert.equals($element.get(0).outerHTML, "<div>THIS IS TEXT</div>");
+          });
+      },
+
       "html": function () {
         var $element = $("<div>");
 
@@ -183,6 +198,7 @@ define([
             assert.isArrayLike($html);
             assert.equals(one, 1);
             assert.equals(two, "two");
+            assert.equals($html.get(0).outerHTML, "<span>THIS IS HTML</span>");
             assert.equals($element.get(0).outerHTML, "<div><span>THIS IS HTML</span></div>");
           });
       },
@@ -197,6 +213,7 @@ define([
             assert.isArrayLike($html);
             assert.equals(one, 1);
             assert.equals(two, "two");
+            assert.equals($html.get(0).outerHTML, "<span>THIS IS HTML</span>");
             assert.equals($element.get(0).outerHTML, "<div><span>THIS IS HTML</span></div>");
           });
       }
