@@ -73,7 +73,7 @@ define([
 					var _contents = _args.shift();
 
 					// If _contents is a function, apply it with _args, otherwise just pass it along to the callback
-					return when(typeof _contents === TYPEOF_FUNCTION ? _contents.apply(me, _args) : contents, function (result) {
+					return when($.isFunction(_contents) ? _contents.apply(me, _args) : contents, function (result) {
 						// Call $fn in the context of me[$ELEMENT] with result as the only argument
 						// Find something to weave
 						// Pass it to loom_weave and return the result
